@@ -5,8 +5,8 @@ class Project {
     _languages[baseLanaguage] = Language(locale: baseLanaguage);
   }
 
-  factory Project.fromSerialized(Map<String, String> data) {
-    return Project(data['baseLanaguage']!, data['projectPath']!);
+  factory Project.fromSerialized(Map<String, dynamic> data) {
+    return Project(data['baseLanguage']!, data['projectPath']!);
   }
 
   String baseLanaguage;
@@ -32,7 +32,7 @@ class Project {
     _languages.remove(langToRemove);
   }
 
-  Map<String, String> serialize() {
+  Map<String, String> toMap() {
     return <String, String>{'version': _projectVersion, 'projectPath': path, 'baseLanguage': baseLanaguage};
   }
 }

@@ -6,8 +6,8 @@ import 'package:riverpod/riverpod.dart';
 
 import '../potato_logger.dart';
 
-final Provider<FilePickerService> filePickerProvider =
-    Provider<FilePickerService>((ProviderRef<FilePickerService> ref) {
+final AutoDisposeProvider<FilePickerService> filePickerProvider =
+    Provider.autoDispose<FilePickerService>((ProviderRef<FilePickerService> ref) {
   return FilePickerService(ref.watch(loggerProvider));
 });
 
@@ -16,8 +16,8 @@ class FilePickerService {
   final Logger _logger;
 
   Future<File?> pickFile() async {
-    final FilePickerResult? result =
-        await FilePicker.platform.pickFiles(type: FileType.custom, allowedExtensions: <String>['.potato']);
+    final FilePickerResult? result = await FilePicker.platform
+        .pickFiles(dialogTitle: 'Open project', type: FileType.custom, allowedExtensions: <String>['potato']);
 
     if (result != null) {
       return File(result.files.single.path!);

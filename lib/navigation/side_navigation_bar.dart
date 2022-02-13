@@ -38,9 +38,9 @@ class _SideNavigationBarState extends State<SideNavigationBar> {
       ),
       content: NavigationBody(
         index: _navIndex,
-        children: [
-          const ScaffoldPage(),
-          const ScaffoldPage(),
+        children: const [
+          ScaffoldPage(),
+          ScaffoldPage(),
         ],
       ),
     );
