@@ -1,4 +1,4 @@
-package com.example.potato
+package com.tsm2.potato
 
 import io.flutter.embedding.android.FlutterActivity
 
