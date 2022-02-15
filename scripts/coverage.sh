@@ -1,5 +1,6 @@
 #!/bin/sh
 file=test/coverage_helper_test.dart
+mkdir -p "test"
 printf "// Helper file to make coverage work for all dart files\n" > $file
 printf "// **************************************************************************\n" >> $file
 printf "// Because of this: https://github.com/flutter/flutter/issues/27997#issue-410722816\n" >> $file
