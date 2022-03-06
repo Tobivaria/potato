@@ -25,8 +25,6 @@ class _OpenProjectState extends ConsumerState<OpenProject> {
     }
 
     ref.read(fileServiceProvider).loadProject(file);
-
-    // TODO find all files in path...
   }
 
   @override
@@ -35,13 +33,11 @@ class _OpenProjectState extends ConsumerState<OpenProject> {
         ? IconButton(
             icon: const Icon(
               FluentIcons.fabric_open_folder_horizontal,
-              size: 20,
             ),
             onPressed: _openFile,
           )
         : Button(
             child: const Text('Load'),
-            // Set onPressed to null to disable the button
             onPressed: _openFile,
           );
   }

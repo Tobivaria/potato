@@ -8,7 +8,6 @@ class CreateProject extends StatelessWidget {
     return IconButton(
       icon: const Icon(
         FluentIcons.add,
-        size: 20,
       ),
       onPressed: () {
         // create project

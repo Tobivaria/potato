@@ -18,7 +18,6 @@ class _OpenProjectState extends ConsumerState<SaveProject> {
     return IconButton(
       icon: const Icon(
         FluentIcons.save,
-        size: 20,
       ),
       onPressed: _saveFile,
     );
