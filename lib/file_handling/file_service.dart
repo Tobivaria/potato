@@ -45,10 +45,9 @@ class FileService {
       return false;
     }
 
-    final Map<String, String> rawFormat = project.toMap();
-    final String rawData = json.encode(rawFormat);
+    final Map<String, String> data = project.toMap();
     final File file = File('$path/$fileName.potato');
-    await file.writeAsString(rawData);
+    await _writeFile(file, data);
 
     return true;
   }
@@ -150,11 +149,21 @@ class FileService {
   }
 
   Future<void> exportLanguage(Project project) async {
+    List<String> keys = project.arbDefinitions.keys.toList();
+    // sort keys alphabetically
+    keys.sort((a, b) {
+      return a.toLowerCase().compareTo(b.toLowerCase());
+    });
+
     for (var item in project.languages.keys) {
-      var data = project.exportLanguage(item);
-      final File file = File('app_$item.arb');
-      String pretty = prettyEncoder.convert(data);
-      await file.writeAsString(pretty);
+      var data = project.exportLanguage(item, keys);
+      final File file = File('${project.path}/app_$item.arb');
+      await _writeFile(file, data);
     }
+  }
+
+  Future<void> _writeFile(File file, Map<String, dynamic> data) async {
+    String pretty = prettyEncoder.convert(data);
+    await file.writeAsString(pretty);
   }
 }
