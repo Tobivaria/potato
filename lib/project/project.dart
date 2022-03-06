@@ -49,6 +49,22 @@ class Project {
     return <String, String>{'version': _projectVersion, 'projectPath': path ?? '', 'baseLanguage': baseLanguage};
   }
 
+  // TODO test
+  Map<String, dynamic> exportLanguage(String langKey) {
+    Map<String, dynamic> export = <String, dynamic>{'@@locale': langKey};
+    if (langKey == baseLanguage) {
+      var baseTranslations = languages[langKey]!.translations;
+      // add one key after the other
+      for (final String key in arbDefinitions.keys) {
+        export[key] = baseTranslations[key]!;
+        export['@$key'] = arbDefinitions[key]!.toMap();
+      }
+    } else {
+      export.addAll({...languages[langKey]!.translations});
+    }
+    return export;
+  }
+
   Project copyWith({
     String? baseLang,
     String? path,

@@ -22,6 +22,8 @@ class FileService {
 
   final Logger _logger;
   final ProjectController _pController;
+
+  final JsonEncoder prettyEncoder = const JsonEncoder.withIndent('  ');
   // read write append to file
   // format arb file (json)
 
@@ -145,5 +147,14 @@ class FileService {
       _logger.e(e, data);
     }
     return data;
+  }
+
+  Future<void> exportLanguage(Project project) async {
+    for (var item in project.languages.keys) {
+      var data = project.exportLanguage(item);
+      final File file = File('app_$item.arb');
+      String pretty = prettyEncoder.convert(data);
+      await file.writeAsString(pretty);
+    }
   }
 }
