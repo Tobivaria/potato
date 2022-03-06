@@ -17,7 +17,7 @@ class _ArbEntryState extends State<ArbEntry> {
   @override
   void initState() {
     super.initState();
-    _typeController.text = widget.definition.type ?? '';
+    _typeController.text = widget.definition.type?.name ?? '';
     _descriptionController.text = widget.definition.description ?? '';
   }
 

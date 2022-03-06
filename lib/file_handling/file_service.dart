@@ -59,10 +59,7 @@ class FileService {
       return;
     }
     final project = Project.fromSerialized(data);
-    print(project.baseLanguage);
-    print(project.path);
 
-    // TODO search for arb files
     // load all arb files and their content
     if (project.path != null) {
       _fileList(project.path!, project.baseLanguage);
@@ -125,7 +122,7 @@ class FileService {
     for (var key in data.keys) {
       var item = data[key];
       if (key == '@@locale') {
-        print("Processing language $item");
+        _logger.i("Processing language $item");
         locale = item;
       } else if (key.startsWith('@')) {
         arbDefinitions[key.substring(1)] = ArbDefinition.fromMap(item);
