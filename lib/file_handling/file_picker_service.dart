@@ -15,27 +15,46 @@ class FilePickerService {
   FilePickerService(this._logger);
   final Logger _logger;
 
+  static const String extension = 'potato';
+
   Future<File?> pickFile() async {
     final FilePickerResult? result = await FilePicker.platform
-        .pickFiles(dialogTitle: 'Open project', type: FileType.custom, allowedExtensions: <String>['potato']);
+        .pickFiles(dialogTitle: 'Open project', type: FileType.custom, allowedExtensions: [extension]);
 
-    if (result != null) {
-      return File(result.files.single.path!);
-    } else {
+    if (result == null) {
       _logger.i('File picker aborted');
       return null;
     }
+
+    return File(result.files.single.path!);
+  }
+
+  Future<String?> pickDirectory() async {
+    String? selectedDirectory = await FilePicker.platform.getDirectoryPath();
+
+    if (selectedDirectory == null) {
+      _logger.i('File picker aborted');
+      return null;
+    }
+
+    return selectedDirectory;
   }
 
   Future<String?> saveFile() async {
-    String? outputFile = await FilePicker.platform.saveFile(
-      dialogTitle: 'Please select an output file:',
-      fileName: 'output-file.pdf',
-    );
+    String? outputFilePath = await FilePicker.platform.saveFile(
+        dialogTitle: 'Save project', type: FileType.custom, allowedExtensions: [extension], lockParentWindow: true);
 
-    if (outputFile == null) {
-      _logger.i('Save file aborted');
+    if (outputFilePath == null) {
       // User canceled the picker
+      _logger.i('Save file aborted');
+      return null;
     }
+
+    // validate path has the extension
+    if (!outputFilePath.endsWith('.$extension')) {
+      outputFilePath += '.$extension';
+    }
+
+    return outputFilePath;
   }
 }

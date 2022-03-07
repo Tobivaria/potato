@@ -38,23 +38,19 @@ class FileService {
     }
   }
 
-  Future<bool> saveProject(String fileName, Project project) async {
-    final String? path = await _localPath;
-
-    if (path == null) {
-      return false;
-    }
-
+  Future<bool> saveProject(String path, Project project) async {
     final Map<String, String> data = project.toMap();
-    final File file = File('$path/$fileName.potato');
+    final File file = File(path);
     await _writeFile(file, data);
 
     return true;
   }
 
   // TODO error handling on loading, return enum
+  // TODO absolut and relative pathes
   void loadProject(File file) async {
     var data = await _loadJsonFromFile(file);
+
     if (data == null) {
       return;
     }
@@ -68,7 +64,7 @@ class FileService {
 
   Future<void> _fileList(String projectPath, String baseLanguage) async {
     final dir = Directory(projectPath);
-    final List<FileSystemEntity> entities = await dir.list().toList();
+    final List<FileSystemEntity> entities = await dir.list().toList(); // TODO error handling
 
     final List<File> files = [];
     File? baseFile;
@@ -95,6 +91,7 @@ class FileService {
       languages[baseLanguage] = Language(existingTranslations: data['data']);
       arbDefinitions = data['arb'];
     }
+
     for (var item in files) {
       Map<String, dynamic>? data = await _extractData(item);
       if (data != null) {
@@ -119,6 +116,7 @@ class FileService {
     Map<String, String> translations = {};
     Map<String, ArbDefinition> arbDefinitions = {};
     String locale = '';
+
     for (var key in data.keys) {
       var item = data[key];
       if (key == '@@locale') {
