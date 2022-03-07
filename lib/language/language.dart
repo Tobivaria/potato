@@ -2,6 +2,8 @@ import 'package:flutter/foundation.dart';
 
 @immutable
 class Language {
+  final Map<String, String> translations;
+
   Language({Map<String, String>? existingTranslations}) : translations = existingTranslations ?? {};
 
   factory Language.copyEmpty(Language base) {
@@ -10,7 +12,13 @@ class Language {
     return Language(existingTranslations: newLang);
   }
 
-  final Map<String, String> translations;
+  Language copyWith({
+    Map<String, String>? translations,
+  }) {
+    return Language(
+      existingTranslations: translations ?? this.translations,
+    );
+  }
 
   // TODO translation not available?
   String getTranslation(String key) {
@@ -32,14 +40,6 @@ class Language {
 
   void deleteTranslation(String key) {
     translations.remove(key);
-  }
-
-  Language copyWith({
-    Map<String, String>? translations,
-  }) {
-    return Language(
-      existingTranslations: translations ?? this.translations,
-    );
   }
 
   @override
