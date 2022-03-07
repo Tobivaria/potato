@@ -1,6 +1,5 @@
 import 'package:flutter/foundation.dart';
 
-@immutable
 class Language {
   final Map<String, String> translations;
 
@@ -29,12 +28,9 @@ class Language {
     return translations.length;
   }
 
-  /// Adds a new translation, returns false when key already exists
+  /// Adds a new translation
   bool addTranslation(String key, String? newTranslation) {
-    if (translations.containsKey(key)) {
-      return false;
-    }
-    translations[key] = '';
+    translations[key] = newTranslation ?? '';
     return true;
   }
 

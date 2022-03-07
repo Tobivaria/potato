@@ -38,15 +38,18 @@ void main() {
     Language lang = Language();
     lang.addTranslation('newKey', 'New entry!');
     expect(mapEquals(lang.translations, {'newKey': 'New entry!'}), isTrue);
+  });
 
-    // language with pre-existing translations
-    lang = Language(existingTranslations: const {'key1': 'hello', 'key2': 'bye'});
+  test('Add translation to already existing', () {
+    Language lang = Language();
+    lang = Language(existingTranslations: {'key1': 'hello', 'key2': 'bye'});
+
     lang.addTranslation('newKey', 'New entry!');
     expect(mapEquals(lang.translations, {'key1': 'hello', 'key2': 'bye', 'newKey': 'New entry!'}), isTrue);
   });
 
   test('Removed translation', () {
-    Language lang = Language(existingTranslations: const {'key1': 'hello', 'key2': 'bye'});
+    Language lang = Language(existingTranslations: {'key1': 'hello', 'key2': 'bye'});
     lang.deleteTranslation('key1');
 
     expect(mapEquals(lang.translations, {'key2': 'bye'}), isTrue);
