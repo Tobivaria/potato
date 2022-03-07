@@ -1,0 +1,28 @@
+{
+  "@@locale": "en",
+  "themeBlue": "Blue",
+  "@themeBlue": {
+    "type": "String",
+    "description": "Title of the blue theme"
+  },
+  "themeDefault": "Default",
+  "@themeDefault": {
+    "type": "String",
+    "description": "Title of the default theme"
+  },
+  "themeGreen": "Green",
+  "@themeGreen": {
+    "type": "String",
+    "description": "Title of the green theme"
+  },
+  "themePicker": "Theme",
+  "@themePicker": {
+    "type": "String",
+    "description": "Title for the theme picker tile"
+  },
+  "themeYellow": "Yellow",
+  "@themeYellow": {
+    "type": "String",
+    "description": "Title of the yellow theme"
+  }
+}
