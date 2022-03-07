@@ -5,6 +5,12 @@ import '../translation/arb_definition.dart';
 
 @immutable
 class Project {
+  final String baseLanguage;
+  final String? path;
+  final Map<String, Language> languages; // langCode
+  final Map<String, ArbDefinition> arbDefinitions; // translation key
+  static const String _projectVersion = '1';
+
   Project(
       {required this.baseLanguage,
       this.path,
@@ -15,41 +21,22 @@ class Project {
     languages.putIfAbsent(baseLanguage, () => Language());
   }
 
-  factory Project.fromSerialized(Map<String, dynamic> data) {
-    return Project(baseLanguage: data['baseLanguage']!, path: data['projectPath']!);
+  factory Project.fromMap(Map<String, dynamic> map) {
+    return Project(
+      baseLanguage: map['baseLanguage'] ?? '', // TODO assert when baselanguage not found
+      path: map['path'],
+    );
   }
 
-  final String baseLanguage;
-  final String? path;
-  final Map<String, Language> languages; // langCode
-  final Map<String, ArbDefinition> arbDefinitions; // translation key
-  static const _projectVersion = '1.0';
+  Map<String, String> toMap() {
+    return {'baseLanguage': baseLanguage, 'path': path ?? '', 'version': _projectVersion};
+  }
 
   List<String> supportedLanguages() {
     return languages.keys.toList();
   }
 
-  /// Add a new language to the project, returns false when language already exists
-  @Deprecated("Todo delete, as this moved to the project controller")
-  bool addLanguage(String newLang) {
-    if (languages.containsKey(newLang)) {
-      return false;
-    }
-    languages[newLang] = Language.copyEmpty(languages[baseLanguage]!);
-    return true;
-  }
-
-  @Deprecated("Todo delete, as this moved to the project controller")
-  // Remove an existing language from the project
-  void removeLanguage(String langToRemove) {
-    languages.remove(langToRemove);
-  }
-
-  Map<String, String> toMap() {
-    return <String, String>{'version': _projectVersion, 'projectPath': path ?? '', 'baseLanguage': baseLanguage};
-  }
-
-  // TODO test
+  /// Creates a ordered map of the given language key, in the arb format
   Map<String, dynamic> exportLanguage(String langKey, List<String> keyOrder) {
     Map<String, dynamic> export = <String, dynamic>{'@@locale': langKey};
     if (langKey == baseLanguage) {
@@ -79,5 +66,21 @@ class Project {
       existingLanguages: languages ?? this.languages,
       existingArdbDefinitions: arbDefinitions ?? this.arbDefinitions,
     );
+  }
+
+  @override
+  bool operator ==(Object other) {
+    if (identical(this, other)) return true;
+
+    return other is Project &&
+        other.baseLanguage == baseLanguage &&
+        other.path == path &&
+        mapEquals(other.languages, languages) &&
+        mapEquals(other.arbDefinitions, arbDefinitions);
+  }
+
+  @override
+  int get hashCode {
+    return baseLanguage.hashCode ^ path.hashCode ^ languages.hashCode ^ arbDefinitions.hashCode;
   }
 }

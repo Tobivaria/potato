@@ -58,7 +58,7 @@ class FileService {
     if (data == null) {
       return;
     }
-    final project = Project.fromSerialized(data);
+    final project = Project.fromMap(data);
 
     // load all arb files and their content
     if (project.path != null) {

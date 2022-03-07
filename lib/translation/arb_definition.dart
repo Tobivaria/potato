@@ -1,4 +1,6 @@
-import 'package:fluent_ui/fluent_ui.dart';
+import 'package:flutter/foundation.dart';
+
+import 'arb_placerholder.dart';
 
 enum ArbType {
   // ignore: constant_identifier_names
@@ -7,52 +9,36 @@ enum ArbType {
 
 @immutable
 class ArbDefinition {
-  final ArbPlaceholder? type;
+  final ArbType? type;
   final String? description;
   final List<ArbPlaceholder>? placeholders;
 
   const ArbDefinition({this.type, this.description, this.placeholders});
 
   factory ArbDefinition.fromMap(Map<String, dynamic> map) {
-    return ArbDefinition(
-      type: map['type'],
-      description: map['description'],
-      placeholders: map['placeholders'] != null
-          ? List<ArbPlaceholder>.from(map['placeholders']?.map((x) => ArbPlaceholder.fromMap(x)))
-          : null,
-    );
+    // TODO placeholders
+    return ArbDefinition(type: ArbType.values.byName(map['type']), description: map['description'], placeholders: null);
   }
 
   Map<String, dynamic> toMap() {
     return {
       'type': type,
       'description': description,
-      'placeholders': placeholders?.map((x) => x.toMap()).toList(),
-    };
-  }
-}
-
-@immutable
-class ArbPlaceholder {
-  final String name;
-  final ArbType type;
-
-  const ArbPlaceholder({
-    required this.name,
-    required this.type,
-  });
-
-  Map<String, dynamic> toMap() {
-    return {
-      'name': name,
-      'type': ArbType.String.name,
+      // TODO placeholders
+      'placeholders': null,
     };
   }
 
-  factory ArbPlaceholder.fromMap(Map<String, dynamic> map) {
-    return ArbPlaceholder(
-      name: map['name'] ?? '',
-      type: ArbType.values.byName(map['type']),
-    );
+  @override
+  bool operator ==(Object other) {
+    if (identical(this, other)) return true;
+
+    return other is ArbDefinition &&
+        other.type == type &&
+        other.description == description &&
+        listEquals(other.placeholders, placeholders);
   }
+
+  @override
+  int get hashCode => type.hashCode ^ description.hashCode ^ placeholders.hashCode;
 }
