@@ -5,12 +5,12 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:logger/logger.dart';
 import 'package:path/path.dart';
 import 'package:path_provider/path_provider.dart';
-import 'package:potato/project/project_controller.dart';
-import 'package:potato/translation/arb_definition.dart';
 
+import '../arb/arb_definition.dart';
 import '../language/language.dart';
 import '../potato_logger.dart';
 import '../project/project.dart';
+import '../project/project_controller.dart';
 
 final AutoDisposeProvider<FileService> fileServiceProvider =
     Provider.autoDispose<FileService>((ProviderRef<FileService> ref) {
@@ -23,7 +23,7 @@ class FileService {
   final Logger _logger;
   final ProjectController _pController;
 
-  final JsonEncoder prettyEncoder = const JsonEncoder.withIndent('  ');
+  final JsonEncoder _prettyEncoder = const JsonEncoder.withIndent('  ');
   // read write append to file
   // format arb file (json)
 
@@ -38,12 +38,10 @@ class FileService {
     }
   }
 
-  Future<bool> saveProject(String path, Project project) async {
+  Future<void> saveProject(String path, Project project) async {
     final Map<String, String> data = project.toMap();
     final File file = File(path);
     await _writeFile(file, data);
-
-    return true;
   }
 
   // TODO error handling on loading, return enum
@@ -158,7 +156,7 @@ class FileService {
   }
 
   Future<void> _writeFile(File file, Map<String, dynamic> data) async {
-    String pretty = prettyEncoder.convert(data);
+    String pretty = _prettyEncoder.convert(data);
     await file.writeAsString(pretty);
   }
 }

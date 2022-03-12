@@ -1,5 +1,6 @@
 import 'package:fluent_ui/fluent_ui.dart';
-import 'package:potato/translation/arb_definition.dart';
+
+import '../arb/arb_definition.dart';
 
 class ArbEntry extends StatefulWidget {
   const ArbEntry({required this.definition, required this.translationKey, Key? key}) : super(key: key);

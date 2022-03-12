@@ -1,9 +1,9 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:logger/logger.dart';
-import 'package:potato/potato_logger.dart';
-import 'package:potato/translation/arb_definition.dart';
 
+import '../arb/arb_definition.dart';
 import '../language/language.dart';
+import '../potato_logger.dart';
 import 'project.dart';
 
 final Provider<Map<String, ArbDefinition>> arbDefinitionProvider =

@@ -1,8 +1,8 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:potato/arb/arb_definition.dart';
 import 'package:potato/language/language.dart';
 import 'package:potato/project/project.dart';
-import 'package:potato/translation/arb_definition.dart';
 
 void main() {
   test('Create new project', () {

@@ -1,7 +1,7 @@
 import 'package:flutter/foundation.dart';
 
+import '../arb/arb_definition.dart';
 import '../language/language.dart';
-import '../translation/arb_definition.dart';
 
 @immutable
 class Project {

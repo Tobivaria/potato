@@ -5,6 +5,10 @@ import 'arb_placerholder.dart';
 enum ArbType {
   // ignore: constant_identifier_names
   String,
+  double,
+  int,
+  // ignore: constant_identifier_names
+  DateTime
 }
 
 @immutable
