@@ -13,36 +13,45 @@ enum ArbType {
 
 @immutable
 class ArbDefinition {
-  final ArbType? type;
   final String? description;
   final List<ArbPlaceholder>? placeholders;
 
-  const ArbDefinition({this.type, this.description, this.placeholders});
+  const ArbDefinition({this.description, this.placeholders});
 
   factory ArbDefinition.fromMap(Map<String, dynamic> map) {
-    // TODO placeholders
-    return ArbDefinition(type: ArbType.values.byName(map['type']), description: map['description'], placeholders: null);
+    List<ArbPlaceholder>? placeholderList;
+
+    if (map['placeholders'] != null) {
+      placeholderList = [];
+      Map<String, dynamic> placeholderMap = map['placeholders'];
+      for (MapEntry<String, dynamic> entry in placeholderMap.entries) {
+        placeholderList.add(ArbPlaceholder.fromMap(entry));
+      }
+    }
+    return ArbDefinition(description: map['description'], placeholders: placeholderList);
   }
 
   Map<String, dynamic> toMap() {
-    return {
-      'type': type,
-      'description': description,
-      // TODO placeholders
-      'placeholders': null,
-    };
+    Map<String, dynamic> out = {'description': description};
+
+    if (placeholders != null) {
+      Map<String, dynamic> placeholderMap = {};
+      for (var entry in placeholders!) {
+        placeholderMap.addAll(entry.toMap());
+      }
+      out['placeholders'] = placeholderMap;
+    }
+
+    return out;
   }
 
   @override
   bool operator ==(Object other) {
     if (identical(this, other)) return true;
 
-    return other is ArbDefinition &&
-        other.type == type &&
-        other.description == description &&
-        listEquals(other.placeholders, placeholders);
+    return other is ArbDefinition && other.description == description && listEquals(other.placeholders, placeholders);
   }
 
   @override
-  int get hashCode => type.hashCode ^ description.hashCode ^ placeholders.hashCode;
+  int get hashCode => description.hashCode ^ placeholders.hashCode;
 }

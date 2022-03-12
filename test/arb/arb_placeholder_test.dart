@@ -23,7 +23,7 @@ void main() {
   test('Number placeholder to map', () {
     ArbPlaceholder placeholder =
         const ArbPlaceholder(id: 'value', type: ArbType.int, numberFormat: ArbNumberFormat.compactLong);
-    Map<String, dynamic> expected = {
+    Map<String, dynamic> expected = const <String, dynamic>{
       'value': {'type': 'int', 'format': 'compactLong'}
     };
 
@@ -31,17 +31,15 @@ void main() {
   });
 
   test('Placeholder from Map', () {
-    Map<String, dynamic> source = {
-      'value': {'type': 'String', 'example': 'Blabla lila'}
-    };
+    MapEntry<String, dynamic> source =
+        const MapEntry<String, dynamic>('value', {'type': 'String', 'example': 'Blabla lila'});
     ArbPlaceholder expected = const ArbPlaceholder(id: 'value', type: ArbType.String, example: 'Blabla lila');
 
     expect(ArbPlaceholder.fromMap(source), expected);
 
     // number with format
-    source = {
-      'value': {'type': 'double', 'example': 'Blabla lila', 'format': 'compactLong'}
-    };
+    source =
+        const MapEntry<String, dynamic>('value', {'type': 'double', 'example': 'Blabla lila', 'format': 'compactLong'});
     expected = const ArbPlaceholder(
         id: 'value', type: ArbType.double, example: 'Blabla lila', numberFormat: ArbNumberFormat.compactLong);
 

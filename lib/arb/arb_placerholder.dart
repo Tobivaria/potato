@@ -28,6 +28,16 @@ class ArbPlaceholder {
 
   const ArbPlaceholder({required this.id, required this.type, this.example, this.numberFormat});
 
+  factory ArbPlaceholder.fromMap(MapEntry<String, dynamic> map) {
+    var entries = map.value;
+
+    return ArbPlaceholder(
+        id: map.key,
+        type: ArbType.values.byName(entries['type']),
+        example: entries['example'],
+        numberFormat: entries['format'] == null ? null : ArbNumberFormat.values.byName(entries['format']));
+  }
+
   Map<String, dynamic> toMap() {
     var entries = {
       'type': type.name,
@@ -44,16 +54,6 @@ class ArbPlaceholder {
     return {
       id: entries,
     };
-  }
-
-  factory ArbPlaceholder.fromMap(Map<String, dynamic> map) {
-    var entries = map[map.keys.first];
-
-    return ArbPlaceholder(
-        id: map.keys.first,
-        type: ArbType.values.byName(entries['type']),
-        example: entries['example'],
-        numberFormat: entries['format'] == null ? null : ArbNumberFormat.values.byName(entries['format']));
   }
 
   @override
