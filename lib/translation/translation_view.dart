@@ -27,7 +27,6 @@ class _TranslationViewState extends ConsumerState<TranslationView> {
     // TODO remove unnecessry stuff here
     final Project project = ref.watch(projectProvider);
     final List<String> translations = ref.watch(languageListProvider);
-    final int translationCount = ref.watch(translationCountProvider);
     final tmp = ref.watch(projectProvider).languages;
     final arbDefs = ref.watch(arbDefinitionProvider);
 
@@ -72,7 +71,7 @@ class _TranslationViewState extends ConsumerState<TranslationView> {
             child: ListView.separated(
               controller: _controller,
               shrinkWrap: true,
-              itemCount: translationCount,
+              itemCount: arbDefs.length,
               itemBuilder: (context, index) {
                 String key = tmp[project.baseLanguage]!.translations.keys.elementAt(index);
                 return Padding(

@@ -15,10 +15,6 @@ final Provider<List<String>> languageListProvider = Provider<List<String>>((Prov
   return ref.watch(projectProvider).languages.keys.toList();
 });
 
-final Provider<int> translationCountProvider = Provider<int>((ProviderRef<int> ref) {
-  return ref.watch(projectProvider).languages[ref.watch(projectProvider).baseLanguage]!.getTranslationCount();
-});
-
 final StateNotifierProvider<ProjectController, Project> projectProvider =
     StateNotifierProvider<ProjectController, Project>((StateNotifierProviderRef<ProjectController, Project> ref) {
   return ProjectController(ref.watch(loggerProvider));
@@ -63,6 +59,8 @@ class ProjectController extends StateNotifier<Project> {
   }
 
   void removeTranslation(String key) {
+    _logger.d('Removing translation with key: $key');
+
     Map<String, Language> newLanguages = {};
     Map<String, ArbDefinition> arbDefs = {...state.arbDefinitions};
     arbDefs.remove(key);
