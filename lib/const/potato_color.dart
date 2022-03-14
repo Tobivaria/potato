@@ -4,4 +4,5 @@ class PotatoColor {
   static const background = Colors.white;
 
   static Color selected = Colors.blue.lightest;
+  static Color warning = Colors.red; // e.g. delete button
 }

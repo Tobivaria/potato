@@ -1,9 +1,11 @@
 import 'package:fluent_ui/fluent_ui.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:potato/const/dimensions.dart';
+import 'package:potato/const/potato_color.dart';
 import 'package:potato/project/project_controller.dart';
 
 import '../arb/arb_definition.dart';
+import '../core/confirm_dialog.dart';
 
 class ArbEntry extends ConsumerStatefulWidget {
   const ArbEntry({required this.definition, required this.translationKey, Key? key}) : super(key: key);
@@ -41,6 +43,15 @@ class _ArbEntryState extends ConsumerState<ArbEntry> {
     super.dispose();
   }
 
+  void _addEntry() {
+    // TODO add placeholder
+    // TODO add description
+  }
+
+  void _deleteEntry() {
+    ref.read(projectProvider.notifier).removeTranslation(_translationKeyController.text);
+  }
+
   @override
   Widget build(BuildContext context) {
     return Row(
@@ -67,11 +78,27 @@ class _ArbEntryState extends ConsumerState<ArbEntry> {
           children: [
             IconButton(
               icon: const Icon(
+                FluentIcons.add,
+                size: Dimensions.arbSettingIconSize,
+              ),
+              onPressed: _addEntry,
+            ),
+            IconButton(
+              icon: const Icon(
                 FluentIcons.delete,
                 size: Dimensions.arbSettingIconSize,
               ),
-              onPressed: () => ref.read(projectProvider.notifier).removeTranslation(_translationKeyController.text),
-            )
+              onPressed: () => showDialog(
+                context: context,
+                builder: (_) => ConfirmDialog(
+                  title: 'Remove ${_translationKeyController.text}',
+                  text: 'This will also remove any translations for this entry. This cannot be undone!',
+                  confirmButtonText: 'Delete',
+                  confirmButtonColor: PotatoColor.warning,
+                  onConfirmPressed: _deleteEntry,
+                ),
+              ),
+            ),
           ],
         )
       ],

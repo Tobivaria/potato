@@ -21,15 +21,16 @@ class _SideNavigationBarState extends State<SideNavigationBar> {
   Widget build(BuildContext context) {
     return NavigationView(
       appBar: NavigationAppBar(
-          actions: Row(
-        children: const <Widget>[
-          CreateProject(),
-          OpenProject(
-            reduced: true,
-          ),
-          SaveProject()
-        ],
-      )),
+        actions: Row(
+          children: const <Widget>[
+            CreateProject(),
+            OpenProject(
+              reduced: true,
+            ),
+            SaveProject()
+          ],
+        ),
+      ),
       pane: NavigationPane(
         displayMode: PaneDisplayMode.compact,
         selected: _navIndex,
