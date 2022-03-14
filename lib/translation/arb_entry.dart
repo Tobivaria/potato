@@ -20,6 +20,8 @@ class _ArbEntryState extends ConsumerState<ArbEntry> {
   final TextEditingController _translationKeyController = TextEditingController();
   final TextEditingController _descriptionController = TextEditingController();
 
+  double _controlsOpacity = 0.0;
+
   @override
   void initState() {
     super.initState();
@@ -43,6 +45,20 @@ class _ArbEntryState extends ConsumerState<ArbEntry> {
     super.dispose();
   }
 
+  void _enterRegion(PointerEvent details) {
+    _toggleControlsOpacity(show: true);
+  }
+
+  void _leaveRegion(PointerEvent details) {
+    _toggleControlsOpacity(show: false);
+  }
+
+  void _toggleControlsOpacity({required bool show}) {
+    setState(() {
+      _controlsOpacity = show ? 1 : 0;
+    });
+  }
+
   void _addEntry() {
     // TODO add placeholder
     // TODO add description
@@ -54,54 +70,63 @@ class _ArbEntryState extends ConsumerState<ArbEntry> {
 
   @override
   Widget build(BuildContext context) {
-    return Row(
-      children: [
-        Column(
-          children: [
-            SizedBox(
-              width: 300, // TODO put this into a provider
-              child: TextBox(
-                controller: _translationKeyController,
-                placeholder: 'Unique translation key',
-              ),
-            ),
-            SizedBox(
-              width: 300, // TODO put this into a provider
-              child: TextBox(
-                controller: _descriptionController,
-                placeholder: 'Description',
-              ),
-            ),
-          ],
-        ),
-        Column(
-          children: [
-            IconButton(
-              icon: const Icon(
-                FluentIcons.add,
-                size: Dimensions.arbSettingIconSize,
-              ),
-              onPressed: _addEntry,
-            ),
-            IconButton(
-              icon: const Icon(
-                FluentIcons.delete,
-                size: Dimensions.arbSettingIconSize,
-              ),
-              onPressed: () => showDialog(
-                context: context,
-                builder: (_) => ConfirmDialog(
-                  title: 'Remove ${_translationKeyController.text}',
-                  text: 'This will also remove any translations for this entry. This cannot be undone!',
-                  confirmButtonText: 'Delete',
-                  confirmButtonColor: PotatoColor.warning,
-                  onConfirmPressed: _deleteEntry,
+    return MouseRegion(
+      onEnter: _enterRegion,
+      onExit: _leaveRegion,
+      child: Row(
+        children: [
+          Column(
+            children: [
+              SizedBox(
+                width: Dimensions.languageCellWidth,
+                child: TextBox(
+                  controller: _translationKeyController,
+                  placeholder: 'Unique translation key',
                 ),
               ),
+              SizedBox(
+                width: Dimensions.languageCellWidth,
+                child: TextBox(
+                  controller: _descriptionController,
+                  placeholder: 'Description',
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(width: 20),
+          AnimatedOpacity(
+            opacity: _controlsOpacity,
+            duration: const Duration(milliseconds: 300),
+            child: Column(
+              children: [
+                IconButton(
+                  icon: const Icon(
+                    FluentIcons.add,
+                    size: Dimensions.arbSettingIconSize,
+                  ),
+                  onPressed: _addEntry,
+                ),
+                IconButton(
+                  icon: const Icon(
+                    FluentIcons.delete,
+                    size: Dimensions.arbSettingIconSize,
+                  ),
+                  onPressed: () => showDialog(
+                    context: context,
+                    builder: (_) => ConfirmDialog(
+                      title: 'Remove ${_translationKeyController.text}',
+                      text: 'This will also remove any translations for this entry. This cannot be undone!',
+                      confirmButtonText: 'Delete',
+                      confirmButtonColor: PotatoColor.warning,
+                      onConfirmPressed: _deleteEntry,
+                    ),
+                  ),
+                ),
+              ],
             ),
-          ],
-        )
-      ],
+          ),
+        ],
+      ),
     );
   }
 }

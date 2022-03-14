@@ -1,12 +1,13 @@
 import 'package:fluent_ui/fluent_ui.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:potato/project/project.dart';
-import 'package:potato/translation/arb_entry.dart';
-import 'package:potato/translation/translation_entry.dart';
 
+import '../const/dimensions.dart';
 import '../language/add_language_dialog.dart';
 import '../language/language_title.dart';
 import '../project/project_controller.dart';
+import 'arb_entry.dart';
+import 'translation_entry.dart';
 
 class TranslationView extends ConsumerStatefulWidget {
   const TranslationView({Key? key}) : super(key: key);
@@ -53,7 +54,10 @@ class _TranslationViewState extends ConsumerState<TranslationView> {
           ),
           Row(
             mainAxisAlignment: MainAxisAlignment.start,
-            children: [LanguageTitle('Id'), for (var i in translations) LanguageTitle(i)],
+            children: [
+              const LanguageTitle('Id', Dimensions.idCellWidth),
+              for (var i in translations) LanguageTitle(i, Dimensions.languageCellWidth)
+            ], // TODO put this into a provider
           ),
           const SizedBox(
             height: 4,
@@ -103,7 +107,7 @@ class _TranslationViewState extends ConsumerState<TranslationView> {
           //   ),
           // ),
           Button(
-              child: Text('Add translation'),
+              child: const Text('Add translation'),
               onPressed: () => ref.read(projectProvider.notifier).addTranslation(key: DateTime.now().toString()))
         ],
       ),
