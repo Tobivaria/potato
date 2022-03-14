@@ -1,6 +1,6 @@
 import 'package:fluent_ui/fluent_ui.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:potato/navigation/side_navigation_bar.dart';
+import 'package:potato/navigation/navigation_manager.dart';
 
 import 'const/potato_theme.dart';
 
@@ -20,7 +20,7 @@ class PotatoApp extends StatelessWidget {
               scaffoldBackgroundColor: Colors.black,
               accentColor: Colors.blue,
               iconTheme: const IconThemeData(size: 24)),
-          home: const SideNavigationBar()),
+          home: const NavigationManager()),
     );
   }
 }
