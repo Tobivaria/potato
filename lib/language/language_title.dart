@@ -12,7 +12,7 @@ class LanguageTitle extends StatelessWidget {
       width: width,
       child: Text(
         title,
-        style: TextStyle(fontWeight: FontWeight.bold), // TODO move style to theme
+        style: const TextStyle(fontWeight: FontWeight.bold), // TODO move style to theme
       ),
     );
   }

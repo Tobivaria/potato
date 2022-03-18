@@ -13,45 +13,82 @@ class AddLanguageDialog extends ConsumerStatefulWidget {
 }
 
 class _AddLanguageState extends ConsumerState<AddLanguageDialog> {
-  List<String> languages = [];
-  final List<String> selected = [];
+  final ScrollController _controller = ScrollController();
+
+  final Map<String, Map<String, dynamic>> _languages = Map.from(ConstLanguages.languages);
+  late Map<String, Map<String, dynamic>> _filteredLanguages;
+  final List<String> _selected = [];
 
   @override
   void initState() {
     super.initState();
-    languages = [...ConstLanguages.getLanguageCodes()];
     // remove languages already in the project
     final List<String> existing = ref.read(projectProvider).languages.keys.toList();
     for (var lang in existing) {
-      languages.remove(lang);
+      _languages.remove(lang);
     }
+    _filteredLanguages = _languages;
   }
 
   void _languageSelected(String lang) {
-    if (selected.contains(lang)) {
-      selected.remove(lang);
-    } else {
-      selected.add(lang);
-    }
+    setState(() {
+      if (_selected.contains(lang)) {
+        _selected.remove(lang);
+      } else {
+        _selected.add(lang);
+      }
+    });
   }
 
   void _addLanguage() {
-    for (var lang in selected) {
+    for (var lang in _selected) {
       ref.read(projectProvider.notifier).addLanguage(lang);
     }
+  }
+
+  // apply filter, which matches on the language code and the name of the language
+  void _onFilterChange(String val) {
+    setState(() {
+      _filteredLanguages = Map.from(_languages)
+        ..removeWhere((key, value) => !(_compare(key, val) || _compare(value['language'].toString(), val)));
+    });
+  }
+
+  bool _compare(String valueToCompare, String pattern) {
+    return valueToCompare.toLowerCase().contains(pattern.toLowerCase());
+  }
+
+  String _formatLanguageText(String key) {
+    return '$key - ${_languages[key]!["language"]!}';
   }
 
   @override
   Widget build(BuildContext context) {
     return ContentDialog(
       title: const Text('Select new languages'),
-      content: Column(children: [
-        for (var lang in languages)
-          LanguageSelectable(
-            text: lang,
-            selectedCb: () => _languageSelected(lang),
-          )
-      ]),
+      content: Column(
+        children: [
+          TextBox(
+            onChanged: _onFilterChange,
+            suffix: const Icon(FluentIcons.search),
+          ),
+          SizedBox(
+            height: 400,
+            child: ListView.builder(
+                controller: _controller,
+                itemCount: _filteredLanguages.length,
+                itemBuilder: (context, index) {
+                  final String key = _filteredLanguages.keys.elementAt(index);
+                  return LanguageSelectable(
+                    key: ValueKey(key),
+                    text: _formatLanguageText(key),
+                    isSelected: _selected.contains(key),
+                    selectedCb: () => _languageSelected(key),
+                  );
+                }),
+          ),
+        ],
+      ),
       actions: [
         Button(
             child: const Text('Add'),

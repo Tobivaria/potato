@@ -32,6 +32,7 @@ class NavigationController extends StateNotifier<NavigationState> {
   }
 
   void navigateTo(ViewRoute route) {
+    _logger.i('Navigating to ${route.name}');
     state = state.copyWith(route: route);
   }
 }
