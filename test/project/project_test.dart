@@ -92,9 +92,9 @@ void main() {
     const Map<String, dynamic> expected = {
       '@@locale': 'en',
       'bye': 'goodbye',
-      '@bye': {'type': null, 'description': 'Saying goodbye', 'placeholders': null},
+      '@bye': {'description': 'Saying goodbye'},
       'greeting': 'hello',
-      '@greeting': {'type': null, 'description': 'Saying hello', 'placeholders': null}
+      '@greeting': {'description': 'Saying hello'}
     };
 
     expect(project.exportLanguage('en', ['bye', 'greeting']), expected);
