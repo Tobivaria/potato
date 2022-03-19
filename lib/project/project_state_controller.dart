@@ -8,25 +8,24 @@ import 'project_state.dart';
 
 final Provider<Map<String, ArbDefinition>> arbDefinitionProvider =
     Provider<Map<String, ArbDefinition>>((ProviderRef<Map<String, ArbDefinition>> ref) {
-  return ref.watch(projectProvider).arbDefinitions;
+  return ref.watch(projectStateProvider).arbDefinitions;
 });
 
 final Provider<List<String>> languageListProvider = Provider<List<String>>((ProviderRef<List> ref) {
-  return ref.watch(projectProvider).languages.keys.toList();
+  return ref.watch(projectStateProvider).languages.keys.toList();
 });
 
-final StateNotifierProvider<ProjectController, ProjectState> projectProvider =
-    StateNotifierProvider<ProjectController, ProjectState>(
-        (StateNotifierProviderRef<ProjectController, ProjectState> ref) {
-  return ProjectController(ref.watch(loggerProvider));
+final StateNotifierProvider<ProjectStateController, ProjectState> projectStateProvider =
+    StateNotifierProvider<ProjectStateController, ProjectState>(
+        (StateNotifierProviderRef<ProjectStateController, ProjectState> ref) {
+  return ProjectStateController(ref.watch(loggerProvider));
 });
 
-class ProjectController extends StateNotifier<ProjectState> {
-  ProjectController(this._logger, [ProjectState? init]) : super(init ?? ProjectState());
+class ProjectStateController extends StateNotifier<ProjectState> {
+  ProjectStateController(this._logger, [ProjectState? init]) : super(init ?? ProjectState());
 
   final Logger _logger;
 
-  // TODO still needed?
   void setProjectState(ProjectState project) {
     state = project;
   }

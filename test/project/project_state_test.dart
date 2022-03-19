@@ -5,14 +5,13 @@ import 'package:potato/language/language.dart';
 import 'package:potato/project/project_state.dart';
 
 void main() {
-  test('Create new project', () {
+  test('Create new project state', () {
     ProjectState project = ProjectState();
     expect(mapEquals(project.languages, {'en': Language()}), isTrue);
     expect(mapEquals(project.arbDefinitions, {}), isTrue);
   });
 
-  test('Copy project', () {
-    const String path = 'some/path';
+  test('Copy project state', () {
     final Map<String, Language> languages = {
       'en': Language(existingTranslations: const {'greeting': 'hello'}),
       'de': Language(existingTranslations: const {'greeting': 'hallo'})
@@ -25,6 +24,32 @@ void main() {
     expect(copy.languages, languages);
     expect(mapEquals(copy.languages, languages), isTrue);
     expect(mapEquals(copy.arbDefinitions, arbDefinitions), isTrue);
+  });
+
+  test('Create project state from json list', () {
+    final List<Map<String, dynamic>> input = [
+      {
+        "@@locale": "en",
+        "themeBlue": "Blue",
+        "@themeBlue": {"description": "Title of the blue theme"},
+        "themeDefault": "Default",
+        "@themeDefault": {"description": "Title of the default theme"},
+        "themeGreen": "Green",
+        "@themeGreen": {"description": "Title of the green theme"},
+      },
+      {"@@locale": "es", "themeBlue": "Azul", "themeDefault": "Por defecto", "themeGreen": "Verde"}
+    ];
+
+    final ProjectState expected = ProjectState(existingArdbDefinitions: const {
+      "themeBlue": ArbDefinition(description: 'Title of the blue theme'),
+      "themeDefault": ArbDefinition(description: 'Title of the default theme'),
+      "themeGreen": ArbDefinition(description: 'Title of the green theme'),
+    }, existingLanguages: {
+      'en': Language(existingTranslations: {"themeBlue": "Blue", "themeDefault": "Default", "themeGreen": "Green"}),
+      'es': Language(existingTranslations: {"themeBlue": "Azul", "themeDefault": "Por defecto", "themeGreen": "Verde"})
+    });
+
+    expect(ProjectState.fromJsons(input), expected);
   });
 
   test('Return available language list', () {

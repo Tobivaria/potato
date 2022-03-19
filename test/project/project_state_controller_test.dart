@@ -4,8 +4,8 @@ import 'package:logger/logger.dart';
 import 'package:potato/arb/arb_definition.dart';
 import 'package:potato/language/language.dart';
 import 'package:potato/potato_logger.dart';
-import 'package:potato/project/project_controller.dart';
 import 'package:potato/project/project_state.dart';
+import 'package:potato/project/project_state_controller.dart';
 
 import '../mocks.dart';
 
@@ -27,7 +27,7 @@ void main() {
       'greeting': const ArbDefinition(description: 'Some description')
     };
     container
-        .read(projectProvider.notifier)
+        .read(projectStateProvider.notifier)
         .setProjectState(ProjectState(existingArdbDefinitions: arbDefinitions, existingLanguages: languages));
   });
 
@@ -36,8 +36,8 @@ void main() {
   });
 
   test('Adding a new language, creates a new language entry with the already existing translations, but empty', () {
-    container.read(projectProvider.notifier).addLanguage('es');
-    ProjectState projectState = container.read(projectProvider);
+    container.read(projectStateProvider.notifier).addLanguage('es');
+    ProjectState projectState = container.read(projectStateProvider);
     expect(projectState.languages.length, 3);
 
     Map<String, String> translations = projectState.languages['es']!.translations;
@@ -46,16 +46,16 @@ void main() {
   });
 
   test('Remove language', () {
-    container.read(projectProvider.notifier).removeLanguage('en');
+    container.read(projectStateProvider.notifier).removeLanguage('en');
 
-    ProjectState projectState = container.read(projectProvider);
+    ProjectState projectState = container.read(projectStateProvider);
     expect(projectState.languages.length, 1);
     expect(projectState.languages.keys, ['de']);
   });
 
   test('Adding a translation, adds a new map entry for each language and arb definition', () {
-    container.read(projectProvider.notifier).addTranslation(key: 'food');
-    ProjectState projectState = container.read(projectProvider);
+    container.read(projectStateProvider.notifier).addTranslation(key: 'food');
+    ProjectState projectState = container.read(projectStateProvider);
     expect(projectState.languages['en']!.translations.length, 2);
     expect(projectState.languages['de']!.translations.length, 2);
     expect(projectState.arbDefinitions.length, 2);
@@ -64,9 +64,10 @@ void main() {
     expect(projectState.languages['de']!.translations['food'], '');
     expect(projectState.arbDefinitions['food'], const ArbDefinition());
   });
+
   test('Removing a translation, remove the key from translation and arb definition', () {
-    container.read(projectProvider.notifier).removeTranslation('greeting');
-    ProjectState projectState = container.read(projectProvider);
+    container.read(projectStateProvider.notifier).removeTranslation('greeting');
+    ProjectState projectState = container.read(projectStateProvider);
     expect(projectState.languages['en']!.translations.length, 0);
     expect(projectState.languages['de']!.translations.length, 0);
     expect(projectState.arbDefinitions.length, 0);
