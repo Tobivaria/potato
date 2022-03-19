@@ -4,7 +4,7 @@ import 'package:logger/logger.dart';
 import '../arb/arb_definition.dart';
 import '../language/language.dart';
 import '../potato_logger.dart';
-import 'project.dart';
+import 'project_state.dart';
 
 final Provider<Map<String, ArbDefinition>> arbDefinitionProvider =
     Provider<Map<String, ArbDefinition>>((ProviderRef<Map<String, ArbDefinition>> ref) {
@@ -15,24 +15,36 @@ final Provider<List<String>> languageListProvider = Provider<List<String>>((Prov
   return ref.watch(projectProvider).languages.keys.toList();
 });
 
-final StateNotifierProvider<ProjectController, Project> projectProvider =
-    StateNotifierProvider<ProjectController, Project>((StateNotifierProviderRef<ProjectController, Project> ref) {
+final StateNotifierProvider<ProjectController, ProjectState> projectProvider =
+    StateNotifierProvider<ProjectController, ProjectState>(
+        (StateNotifierProviderRef<ProjectController, ProjectState> ref) {
   return ProjectController(ref.watch(loggerProvider));
 });
 
-class ProjectController extends StateNotifier<Project> {
-  ProjectController(this._logger, [Project? init]) : super(init ?? Project(baseLanguage: 'en'));
+class ProjectController extends StateNotifier<ProjectState> {
+  ProjectController(this._logger, [ProjectState? init]) : super(init ?? ProjectState());
 
   final Logger _logger;
 
-  void setProject(Project project) {
+  // TODO still needed?
+  void setProjectState(ProjectState project) {
     state = project;
   }
 
-  void addLanguage(String newLang) {
-    _logger.d('Adding language: $newLang');
-    state = state
-        .copyWith(languages: {...state.languages, newLang: Language.copyEmpty(state.languages[state.baseLanguage]!)});
+  void addLanguage(String langKey) {
+    _logger.d('Adding language: $langKey');
+
+    // TODO define base language on project create
+    if (state.languages.isEmpty) {
+      return;
+    }
+
+    Map<String, String> newLanguage = {};
+    for (var entry in state.arbDefinitions.keys) {
+      newLanguage[entry] = '';
+    }
+
+    state = state.copyWith(languages: {...state.languages, langKey: Language(existingTranslations: newLanguage)});
   }
 
   /// Remove an existing language from the project
@@ -44,36 +56,29 @@ class ProjectController extends StateNotifier<Project> {
     state = state.copyWith(languages: previousLanguages);
   }
 
-  Language getLanguage(String lang) {
-    return state.languages[lang]!;
-  }
-
   void addTranslation({required String key, String? translation}) {
-    Map<String, Language> newLanguages = {};
+    final Map<String, Language> modifiedLanguages = {};
+
     for (var item in state.languages.keys) {
-      var tmp = state.languages[item]!;
-      tmp.addTranslation(key, translation);
-      newLanguages[item] = tmp;
+      modifiedLanguages[item] = Language(existingTranslations: {...state.languages[item]!.translations, key: ''});
     }
-    state = state.copyWith(languages: newLanguages, arbDefinitions: {...state.arbDefinitions, key: ArbDefinition()});
+    state = state
+        .copyWith(languages: modifiedLanguages, arbDefinitions: {...state.arbDefinitions, key: const ArbDefinition()});
   }
 
-  void removeTranslation(String key) {
-    _logger.d('Removing translation with key: $key');
+  void removeTranslation(String keyToRemove) {
+    _logger.d('Removing translation with key: $keyToRemove');
 
-    Map<String, Language> newLanguages = {};
+    Map<String, Language> modifiedLanguages = {};
+
+    for (var key in state.languages.keys) {
+      Map<String, String> copy = Map.of(state.languages[key]!.translations);
+      copy.remove(keyToRemove);
+      modifiedLanguages[key] = Language(existingTranslations: copy);
+    }
+
     Map<String, ArbDefinition> arbDefs = {...state.arbDefinitions};
-    arbDefs.remove(key);
-
-    for (var item in state.languages.keys) {
-      var tmp = state.languages[item]!;
-      tmp.deleteTranslation(key);
-      newLanguages[item] = tmp;
-    }
-    state = state.copyWith(languages: newLanguages, arbDefinitions: arbDefs);
-  }
-
-  int getTranslationCount() {
-    return state.languages[state.baseLanguage]!.getTranslationCount();
+    arbDefs.remove(keyToRemove);
+    state = state.copyWith(languages: modifiedLanguages, arbDefinitions: arbDefs);
   }
 }

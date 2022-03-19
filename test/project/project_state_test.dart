@@ -2,19 +2,16 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:potato/arb/arb_definition.dart';
 import 'package:potato/language/language.dart';
-import 'package:potato/project/project.dart';
+import 'package:potato/project/project_state.dart';
 
 void main() {
   test('Create new project', () {
-    Project project = Project(baseLanguage: 'en');
-    expect(project.baseLanguage, 'en');
-    expect(project.path, isNull);
+    ProjectState project = ProjectState();
     expect(mapEquals(project.languages, {'en': Language()}), isTrue);
     expect(mapEquals(project.arbDefinitions, {}), isTrue);
   });
 
   test('Copy project', () {
-    const String baseLanguage = 'de';
     const String path = 'some/path';
     final Map<String, Language> languages = {
       'en': Language(existingTranslations: const {'greeting': 'hello'}),
@@ -22,44 +19,21 @@ void main() {
     };
     final Map<String, ArbDefinition> arbDefinitions = {'greeting': const ArbDefinition(description: 'Lul')};
 
-    Project project = Project(baseLanguage: 'en');
-    Project copy =
-        project.copyWith(baseLang: baseLanguage, path: path, languages: languages, arbDefinitions: arbDefinitions);
+    ProjectState project = ProjectState();
+    ProjectState copy = project.copyWith(languages: languages, arbDefinitions: arbDefinitions);
 
-    expect(copy.baseLanguage, 'de');
-    expect(copy.path, path);
     expect(copy.languages, languages);
     expect(mapEquals(copy.languages, languages), isTrue);
     expect(mapEquals(copy.arbDefinitions, arbDefinitions), isTrue);
   });
 
-  test('Create project from map', () {
-    const String baseLanguage = 'de';
-    const String path = 'some/path';
-
-    Project project = Project.fromMap(const {'baseLanguage': baseLanguage, 'path': path});
-
-    expect(project.baseLanguage, 'de');
-    expect(project.path, path);
-  });
-
-  test('Convert project to map', () {
-    const String baseLanguage = 'de';
-    const String path = 'some/path';
-    const Map<String, String> expected = {'baseLanguage': baseLanguage, 'path': path, 'version': '1'};
-
-    Project project = Project(baseLanguage: baseLanguage, path: path);
-    expect(mapEquals(project.toMap(), expected), isTrue);
-  });
-
   test('Return available language list', () {
-    const String baseLanguage = 'de';
     final Map<String, Language> languages = {
       'en': Language(existingTranslations: const {'greeting': 'hello'}),
       'de': Language(existingTranslations: const {'greeting': 'hallo'})
     };
 
-    Project project = Project(baseLanguage: baseLanguage, existingLanguages: languages);
+    ProjectState project = ProjectState(existingLanguages: languages);
 
     expect(listEquals(project.supportedLanguages(), ['en', 'de']), isTrue);
   });
@@ -70,7 +44,7 @@ void main() {
       'de': Language(existingTranslations: const {'greeting': 'hallo', 'bye': 'tschüss'})
     };
 
-    Project project = Project(baseLanguage: 'en', existingLanguages: languages);
+    ProjectState project = ProjectState(existingLanguages: languages);
     const Map<String, dynamic> expected = {'@@locale': 'de', 'bye': 'tschüss', 'greeting': 'hallo'};
 
     expect(project.exportLanguage('de', ['bye', 'greeting']), expected);
@@ -86,8 +60,7 @@ void main() {
       'greeting': const ArbDefinition(description: 'Saying hello')
     };
 
-    Project project =
-        Project(baseLanguage: 'en', existingLanguages: languages, existingArdbDefinitions: arbDefinitions);
+    ProjectState project = ProjectState(existingLanguages: languages, existingArdbDefinitions: arbDefinitions);
 
     const Map<String, dynamic> expected = {
       '@@locale': 'en',

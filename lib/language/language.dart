@@ -5,12 +5,6 @@ class Language {
 
   Language({Map<String, String>? existingTranslations}) : translations = existingTranslations ?? {};
 
-  factory Language.copyEmpty(Language base) {
-    final Map<String, String> newLang = {...base.translations}; // copy translations
-    newLang.updateAll((key, value) => ''); // remove all values
-    return Language(existingTranslations: newLang);
-  }
-
   Language copyWith({
     Map<String, String>? translations,
   }) {
@@ -26,16 +20,6 @@ class Language {
 
   int getTranslationCount() {
     return translations.length;
-  }
-
-  /// Adds a new translation
-  bool addTranslation(String key, String? newTranslation) {
-    translations[key] = newTranslation ?? '';
-    return true;
-  }
-
-  void deleteTranslation(String key) {
-    translations.remove(key);
   }
 
   @override
