@@ -21,7 +21,7 @@ class OpenProject extends ConsumerStatefulWidget {
 
 class _OpenProjectState extends ConsumerState<OpenProject> {
   Future<void> _openFile() async {
-    File? file = await ref.read(filePickerProvider).pickFile();
+    final File? file = await ref.read(filePickerProvider).pickFile();
     if (file == null) {
       return;
     }
@@ -40,8 +40,8 @@ class _OpenProjectState extends ConsumerState<OpenProject> {
             onPressed: _openFile,
           )
         : Button(
-            child: const Text('Load'),
             onPressed: _openFile,
+            child: const Text('Load'),
           );
   }
 }

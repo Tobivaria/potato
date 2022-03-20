@@ -10,8 +10,12 @@ import '../mocks.dart';
 
 class FakeFile extends Fake implements File {
   @override
-  Future<FakeFile> writeAsString(String contents,
-      {FileMode mode = FileMode.write, Encoding encoding = utf8, bool flush = false}) async {
+  Future<FakeFile> writeAsString(
+    String contents, {
+    FileMode mode = FileMode.write,
+    Encoding encoding = utf8,
+    bool flush = false,
+  }) async {
     return Future.value(FakeFile());
   }
 }
@@ -22,21 +26,35 @@ void main() {
 
   setUp(() {
     mockLogger = MockLogger();
-    container = ProviderContainer(overrides: [
-      loggerProvider.overrideWithValue(mockLogger),
-    ]);
+    container = ProviderContainer(
+      overrides: [
+        loggerProvider.overrideWithValue(mockLogger),
+      ],
+    );
   });
 
   // TODO implement
-  test('Read files in directory', () {
-    // String path = File(r'.\test_data\testgroup\en\testgroup_en-CY.txt')
-  }, skip: true);
+  test(
+    'Read files in directory',
+    () {
+      // String path = File(r'.\test_data\testgroup\en\testgroup_en-CY.txt')
+    },
+    skip: true,
+  );
 
-  test('Read json from file', () {
-    // String path = File(r'.\test_data\testgroup\en\testgroup_en-CY.txt')
-  }, skip: true);
+  test(
+    'Read json from file',
+    () {
+      // String path = File(r'.\test_data\testgroup\en\testgroup_en-CY.txt')
+    },
+    skip: true,
+  );
 
-  test('Writing formatted json file', () {
-    // String path = File(r'.\test_data\testgroup\en\testgroup_en-CY.txt')
-  }, skip: true);
+  test(
+    'Writing formatted json file',
+    () {
+      // String path = File(r'.\test_data\testgroup\en\testgroup_en-CY.txt')
+    },
+    skip: true,
+  );
 }

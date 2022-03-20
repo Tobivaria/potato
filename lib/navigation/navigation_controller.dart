@@ -2,8 +2,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:logger/logger.dart';
 import 'package:potato/navigation/navigation_state.dart';
 import 'package:potato/navigation/navigation_view_pair.dart';
-
-import '../potato_logger.dart';
+import 'package:potato/potato_logger.dart';
 
 final Provider routeProvider = Provider<ViewRoute>((ref) {
   return ref.watch(navigationProvider).route;
@@ -16,14 +15,17 @@ final StateNotifierProvider<NavigationController, NavigationState> navigationPro
 
 class NavigationController extends StateNotifier<NavigationState> {
   NavigationController(this._logger, [NavigationState? init])
-      : super(init ??
-            // default state when launching the app
-            const NavigationState(
+      : super(
+          init ??
+              // default state when launching the app
+              const NavigationState(
                 showExportTranslations: false,
                 showSaveProject: false,
                 showTranslations: false,
                 showTranslationButtons: false,
-                route: ViewRoute.translations));
+                route: ViewRoute.translations,
+              ),
+        );
 
   final Logger _logger;
 

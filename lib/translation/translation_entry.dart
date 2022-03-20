@@ -1,5 +1,4 @@
 import 'package:fluent_ui/fluent_ui.dart';
-import 'package:flutter/material.dart';
 
 class TranslationEntry extends StatefulWidget {
   const TranslationEntry({required this.translation, required this.translationKey, Key? key}) : super(key: key);
@@ -28,8 +27,8 @@ class _TranslationEntryState extends State<TranslationEntry> {
         controller: _controller,
         maxLines: 3,
         placeholder: 'Translation',
-        decoration: BoxDecoration(
-          border: Border(bottom: BorderSide.none),
+        decoration: const BoxDecoration(
+          border: Border(),
         ),
         // foregroundDecoration: BoxDecoration(
         //   border: Border(bottom: BorderSide.none),

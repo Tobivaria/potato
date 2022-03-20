@@ -1,9 +1,8 @@
 import 'package:fluent_ui/fluent_ui.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:potato/language/const_languages.dart';
 import 'package:potato/language/language_selectable.dart';
-
-import '../project/project_state_controller.dart';
-import 'const_languages.dart';
+import 'package:potato/project/project_state_controller.dart';
 
 class AddLanguageDialog extends ConsumerStatefulWidget {
   const AddLanguageDialog({Key? key}) : super(key: key);
@@ -24,7 +23,7 @@ class _AddLanguageState extends ConsumerState<AddLanguageDialog> {
     super.initState();
     // remove languages already in the project
     final List<String> existing = ref.read(projectStateProvider).languages.keys.toList();
-    for (var lang in existing) {
+    for (final lang in existing) {
       _languages.remove(lang);
     }
     _filteredLanguages = _languages;
@@ -41,7 +40,7 @@ class _AddLanguageState extends ConsumerState<AddLanguageDialog> {
   }
 
   void _addLanguage() {
-    for (var lang in _selected) {
+    for (final lang in _selected) {
       ref.read(projectStateProvider.notifier).addLanguage(lang);
     }
   }
@@ -75,32 +74,35 @@ class _AddLanguageState extends ConsumerState<AddLanguageDialog> {
           SizedBox(
             height: 400,
             child: ListView.builder(
-                controller: _controller,
-                itemCount: _filteredLanguages.length,
-                itemBuilder: (context, index) {
-                  final String key = _filteredLanguages.keys.elementAt(index);
-                  return LanguageSelectable(
-                    key: ValueKey(key),
-                    text: _formatLanguageText(key),
-                    isSelected: _selected.contains(key),
-                    selectedCb: () => _languageSelected(key),
-                  );
-                }),
+              controller: _controller,
+              itemCount: _filteredLanguages.length,
+              itemBuilder: (context, index) {
+                final String key = _filteredLanguages.keys.elementAt(index);
+                return LanguageSelectable(
+                  key: ValueKey(key),
+                  text: _formatLanguageText(key),
+                  isSelected: _selected.contains(key),
+                  selectedCb: () => _languageSelected(key),
+                );
+              },
+            ),
           ),
         ],
       ),
       actions: [
         Button(
-            child: const Text('Add'),
-            onPressed: () {
-              _addLanguage();
-              Navigator.pop(context);
-            }),
+          child: const Text('Add'),
+          onPressed: () {
+            _addLanguage();
+            Navigator.pop(context);
+          },
+        ),
         Button(
-            child: const Text('Cancel'),
-            onPressed: () {
-              Navigator.pop(context);
-            }),
+          child: const Text('Cancel'),
+          onPressed: () {
+            Navigator.pop(context);
+          },
+        ),
       ],
     );
   }

@@ -34,11 +34,11 @@ class ArbPlaceholder {
         id: map.key,
         type: ArbType.values.byName(entries['type'] as String),
         example: entries['example'] as String?,
-        numberFormat: entries['format'] == null ? null : ArbNumberFormat.values.byName(entries['format'] as String));
+        numberFormat: entries['format'] == null ? null : ArbNumberFormat.values.byName(entries['format'] as String),);
   }
 
   Map<String, dynamic> toMap() {
-    var entries = {
+    final entries = {
       'type': type.name,
     };
 

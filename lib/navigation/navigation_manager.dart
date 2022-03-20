@@ -1,11 +1,10 @@
 import 'package:fluent_ui/fluent_ui.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-
-import '../project/start_view.dart';
-import '../translation/translation_view.dart';
-import 'navigation_controller.dart';
-import 'navigation_view_pair.dart';
-import 'top_navigation.dart';
+import 'package:potato/navigation/navigation_controller.dart';
+import 'package:potato/navigation/navigation_view_pair.dart';
+import 'package:potato/navigation/top_navigation.dart';
+import 'package:potato/project/start_view.dart';
+import 'package:potato/translation/translation_view.dart';
 
 class NavigationManager extends ConsumerStatefulWidget {
   const NavigationManager({Key? key}) : super(key: key);
@@ -19,7 +18,7 @@ class _SideNavigationBarState extends ConsumerState<NavigationManager> {
     NavigationViewPair(
       navigation: PaneItem(
         icon: const Icon(FluentIcons.home),
-        title: const Text("Home"),
+        title: const Text('Home'),
       ),
       route: ViewRoute.home,
       view: const StartView(),
@@ -27,7 +26,7 @@ class _SideNavigationBarState extends ConsumerState<NavigationManager> {
     NavigationViewPair(
       navigation: PaneItem(
         icon: const Icon(FluentIcons.text_document_edit),
-        title: const Text("Translations"),
+        title: const Text('Translations'),
       ),
       route: ViewRoute.translations,
       view: const TranslationView(),
@@ -35,7 +34,7 @@ class _SideNavigationBarState extends ConsumerState<NavigationManager> {
     NavigationViewPair(
       navigation: PaneItem(
         icon: const Icon(FluentIcons.settings),
-        title: const Text("Settings"),
+        title: const Text('Settings'),
       ),
       route: ViewRoute.settings,
       view: const TranslationView(),

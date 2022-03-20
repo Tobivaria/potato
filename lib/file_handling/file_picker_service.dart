@@ -30,7 +30,7 @@ class FilePickerService {
   }
 
   Future<String?> pickDirectory() async {
-    String? selectedDirectory = await FilePicker.platform.getDirectoryPath();
+    final String? selectedDirectory = await FilePicker.platform.getDirectoryPath();
 
     if (selectedDirectory == null) {
       _logger.i('File picker aborted');
@@ -42,7 +42,11 @@ class FilePickerService {
 
   Future<String?> saveFile() async {
     String? outputFilePath = await FilePicker.platform.saveFile(
-        dialogTitle: 'Save project', type: FileType.custom, allowedExtensions: [extension], lockParentWindow: true);
+      dialogTitle: 'Save project',
+      type: FileType.custom,
+      allowedExtensions: [extension],
+      lockParentWindow: true,
+    );
 
     if (outputFilePath == null) {
       // User canceled the picker

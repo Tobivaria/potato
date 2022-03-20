@@ -1,13 +1,12 @@
 import 'package:fluent_ui/fluent_ui.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-
-import '../const/dimensions.dart';
-import '../language/add_language_dialog.dart';
-import '../language/language_title.dart';
-import '../project/project_state.dart';
-import '../project/project_state_controller.dart';
-import 'arb_entry.dart';
-import 'translation_entry.dart';
+import 'package:potato/const/dimensions.dart';
+import 'package:potato/language/add_language_dialog.dart';
+import 'package:potato/language/language_title.dart';
+import 'package:potato/project/project_state.dart';
+import 'package:potato/project/project_state_controller.dart';
+import 'package:potato/translation/arb_entry.dart';
+import 'package:potato/translation/translation_entry.dart';
 
 class TranslationView extends ConsumerStatefulWidget {
   const TranslationView({Key? key}) : super(key: key);
@@ -48,12 +47,12 @@ class _TranslationViewState extends ConsumerState<TranslationView> {
                 ),
               ),
               Button(
-                  child: const Text('Remove language'),
-                  onPressed: () => ref.read(projectStateProvider.notifier).removeLanguage('de')),
+                child: const Text('Remove language'),
+                onPressed: () => ref.read(projectStateProvider.notifier).removeLanguage('de'),
+              ),
             ],
           ),
           Row(
-            mainAxisAlignment: MainAxisAlignment.start,
             children: [
               const LanguageTitle('Id', Dimensions.idCellWidth),
               for (var i in translations) LanguageTitle(i, Dimensions.languageCellWidth)
@@ -77,7 +76,7 @@ class _TranslationViewState extends ConsumerState<TranslationView> {
               shrinkWrap: true,
               itemCount: arbDefs.length,
               itemBuilder: (context, index) {
-                String key = projectState.arbDefinitions.keys.elementAt(index);
+                final String key = projectState.arbDefinitions.keys.elementAt(index);
                 return Padding(
                   padding: const EdgeInsets.symmetric(vertical: 8.0),
                   child: Row(
@@ -107,8 +106,9 @@ class _TranslationViewState extends ConsumerState<TranslationView> {
           //   ),
           // ),
           Button(
-              child: const Text('Add translation'),
-              onPressed: () => ref.read(projectStateProvider.notifier).addTranslation(key: DateTime.now().toString()))
+            child: const Text('Add translation'),
+            onPressed: () => ref.read(projectStateProvider.notifier).addTranslation(key: DateTime.now().toString()),
+          )
         ],
       ),
     );

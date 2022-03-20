@@ -24,10 +24,12 @@ void main() {
   setUp(() {
     mockLogger = MockLogger();
     mockFileService = MockFileService();
-    container = ProviderContainer(overrides: [
-      fileServiceProvider.overrideWithValue(mockFileService),
-      loggerProvider.overrideWithValue(mockLogger),
-    ]);
+    container = ProviderContainer(
+      overrides: [
+        fileServiceProvider.overrideWithValue(mockFileService),
+        loggerProvider.overrideWithValue(mockLogger),
+      ],
+    );
 
     final Map<String, Language> languages = {
       'en': Language(existingTranslations: const {'greeting': 'hello'}),
@@ -47,10 +49,10 @@ void main() {
 
   test('Adding a new language, creates a new language entry with the already existing translations, but empty', () {
     container.read(projectStateProvider.notifier).addLanguage('es');
-    ProjectState projectState = container.read(projectStateProvider);
+    final ProjectState projectState = container.read(projectStateProvider);
     expect(projectState.languages.length, 3);
 
-    Map<String, String> translations = projectState.languages['es']!.translations;
+    final Map<String, String> translations = projectState.languages['es']!.translations;
     expect(translations.length, 1);
     expect(translations['greeting'], '');
   });
@@ -58,14 +60,14 @@ void main() {
   test('Remove language', () {
     container.read(projectStateProvider.notifier).removeLanguage('en');
 
-    ProjectState projectState = container.read(projectStateProvider);
+    final ProjectState projectState = container.read(projectStateProvider);
     expect(projectState.languages.length, 1);
     expect(projectState.languages.keys, ['de']);
   });
 
   test('Adding a translation, adds a new map entry for each language and arb definition', () {
     container.read(projectStateProvider.notifier).addTranslation(key: 'food');
-    ProjectState projectState = container.read(projectStateProvider);
+    final ProjectState projectState = container.read(projectStateProvider);
     expect(projectState.languages['en']!.translations.length, 2);
     expect(projectState.languages['de']!.translations.length, 2);
     expect(projectState.arbDefinitions.length, 2);
@@ -77,7 +79,7 @@ void main() {
 
   test('Removing a translation, remove the key from translation and arb definition', () {
     container.read(projectStateProvider.notifier).removeTranslation('greeting');
-    ProjectState projectState = container.read(projectStateProvider);
+    final ProjectState projectState = container.read(projectStateProvider);
     expect(projectState.languages['en']!.translations.length, 0);
     expect(projectState.languages['de']!.translations.length, 0);
     expect(projectState.arbDefinitions.length, 0);

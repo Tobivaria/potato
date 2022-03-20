@@ -3,17 +3,19 @@ import 'dart:io';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:logger/logger.dart';
 import 'package:potato/file_handling/file_service.dart';
-
-import '../potato_logger.dart';
-import 'project_file.dart';
-import 'project_state.dart';
-import 'project_state_controller.dart';
+import 'package:potato/potato_logger.dart';
+import 'package:potato/project/project_file.dart';
+import 'package:potato/project/project_state.dart';
+import 'package:potato/project/project_state_controller.dart';
 
 final StateNotifierProvider<ProjectFileController, ProjectFile> projectFileProvider =
     StateNotifierProvider<ProjectFileController, ProjectFile>(
         (StateNotifierProviderRef<ProjectFileController, ProjectFile> ref) {
   return ProjectFileController(
-      ref.watch(projectStateProvider.notifier), ref.watch(fileServiceProvider), ref.watch(loggerProvider));
+    ref.watch(projectStateProvider.notifier),
+    ref.watch(fileServiceProvider),
+    ref.watch(loggerProvider),
+  );
 });
 
 class ProjectFileController extends StateNotifier<ProjectFile> {
@@ -50,7 +52,7 @@ class ProjectFileController extends StateNotifier<ProjectFile> {
   Future<void> loadProjectFileAndTranslations(File file) async {
     _logger.i('Loading project');
 
-    Map<String, dynamic>? data = await _fileService.readJsonFromFile(file);
+    final Map<String, dynamic>? data = await _fileService.readJsonFromFile(file);
 
     if (data == null) {
       _logger.w('Loading project failed ${file.path}');
@@ -65,7 +67,7 @@ class ProjectFileController extends StateNotifier<ProjectFile> {
       return;
     }
 
-    List<Map<String, dynamic>> jsons = await _fileService.readFilesFromDirectory(project.path!);
+    final List<Map<String, dynamic>> jsons = await _fileService.readFilesFromDirectory(project.path!);
     _projectStateController.setProjectState(ProjectState.fromJsons(jsons));
   }
 }

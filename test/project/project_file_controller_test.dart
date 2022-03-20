@@ -28,11 +28,13 @@ void main() {
     mockProjectStateController = MockProjectStateController();
     mockLogger = MockLogger();
 
-    container = ProviderContainer(overrides: [
-      fileServiceProvider.overrideWithValue(mockFileService),
-      projectStateProvider.overrideWithValue(mockProjectStateController),
-      loggerProvider.overrideWithValue(mockLogger),
-    ]);
+    container = ProviderContainer(
+      overrides: [
+        fileServiceProvider.overrideWithValue(mockFileService),
+        projectStateProvider.overrideWithValue(mockProjectStateController),
+        loggerProvider.overrideWithValue(mockLogger),
+      ],
+    );
 
     // setup state
     container.read(projectFileProvider.notifier).setBaseLanguage('en');
@@ -44,7 +46,7 @@ void main() {
   });
 
   test('Verify set path and language are working', () {
-    ProjectFile actual = container.read(projectFileProvider);
+    final ProjectFile actual = container.read(projectFileProvider);
 
     expect(actual.baseLanguage, 'en');
     expect(actual.path, 'some/path');

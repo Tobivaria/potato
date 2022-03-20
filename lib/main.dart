@@ -19,8 +19,8 @@ class PotatoApp extends StatelessWidget {
           darkTheme: ThemeData(
               scaffoldBackgroundColor: Colors.black,
               accentColor: Colors.blue,
-              iconTheme: const IconThemeData(size: 24)),
-          home: const NavigationManager()),
+              iconTheme: const IconThemeData(size: 24),),
+          home: const NavigationManager(),),
     );
   }
 }

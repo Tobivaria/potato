@@ -8,6 +8,6 @@ class PotatoTheme {
         activeColor: PotatoColor.selected,
         borderInputColor: Colors.green,
         scaffoldBackgroundColor: PotatoColor.background,
-        buttonTheme: ButtonThemeData(iconButtonStyle: ButtonStyle(iconSize: ButtonState.all(24))));
+        buttonTheme: ButtonThemeData(iconButtonStyle: ButtonStyle(iconSize: ButtonState.all(24))),);
   }
 }

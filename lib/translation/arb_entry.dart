@@ -1,11 +1,10 @@
 import 'package:fluent_ui/fluent_ui.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:potato/arb/arb_definition.dart';
 import 'package:potato/const/dimensions.dart';
 import 'package:potato/const/potato_color.dart';
-import 'package:potato/project/project_controller.dart';
-
-import '../arb/arb_definition.dart';
-import '../core/confirm_dialog.dart';
+import 'package:potato/core/confirm_dialog.dart';
+import 'package:potato/project/project_state_controller.dart';
 
 class ArbEntry extends ConsumerStatefulWidget {
   const ArbEntry({required this.definition, required this.translationKey, Key? key}) : super(key: key);
@@ -19,22 +18,34 @@ class ArbEntry extends ConsumerStatefulWidget {
 class _ArbEntryState extends ConsumerState<ArbEntry> {
   final TextEditingController _translationKeyController = TextEditingController();
   final TextEditingController _descriptionController = TextEditingController();
+  final _flyoutController = FlyoutController();
+
+  bool _showDescription = false;
 
   double _controlsOpacity = 0.0;
 
   @override
   void initState() {
     super.initState();
-    _translationKeyController.text = widget.translationKey;
-    _descriptionController.text = widget.definition.description ?? '';
+    _initializeFields();
   }
 
   @override
   void didUpdateWidget(covariant ArbEntry oldWidget) {
     super.didUpdateWidget(oldWidget);
     if (widget != oldWidget) {
-      _translationKeyController.text = widget.translationKey;
-      _descriptionController.text = widget.definition.description ?? '';
+      _initializeFields();
+    }
+  }
+
+  void _initializeFields() {
+    _translationKeyController.text = widget.translationKey;
+    _descriptionController.text = widget.definition.description ?? '';
+
+    if (widget.definition.description != null) {
+      _showDescription = true;
+    } else {
+      _showDescription = false;
     }
   }
 
@@ -42,6 +53,7 @@ class _ArbEntryState extends ConsumerState<ArbEntry> {
   void dispose() {
     _translationKeyController.dispose();
     _descriptionController.dispose();
+    _flyoutController.dispose();
     super.dispose();
   }
 
@@ -60,12 +72,14 @@ class _ArbEntryState extends ConsumerState<ArbEntry> {
   }
 
   void _addEntry() {
+    _flyoutController.open = true;
+    // TODO make the elements available which are not used
     // TODO add placeholder
     // TODO add description
   }
 
   void _deleteEntry() {
-    ref.read(projectProvider.notifier).removeTranslation(_translationKeyController.text);
+    ref.read(projectStateProvider.notifier).removeTranslation(_translationKeyController.text);
   }
 
   @override
@@ -81,16 +95,17 @@ class _ArbEntryState extends ConsumerState<ArbEntry> {
                 width: Dimensions.languageCellWidth,
                 child: TextBox(
                   controller: _translationKeyController,
-                  placeholder: 'Unique translation key',
+                  placeholder: 'Unique key',
                 ),
               ),
-              SizedBox(
-                width: Dimensions.languageCellWidth,
-                child: TextBox(
-                  controller: _descriptionController,
-                  placeholder: 'Description',
+              if (_showDescription)
+                SizedBox(
+                  width: Dimensions.languageCellWidth,
+                  child: TextBox(
+                    controller: _descriptionController,
+                    placeholder: 'Description',
+                  ),
                 ),
-              ),
             ],
           ),
           const SizedBox(width: 20),
@@ -99,12 +114,26 @@ class _ArbEntryState extends ConsumerState<ArbEntry> {
             duration: const Duration(milliseconds: 300),
             child: Column(
               children: [
-                IconButton(
-                  icon: const Icon(
-                    FluentIcons.add,
-                    size: Dimensions.arbSettingIconSize,
+                Flyout(
+                  controller: _flyoutController,
+                  verticalOffset: -80,
+                  contentWidth: 120, // TODO width
+                  content: FlyoutContent(
+                    child: SizedBox(
+                      height: 50,
+                      width: 120, // TODO width
+                      child: Column(
+                        children: const [Text('Placeholder'), Text('Description')],
+                      ),
+                    ),
                   ),
-                  onPressed: _addEntry,
+                  child: IconButton(
+                    icon: const Icon(
+                      FluentIcons.add,
+                      size: Dimensions.arbSettingIconSize,
+                    ),
+                    onPressed: _addEntry,
+                  ),
                 ),
                 IconButton(
                   icon: const Icon(

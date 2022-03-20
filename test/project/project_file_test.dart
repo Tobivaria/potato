@@ -4,7 +4,7 @@ import 'package:potato/project/project_file.dart';
 
 void main() {
   test('Create new ProjectFile', () {
-    ProjectFile project = const ProjectFile(baseLanguage: 'en');
+    const ProjectFile project = ProjectFile(baseLanguage: 'en');
     expect(project.baseLanguage, 'en');
     expect(project.path, isNull);
   });
@@ -13,7 +13,7 @@ void main() {
     const String baseLanguage = 'de';
     const String path = 'some/path';
 
-    ProjectFile project = ProjectFile.fromMap(const {'baseLanguage': baseLanguage, 'path': path});
+    final ProjectFile project = ProjectFile.fromMap(const {'baseLanguage': baseLanguage, 'path': path});
 
     expect(project.baseLanguage, 'de');
     expect(project.path, path);
@@ -24,7 +24,7 @@ void main() {
     const String path = 'some/path';
     const Map<String, String> expected = {'baseLanguage': baseLanguage, 'path': path, 'version': '1'};
 
-    ProjectFile project = const ProjectFile(baseLanguage: baseLanguage, path: path);
+    const ProjectFile project = ProjectFile(baseLanguage: baseLanguage, path: path);
     expect(mapEquals(project.toMap(), expected), isTrue);
   });
 }
