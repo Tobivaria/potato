@@ -1,6 +1,5 @@
 import 'package:fluent_ui/fluent_ui.dart';
-
-import 'arb_definition.dart';
+import 'package:potato/arb/arb_definition.dart';
 
 enum ArbNumberFormat {
   compact,
@@ -29,13 +28,13 @@ class ArbPlaceholder {
   const ArbPlaceholder({required this.id, required this.type, this.example, this.numberFormat});
 
   factory ArbPlaceholder.fromMap(MapEntry<String, dynamic> map) {
-    var entries = map.value;
+    final entries = map.value as Map<String, dynamic>;
 
     return ArbPlaceholder(
         id: map.key,
-        type: ArbType.values.byName(entries['type']),
-        example: entries['example'],
-        numberFormat: entries['format'] == null ? null : ArbNumberFormat.values.byName(entries['format']));
+        type: ArbType.values.byName(entries['type'] as String),
+        example: entries['example'] as String?,
+        numberFormat: entries['format'] == null ? null : ArbNumberFormat.values.byName(entries['format'] as String));
   }
 
   Map<String, dynamic> toMap() {

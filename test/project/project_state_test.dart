@@ -6,7 +6,7 @@ import 'package:potato/project/project_state.dart';
 
 void main() {
   test('Create new project state', () {
-    ProjectState project = ProjectState();
+    final ProjectState project = ProjectState();
     expect(mapEquals(project.languages, {}), isTrue);
     expect(mapEquals(project.arbDefinitions, {}), isTrue);
   });
@@ -18,8 +18,8 @@ void main() {
     };
     final Map<String, ArbDefinition> arbDefinitions = {'greeting': const ArbDefinition(description: 'Lul')};
 
-    ProjectState project = ProjectState();
-    ProjectState copy = project.copyWith(languages: languages, arbDefinitions: arbDefinitions);
+    final ProjectState project = ProjectState();
+    final ProjectState copy = project.copyWith(languages: languages, arbDefinitions: arbDefinitions);
 
     expect(copy.languages, languages);
     expect(mapEquals(copy.languages, languages), isTrue);
@@ -29,25 +29,29 @@ void main() {
   test('Create project state from json list', () {
     final List<Map<String, dynamic>> input = [
       {
-        "@@locale": "en",
-        "themeBlue": "Blue",
-        "@themeBlue": {"description": "Title of the blue theme"},
-        "themeDefault": "Default",
-        "@themeDefault": {"description": "Title of the default theme"},
-        "themeGreen": "Green",
-        "@themeGreen": {"description": "Title of the green theme"},
+        '@@locale': 'en',
+        'themeBlue': 'Blue',
+        '@themeBlue': {'description': 'Title of the blue theme'},
+        'themeDefault': 'Default',
+        '@themeDefault': {'description': 'Title of the default theme'},
+        'themeGreen': 'Green',
+        '@themeGreen': {'description': 'Title of the green theme'},
       },
-      {"@@locale": "es", "themeBlue": "Azul", "themeDefault": "Por defecto", "themeGreen": "Verde"}
+      {'@@locale': 'es', 'themeBlue': 'Azul', 'themeDefault': 'Por defecto', 'themeGreen': 'Verde'}
     ];
 
-    final ProjectState expected = ProjectState(existingArdbDefinitions: const {
-      "themeBlue": ArbDefinition(description: 'Title of the blue theme'),
-      "themeDefault": ArbDefinition(description: 'Title of the default theme'),
-      "themeGreen": ArbDefinition(description: 'Title of the green theme'),
-    }, existingLanguages: {
-      'en': Language(existingTranslations: {"themeBlue": "Blue", "themeDefault": "Default", "themeGreen": "Green"}),
-      'es': Language(existingTranslations: {"themeBlue": "Azul", "themeDefault": "Por defecto", "themeGreen": "Verde"})
-    });
+    final ProjectState expected = ProjectState(
+      existingArdbDefinitions: const {
+        'themeBlue': ArbDefinition(description: 'Title of the blue theme'),
+        'themeDefault': ArbDefinition(description: 'Title of the default theme'),
+        'themeGreen': ArbDefinition(description: 'Title of the green theme'),
+      },
+      existingLanguages: {
+        'en': Language(existingTranslations: {'themeBlue': 'Blue', 'themeDefault': 'Default', 'themeGreen': 'Green'}),
+        'es':
+            Language(existingTranslations: {'themeBlue': 'Azul', 'themeDefault': 'Por defecto', 'themeGreen': 'Verde'})
+      },
+    );
 
     expect(ProjectState.fromJsons(input), expected);
   });
@@ -58,7 +62,7 @@ void main() {
       'de': Language(existingTranslations: const {'greeting': 'hallo'})
     };
 
-    ProjectState project = ProjectState(existingLanguages: languages);
+    final ProjectState project = ProjectState(existingLanguages: languages);
 
     expect(listEquals(project.supportedLanguages(), ['en', 'de']), isTrue);
   });
@@ -69,7 +73,7 @@ void main() {
       'de': Language(existingTranslations: const {'greeting': 'hallo', 'bye': 'tschüss'})
     };
 
-    ProjectState project = ProjectState(existingLanguages: languages);
+    final ProjectState project = ProjectState(existingLanguages: languages);
     const Map<String, dynamic> expected = {'@@locale': 'de', 'bye': 'tschüss', 'greeting': 'hallo'};
 
     expect(project.exportLanguage('de', ['bye', 'greeting']), expected);
@@ -85,7 +89,7 @@ void main() {
       'greeting': const ArbDefinition(description: 'Saying hello')
     };
 
-    ProjectState project = ProjectState(existingLanguages: languages, existingArdbDefinitions: arbDefinitions);
+    final ProjectState project = ProjectState(existingLanguages: languages, existingArdbDefinitions: arbDefinitions);
 
     const Map<String, dynamic> expected = {
       '@@locale': 'en',
@@ -95,6 +99,6 @@ void main() {
       '@greeting': {'description': 'Saying hello'}
     };
 
-    expect(project.exportLanguage('en', ['bye', 'greeting'], true), expected);
+    expect(project.exportLanguage('en', ['bye', 'greeting'], isBaseLanguage: true), expected);
   });
 }

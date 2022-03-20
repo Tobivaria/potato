@@ -1,6 +1,5 @@
 import 'package:flutter/foundation.dart';
-
-import 'arb_placerholder.dart';
+import 'package:potato/arb/arb_placerholder.dart';
 
 enum ArbType {
   // ignore: constant_identifier_names
@@ -23,20 +22,20 @@ class ArbDefinition {
 
     if (map['placeholders'] != null) {
       placeholderList = [];
-      Map<String, dynamic> placeholderMap = map['placeholders'];
-      for (MapEntry<String, dynamic> entry in placeholderMap.entries) {
+      final Map<String, dynamic> placeholderMap = map['placeholders'] as Map<String, dynamic>;
+      for (final MapEntry<String, dynamic> entry in placeholderMap.entries) {
         placeholderList.add(ArbPlaceholder.fromMap(entry));
       }
     }
-    return ArbDefinition(description: map['description'], placeholders: placeholderList);
+    return ArbDefinition(description: map['description'] as String?, placeholders: placeholderList);
   }
 
   Map<String, dynamic> toMap() {
-    Map<String, dynamic> out = {'description': description};
+    final Map<String, dynamic> out = {'description': description};
 
     if (placeholders != null) {
-      Map<String, dynamic> placeholderMap = {};
-      for (var entry in placeholders!) {
+      final Map<String, dynamic> placeholderMap = {};
+      for (final entry in placeholders!) {
         placeholderMap.addAll(entry.toMap());
       }
       out['placeholders'] = placeholderMap;

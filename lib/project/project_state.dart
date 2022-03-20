@@ -1,7 +1,6 @@
 import 'package:flutter/foundation.dart';
-
-import '../arb/arb_definition.dart';
-import '../language/language.dart';
+import 'package:potato/arb/arb_definition.dart';
+import 'package:potato/language/language.dart';
 
 /// Holds the state of the currently loaded project
 @immutable
@@ -14,25 +13,25 @@ class ProjectState {
         arbDefinitions = existingArdbDefinitions ?? <String, ArbDefinition>{};
 
   factory ProjectState.fromJsons(List<Map<String, dynamic>> data) {
-    Map<String, ArbDefinition> arbDefinitions = {};
-    Map<String, Language> languages = {};
+    final Map<String, ArbDefinition> arbDefinitions = {};
+    final Map<String, Language> languages = {};
 
     // TODO error handling
 
     // iterate over jsons
-    for (Map<String, dynamic> entry in data) {
+    for (final Map<String, dynamic> entry in data) {
       String locale = '';
-      Map<String, String> translations = {};
+      final Map<String, String> translations = {};
 
       // extract data from json
-      for (String key in entry.keys) {
-        var item = entry[key];
+      for (final String key in entry.keys) {
+        final dynamic item = entry[key] as dynamic;
         if (key == '@@locale') {
-          locale = item;
+          locale = item as String;
         } else if (key.startsWith('@')) {
-          arbDefinitions[key.substring(1)] = ArbDefinition.fromMap(item);
+          arbDefinitions[key.substring(1)] = ArbDefinition.fromMap(item as Map<String, dynamic>);
         } else {
-          translations[key] = item;
+          translations[key] = item as String;
         }
       }
 
@@ -47,13 +46,13 @@ class ProjectState {
   }
 
   /// Creates a ordered map of the given language key, in the arb format
-  Map<String, dynamic> exportLanguage(String langKey, List<String> keyOrder, [bool isBaseLanguage = false]) {
-    Map<String, dynamic> export = <String, dynamic>{'@@locale': langKey};
+  Map<String, dynamic> exportLanguage(String langKey, List<String> keyOrder, {bool isBaseLanguage = false}) {
+    final Map<String, dynamic> export = <String, dynamic>{'@@locale': langKey};
     if (isBaseLanguage) {
-      Map<String, String> baseTranslations = languages[langKey]!.translations;
+      final Map<String, String> baseTranslations = languages[langKey]!.translations;
       // add one key after the other
       for (final String key in keyOrder) {
-        export[key] = baseTranslations[key]!;
+        export[key] = baseTranslations[key];
         export['@$key'] = arbDefinitions[key]!.toMap();
       }
     } else {

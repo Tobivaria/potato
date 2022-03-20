@@ -14,8 +14,8 @@ class ProjectFile {
 
   factory ProjectFile.fromMap(Map<String, dynamic> map) {
     return ProjectFile(
-      baseLanguage: map['baseLanguage'] ?? '', // TODO assert when baselanguage not found
-      path: map['path'],
+      baseLanguage: map['baseLanguage'] as String? ?? '', // TODO assert when baselanguage not found
+      path: map['path'] as String?,
     );
   }
 
