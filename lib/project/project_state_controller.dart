@@ -85,7 +85,7 @@ class ProjectStateController extends StateNotifier<ProjectState> {
     state = state.copyWith(languages: modifiedLanguages, arbDefinitions: arbDefs);
   }
 
-  Future<void> exportProjectState(String pathToExportTo) async {
+  Future<void> export(String pathToExportTo) async {
     List<String> keys = state.arbDefinitions.keys.toList();
     // sort keys alphabetically
     keys.sort((a, b) {

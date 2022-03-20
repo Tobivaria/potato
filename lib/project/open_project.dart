@@ -3,7 +3,9 @@ import 'dart:io';
 import 'package:fluent_ui/fluent_ui.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:potato/file_handling/file_picker_service.dart';
-import 'package:potato/file_handling/file_service.dart';
+import 'package:potato/navigation/navigation_controller.dart';
+import 'package:potato/navigation/navigation_view_pair.dart';
+import 'package:potato/project/project_file_controller.dart';
 
 /// Widget for opening / loading a previous project
 ///
@@ -24,7 +26,8 @@ class _OpenProjectState extends ConsumerState<OpenProject> {
       return;
     }
 
-    ref.read(fileServiceProvider).loadProject(file);
+    await ref.read(projectFileProvider.notifier).loadProjectFileAndTranslations(file);
+    ref.read(navigationProvider.notifier).navigateTo(ViewRoute.translations);
   }
 
   @override

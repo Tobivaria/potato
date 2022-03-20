@@ -85,7 +85,7 @@ void main() {
 
   test('Export every language and its translations to a separate file', () async {
     when(() => mockFileService.writeFile(any(), any())).thenAnswer((_) async {});
-    await container.read(projectStateProvider.notifier).exportProjectState('some/path');
+    await container.read(projectStateProvider.notifier).export('some/path');
 
     verify(() => mockFileService.writeFile(any(), any())).called(2);
   });
