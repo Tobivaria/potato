@@ -1,6 +1,5 @@
 import 'package:fluent_ui/fluent_ui.dart';
-
-import '../const/potato_color.dart';
+import 'package:potato/const/potato_color.dart';
 
 class LanguageSelectable extends StatelessWidget {
   const LanguageSelectable({required this.text, required this.isSelected, required this.selectedCb, Key? key})

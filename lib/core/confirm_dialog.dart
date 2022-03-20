@@ -1,14 +1,14 @@
 import 'package:fluent_ui/fluent_ui.dart';
 
 class ConfirmDialog extends StatelessWidget {
-  const ConfirmDialog(
-      {required this.title,
-      required this.text,
-      required this.confirmButtonText,
-      required this.confirmButtonColor,
-      required this.onConfirmPressed,
-      Key? key})
-      : super(key: key);
+  const ConfirmDialog({
+    required this.title,
+    required this.text,
+    required this.confirmButtonText,
+    required this.confirmButtonColor,
+    required this.onConfirmPressed,
+    Key? key,
+  }) : super(key: key);
 
   final String title;
   final String text;
