@@ -1,11 +1,11 @@
 import 'package:fluent_ui/fluent_ui.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:potato/project/project.dart';
 
 import '../const/dimensions.dart';
 import '../language/add_language_dialog.dart';
 import '../language/language_title.dart';
-import '../project/project_controller.dart';
+import '../project/project_state.dart';
+import '../project/project_state_controller.dart';
 import 'arb_entry.dart';
 import 'translation_entry.dart';
 
@@ -18,7 +18,7 @@ class TranslationView extends ConsumerStatefulWidget {
 
 class _TranslationViewState extends ConsumerState<TranslationView> {
   void _addLangauge() {
-    ref.read(projectProvider.notifier).addLanguage('de');
+    ref.read(projectStateProvider.notifier).addLanguage('de');
   }
 
   final _controller = ScrollController();
@@ -26,9 +26,9 @@ class _TranslationViewState extends ConsumerState<TranslationView> {
   @override
   Widget build(BuildContext context) {
     // TODO remove unnecessry stuff here
-    final Project project = ref.watch(projectProvider);
+    final ProjectState projectState = ref.watch(projectStateProvider);
     final List<String> translations = ref.watch(languageListProvider);
-    final tmp = ref.watch(projectProvider).languages;
+    final tmp = ref.watch(projectStateProvider).languages;
     final arbDefs = ref.watch(arbDefinitionProvider);
 
     return Padding(
@@ -49,7 +49,7 @@ class _TranslationViewState extends ConsumerState<TranslationView> {
               ),
               Button(
                   child: const Text('Remove language'),
-                  onPressed: () => ref.read(projectProvider.notifier).removeLanguage('de')),
+                  onPressed: () => ref.read(projectStateProvider.notifier).removeLanguage('de')),
             ],
           ),
           Row(
@@ -77,7 +77,7 @@ class _TranslationViewState extends ConsumerState<TranslationView> {
               shrinkWrap: true,
               itemCount: arbDefs.length,
               itemBuilder: (context, index) {
-                String key = tmp[project.baseLanguage]!.translations.keys.elementAt(index);
+                String key = projectState.arbDefinitions.keys.elementAt(index);
                 return Padding(
                   padding: const EdgeInsets.symmetric(vertical: 8.0),
                   child: Row(
@@ -108,7 +108,7 @@ class _TranslationViewState extends ConsumerState<TranslationView> {
           // ),
           Button(
               child: const Text('Add translation'),
-              onPressed: () => ref.read(projectProvider.notifier).addTranslation(key: DateTime.now().toString()))
+              onPressed: () => ref.read(projectStateProvider.notifier).addTranslation(key: DateTime.now().toString()))
         ],
       ),
     );
