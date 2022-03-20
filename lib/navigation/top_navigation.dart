@@ -1,5 +1,6 @@
 import 'package:fluent_ui/fluent_ui.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:potato/navigation/navigation_view_pair.dart';
 
 import '../project/create_project.dart';
 import '../project/open_project.dart';
@@ -19,13 +20,13 @@ class TopNavigation extends ConsumerWidget {
           reduced: true,
         ),
         if (navState.showSaveProject) const SaveProject(),
-        if (navState.showTranslationButtons)
+        if (navState.route == ViewRoute.translations)
           Row(
-            children: [
+            children: const [
+              SizedBox(
+                width: 20,
+              ),
               Text('Translations'),
-              Divider(
-                direction: Axis.vertical,
-              )
             ],
           ),
       ],
