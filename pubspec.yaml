@@ -11,7 +11,7 @@ dependencies:
   flutter:
     sdk: flutter
 
-  file_picker: ^4.3.3
+  file_picker: ^4.5.1
   fluent_ui: ^3.9.1
   flutter_riverpod: ^1.0.3
   logger: ^1.1.0
@@ -20,6 +20,7 @@ dependencies:
 dev_dependencies:
   flutter_test:
     sdk: flutter
+  mocktail: 0.3.0
 
   flutter_lints: ^1.0.0
 
