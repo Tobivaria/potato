@@ -7,7 +7,7 @@ import 'package:potato/project/project_state.dart';
 void main() {
   test('Create new project state', () {
     ProjectState project = ProjectState();
-    expect(mapEquals(project.languages, {'en': Language()}), isTrue);
+    expect(mapEquals(project.languages, {}), isTrue);
     expect(mapEquals(project.arbDefinitions, {}), isTrue);
   });
 
@@ -95,6 +95,6 @@ void main() {
       '@greeting': {'description': 'Saying hello'}
     };
 
-    expect(project.exportLanguage('en', ['bye', 'greeting']), expected);
+    expect(project.exportLanguage('en', ['bye', 'greeting'], true), expected);
   });
 }
