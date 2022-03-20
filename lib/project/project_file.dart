@@ -2,13 +2,13 @@ import 'package:flutter/foundation.dart';
 
 @immutable
 class ProjectFile {
-  final String baseLanguage;
+  final String? baseLanguage;
   final String? path;
 
   static const String _projectVersion = '1';
 
   const ProjectFile({
-    required this.baseLanguage,
+    this.baseLanguage,
     this.path,
   });
 
@@ -20,7 +20,7 @@ class ProjectFile {
   }
 
   Map<String, String> toMap() {
-    return {'baseLanguage': baseLanguage, 'path': path ?? '', 'version': _projectVersion};
+    return {'baseLanguage': baseLanguage ?? '', 'path': path ?? '', 'version': _projectVersion};
   }
 
   ProjectFile copyWith({
@@ -42,4 +42,7 @@ class ProjectFile {
 
   @override
   int get hashCode => baseLanguage.hashCode ^ path.hashCode;
+
+  @override
+  String toString() => 'ProjectFile(baseLanguage: $baseLanguage, path: $path)';
 }

@@ -1,7 +1,10 @@
+import 'dart:io';
+
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:logger/logger.dart';
 
 import '../arb/arb_definition.dart';
+import '../file_handling/file_service.dart';
 import '../language/language.dart';
 import '../potato_logger.dart';
 import 'project_state.dart';
@@ -18,12 +21,13 @@ final Provider<List<String>> languageListProvider = Provider<List<String>>((Prov
 final StateNotifierProvider<ProjectStateController, ProjectState> projectStateProvider =
     StateNotifierProvider<ProjectStateController, ProjectState>(
         (StateNotifierProviderRef<ProjectStateController, ProjectState> ref) {
-  return ProjectStateController(ref.watch(loggerProvider));
+  return ProjectStateController(ref.watch(fileServiceProvider), ref.watch(loggerProvider));
 });
 
 class ProjectStateController extends StateNotifier<ProjectState> {
-  ProjectStateController(this._logger, [ProjectState? init]) : super(init ?? ProjectState());
+  ProjectStateController(this._fileService, this._logger, [ProjectState? init]) : super(init ?? ProjectState());
 
+  final FileService _fileService;
   final Logger _logger;
 
   void setProjectState(ProjectState project) {
@@ -79,5 +83,19 @@ class ProjectStateController extends StateNotifier<ProjectState> {
     Map<String, ArbDefinition> arbDefs = {...state.arbDefinitions};
     arbDefs.remove(keyToRemove);
     state = state.copyWith(languages: modifiedLanguages, arbDefinitions: arbDefs);
+  }
+
+  Future<void> exportProjectState(String pathToExportTo) async {
+    List<String> keys = state.arbDefinitions.keys.toList();
+    // sort keys alphabetically
+    keys.sort((a, b) {
+      return a.toLowerCase().compareTo(b.toLowerCase());
+    });
+
+    for (var item in state.languages.keys) {
+      var data = state.exportLanguage(item, keys);
+      final File file = File('$pathToExportTo/app_$item.arb');
+      await _fileService.writeFile(file, data);
+    }
   }
 }

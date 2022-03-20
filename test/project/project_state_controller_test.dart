@@ -1,22 +1,32 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:logger/logger.dart';
+import 'package:mocktail/mocktail.dart';
 import 'package:potato/arb/arb_definition.dart';
+import 'package:potato/file_handling/file_service.dart';
 import 'package:potato/language/language.dart';
 import 'package:potato/potato_logger.dart';
 import 'package:potato/project/project_state.dart';
 import 'package:potato/project/project_state_controller.dart';
 
+import '../fakes.dart';
 import '../mocks.dart';
 
 void main() {
   late ProviderContainer container;
-  late Logger logger;
+  late FileService mockFileService;
+  late Logger mockLogger;
+
+  setUpAll(() {
+    registerFallbackValue(FakeFile());
+  });
 
   setUp(() {
-    logger = MockLogger();
+    mockLogger = MockLogger();
+    mockFileService = MockFileService();
     container = ProviderContainer(overrides: [
-      loggerProvider.overrideWithValue(logger),
+      fileServiceProvider.overrideWithValue(mockFileService),
+      loggerProvider.overrideWithValue(mockLogger),
     ]);
 
     final Map<String, Language> languages = {
@@ -71,5 +81,12 @@ void main() {
     expect(projectState.languages['en']!.translations.length, 0);
     expect(projectState.languages['de']!.translations.length, 0);
     expect(projectState.arbDefinitions.length, 0);
+  });
+
+  test('Export every language and its translations to a separate file', () async {
+    when(() => mockFileService.writeFile(any(), any())).thenAnswer((_) async {});
+    await container.read(projectStateProvider.notifier).exportProjectState('some/path');
+
+    verify(() => mockFileService.writeFile(any(), any())).called(2);
   });
 }

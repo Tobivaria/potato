@@ -2,7 +2,7 @@ import 'package:fluent_ui/fluent_ui.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:potato/language/language_selectable.dart';
 
-import '../project/project_controller.dart';
+import '../project/project_state_controller.dart';
 import 'const_languages.dart';
 
 class AddLanguageDialog extends ConsumerStatefulWidget {
@@ -23,7 +23,7 @@ class _AddLanguageState extends ConsumerState<AddLanguageDialog> {
   void initState() {
     super.initState();
     // remove languages already in the project
-    final List<String> existing = ref.read(projectProvider).languages.keys.toList();
+    final List<String> existing = ref.read(projectStateProvider).languages.keys.toList();
     for (var lang in existing) {
       _languages.remove(lang);
     }
@@ -42,7 +42,7 @@ class _AddLanguageState extends ConsumerState<AddLanguageDialog> {
 
   void _addLanguage() {
     for (var lang in _selected) {
-      ref.read(projectProvider.notifier).addLanguage(lang);
+      ref.read(projectStateProvider.notifier).addLanguage(lang);
     }
   }
 
