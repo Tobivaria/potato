@@ -39,7 +39,13 @@ class _TranslationViewState extends ConsumerState<TranslationView> {
               children: [
                 Row(
                   children: [
-                    const LanguageTitle('Id', Dimensions.idCellWidth),
+                    const SizedBox(
+                      width: Dimensions.idCellWidth,
+                      child: Text(
+                        'Id',
+                        style: TextStyle(fontWeight: FontWeight.bold), // TODO move style to theme
+                      ),
+                    ),
                     for (String langKey in translations)
                       LanguageTitle(
                         langKey,
