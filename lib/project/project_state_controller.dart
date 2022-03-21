@@ -6,6 +6,7 @@ import 'package:potato/arb/arb_definition.dart';
 import 'package:potato/file_handling/file_service.dart';
 import 'package:potato/language/language.dart';
 import 'package:potato/potato_logger.dart';
+import 'package:potato/project/project_file_controller.dart';
 import 'package:potato/project/project_state.dart';
 
 final Provider<Map<String, ArbDefinition>> arbDefinitionProvider =
@@ -20,13 +21,19 @@ final Provider<List<String>> languageListProvider = Provider<List<String>>((Prov
 final StateNotifierProvider<ProjectStateController, ProjectState> projectStateProvider =
     StateNotifierProvider<ProjectStateController, ProjectState>(
         (StateNotifierProviderRef<ProjectStateController, ProjectState> ref) {
-  return ProjectStateController(ref.watch(fileServiceProvider), ref.watch(loggerProvider));
+  return ProjectStateController(
+    ref.watch(fileServiceProvider),
+    ref.watch(projectFileProvider.notifier),
+    ref.watch(loggerProvider),
+  );
 });
 
 class ProjectStateController extends StateNotifier<ProjectState> {
-  ProjectStateController(this._fileService, this._logger, [ProjectState? init]) : super(init ?? ProjectState());
+  ProjectStateController(this._fileService, this._projectFileController, this._logger, [ProjectState? init])
+      : super(init ?? ProjectState());
 
   final FileService _fileService;
+  final ProjectFileController _projectFileController;
   final Logger _logger;
 
   void setProjectState(ProjectState project) {
@@ -36,9 +43,10 @@ class ProjectStateController extends StateNotifier<ProjectState> {
   void addLanguage(String langKey) {
     _logger.d('Adding language: $langKey');
 
-    // TODO define base language on project create
     if (state.languages.isEmpty) {
-      return;
+      // mark first language as base language
+
+      _projectFileController.setBaseLanguage(langKey);
     }
 
     final Map<String, String> newLanguage = {};
@@ -56,6 +64,11 @@ class ProjectStateController extends StateNotifier<ProjectState> {
     final Map<String, Language> previousLanguages = {...state.languages};
     previousLanguages.remove(langToRemove);
     state = state.copyWith(languages: previousLanguages);
+
+    if (langToRemove == _projectFileController.state.baseLanguage) {
+      // invalidate base language
+      _projectFileController.setBaseLanguage(null);
+    }
   }
 
   void addTranslation({required String key, String? translation}) {
