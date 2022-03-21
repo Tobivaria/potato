@@ -28,71 +28,75 @@ class _TranslationViewState extends ConsumerState<TranslationView> {
 
     final String? baseLang = ref.watch(projectFileProvider).baseLanguage;
 
-    return Padding(
-      padding: const EdgeInsets.fromLTRB(12.0, 8.0, 8.0, 0.0), // TODO move to styling const
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Row(
-            children: [
-              const LanguageTitle('Id', Dimensions.idCellWidth),
-              for (String langKey in translations)
-                LanguageTitle(
-                  langKey,
-                  Dimensions.languageCellWidth,
-                  isBaseLanguage: langKey == baseLang,
-                )
-            ], // TODO put this into a provider
-          ),
-          const SizedBox(
-            height: 4,
-          ),
-          // Expanded(
-          // child: SingleChildScrollView(
-          // shrinkWrap: true,
-          // children: [
-          // child: Container(
-          // height: 36 * translationCount.toDouble() * 2, // TODO entries of translations
-          // child: Scrollbar(
-          // controller: _controller,
-          // child:
-          Expanded(
-            child: ListView.separated(
-              controller: _controller,
-              shrinkWrap: true,
-              itemCount: arbDefs.length,
-              itemBuilder: (context, index) {
-                final String key = projectState.arbDefinitions.keys.elementAt(index);
-                return Padding(
-                  padding: const EdgeInsets.symmetric(vertical: 8.0),
-                  child: Row(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      ArbEntry(
-                        definition: arbDefs[key]!,
-                        translationKey: key,
-                      ),
-                      for (var i in tmp.keys)
-                        TranslationEntry(
-                          translation: tmp[i]?.getTranslation(key),
-                          translationKey: key,
+    return projectState.languages.isEmpty
+        ? const Center(
+            child: Text('Start by adding a language'),
+          )
+        : Padding(
+            padding: const EdgeInsets.fromLTRB(12.0, 8.0, 8.0, 0.0), // TODO move to styling const
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Row(
+                  children: [
+                    const LanguageTitle('Id', Dimensions.idCellWidth),
+                    for (String langKey in translations)
+                      LanguageTitle(
+                        langKey,
+                        Dimensions.languageCellWidth,
+                        isBaseLanguage: langKey == baseLang,
+                      )
+                  ], // TODO put this into a provider
+                ),
+                const SizedBox(
+                  height: 4,
+                ),
+                // Expanded(
+                // child: SingleChildScrollView(
+                // shrinkWrap: true,
+                // children: [
+                // child: Container(
+                // height: 36 * translationCount.toDouble() * 2, // TODO entries of translations
+                // child: Scrollbar(
+                // controller: _controller,
+                // child:
+                Expanded(
+                  child: ListView.separated(
+                    controller: _controller,
+                    shrinkWrap: true,
+                    itemCount: arbDefs.length,
+                    itemBuilder: (context, index) {
+                      final String key = projectState.arbDefinitions.keys.elementAt(index);
+                      return Padding(
+                        padding: const EdgeInsets.symmetric(vertical: 8.0),
+                        child: Row(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            ArbEntry(
+                              definition: arbDefs[key]!,
+                              translationKey: key,
+                            ),
+                            for (var i in tmp.keys)
+                              TranslationEntry(
+                                translation: tmp[i]?.getTranslation(key),
+                                translationKey: key,
+                              ),
+                            //TranslationEntry() // tmp[project.baseLanaguage]!.translations[key]!
+                          ],
                         ),
-                      //TranslationEntry() // tmp[project.baseLanaguage]!.translations[key]!
-                    ],
+                      );
+                    },
+                    separatorBuilder: (context, index) {
+                      return const Divider();
+                    },
                   ),
-                );
-              },
-              separatorBuilder: (context, index) {
-                return const Divider();
-              },
+                ),
+                //       ),
+                //     ),
+                //   ),
+                // ),
+              ],
             ),
-          ),
-          //       ),
-          //     ),
-          //   ),
-          // ),
-        ],
-      ),
-    );
+          );
   }
 }

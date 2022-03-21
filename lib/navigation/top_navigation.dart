@@ -15,7 +15,9 @@ class TopNavigation extends ConsumerWidget {
     final navState = ref.watch(navigationProvider);
     return Row(
       children: <Widget>[
-        const CreateProject(),
+        const CreateProject(
+          reduced: true,
+        ),
         const OpenProject(
           reduced: true,
         ),
