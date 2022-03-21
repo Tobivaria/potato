@@ -133,4 +133,10 @@ class ProjectStateController extends StateNotifier<ProjectState> {
       await _fileService.writeFile(file, data);
     }
   }
+
+  void updateKey(String oldKey, String newKey) {
+    // TODO
+    print(oldKey);
+    print(newKey);
+  }
 }

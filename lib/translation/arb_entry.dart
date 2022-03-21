@@ -1,4 +1,5 @@
 import 'package:fluent_ui/fluent_ui.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:potato/arb/arb_definition.dart';
 import 'package:potato/const/dimensions.dart';
@@ -20,6 +21,8 @@ class _ArbEntryState extends ConsumerState<ArbEntry> {
   final TextEditingController _descriptionController = TextEditingController();
   final _flyoutController = FlyoutController();
 
+  final FocusNode _translationKeyFocusNode = FocusNode();
+
   bool _showDescription = false;
 
   double _controlsOpacity = 0.0;
@@ -28,6 +31,7 @@ class _ArbEntryState extends ConsumerState<ArbEntry> {
   void initState() {
     super.initState();
     _initializeFields();
+    _translationKeyFocusNode.addListener(_updateTranslationKeyState);
   }
 
   @override
@@ -36,6 +40,16 @@ class _ArbEntryState extends ConsumerState<ArbEntry> {
     if (widget != oldWidget) {
       _initializeFields();
     }
+  }
+
+  @override
+  void dispose() {
+    _translationKeyController.dispose();
+    _descriptionController.dispose();
+    _flyoutController.dispose();
+    _translationKeyFocusNode.dispose();
+
+    super.dispose();
   }
 
   void _initializeFields() {
@@ -49,12 +63,11 @@ class _ArbEntryState extends ConsumerState<ArbEntry> {
     }
   }
 
-  @override
-  void dispose() {
-    _translationKeyController.dispose();
-    _descriptionController.dispose();
-    _flyoutController.dispose();
-    super.dispose();
+  // update the translation key, once the textfield is losing focus
+  void _updateTranslationKeyState() {
+    if (!_translationKeyFocusNode.hasFocus) {
+      ref.read(projectStateProvider.notifier).updateKey(widget.translationKey, _translationKeyController.text);
+    }
   }
 
   void _enterRegion(PointerEvent details) {
@@ -95,7 +108,12 @@ class _ArbEntryState extends ConsumerState<ArbEntry> {
                 width: Dimensions.languageCellWidth,
                 child: TextBox(
                   controller: _translationKeyController,
+                  focusNode: _translationKeyFocusNode,
+                  onEditingComplete: () => _translationKeyFocusNode.unfocus(),
                   placeholder: 'Unique key',
+                  inputFormatters: [
+                    FilteringTextInputFormatter.deny(RegExp(r'[/\s]')), // prevent whitespaces in the keys
+                  ],
                 ),
               ),
               if (_showDescription)
