@@ -5,6 +5,7 @@ import 'package:potato/navigation/navigation_view_pair.dart';
 import 'package:potato/project/create_project.dart';
 import 'package:potato/project/open_project.dart';
 import 'package:potato/project/save_project.dart';
+import 'package:potato/translation/translation_menu.dart';
 
 class TopNavigation extends ConsumerWidget {
   const TopNavigation({Key? key}) : super(key: key);
@@ -19,15 +20,7 @@ class TopNavigation extends ConsumerWidget {
           reduced: true,
         ),
         if (navState.showSaveProject) const SaveProject(),
-        if (navState.route == ViewRoute.translations)
-          Row(
-            children: const [
-              SizedBox(
-                width: 20,
-              ),
-              Text('Translations'),
-            ],
-          ),
+        if (navState.route == ViewRoute.translations) const TranslationMenu(),
       ],
     );
   }

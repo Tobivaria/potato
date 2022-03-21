@@ -6,6 +6,8 @@ import 'package:potato/file_handling/file_picker_service.dart';
 import 'package:potato/navigation/navigation_controller.dart';
 import 'package:potato/navigation/navigation_view_pair.dart';
 import 'package:potato/project/project_file_controller.dart';
+import 'package:potato/project/project_state.dart';
+import 'package:potato/project/project_state_controller.dart';
 
 /// Widget for opening / loading a previous project
 ///
@@ -26,7 +28,15 @@ class _OpenProjectState extends ConsumerState<OpenProject> {
       return;
     }
 
-    await ref.read(projectFileProvider.notifier).loadProjectFileAndTranslations(file);
+    final List<Map<String, dynamic>>? jsons =
+        await ref.read(projectFileProvider.notifier).loadProjectFileAndTranslations(file);
+
+    if (jsons == null) {
+      // TODO show error message
+      return;
+    }
+
+    ref.read(projectStateProvider.notifier).setProjectState(ProjectState.fromJsons(jsons));
     ref.read(navigationProvider.notifier).navigateTo(ViewRoute.translations);
   }
 

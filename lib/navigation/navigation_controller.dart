@@ -23,7 +23,7 @@ class NavigationController extends StateNotifier<NavigationState> {
                 showSaveProject: false,
                 showTranslations: false,
                 showTranslationButtons: false,
-                route: ViewRoute.translations,
+                route: ViewRoute.home,
               ),
         );
 

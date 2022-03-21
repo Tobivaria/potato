@@ -1,8 +1,8 @@
 import 'package:fluent_ui/fluent_ui.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:potato/const/dimensions.dart';
-import 'package:potato/language/add_language_dialog.dart';
 import 'package:potato/language/language_title.dart';
+import 'package:potato/project/project_file_controller.dart';
 import 'package:potato/project/project_state.dart';
 import 'package:potato/project/project_state_controller.dart';
 import 'package:potato/translation/arb_entry.dart';
@@ -16,10 +16,6 @@ class TranslationView extends ConsumerStatefulWidget {
 }
 
 class _TranslationViewState extends ConsumerState<TranslationView> {
-  void _addLangauge() {
-    ref.read(projectStateProvider.notifier).addLanguage('de');
-  }
-
   final _controller = ScrollController();
 
   @override
@@ -30,6 +26,8 @@ class _TranslationViewState extends ConsumerState<TranslationView> {
     final tmp = ref.watch(projectStateProvider).languages;
     final arbDefs = ref.watch(arbDefinitionProvider);
 
+    final String? baseLang = ref.watch(projectFileProvider).baseLanguage;
+
     return Padding(
       padding: const EdgeInsets.fromLTRB(12.0, 8.0, 8.0, 0.0), // TODO move to styling const
       child: Column(
@@ -37,25 +35,13 @@ class _TranslationViewState extends ConsumerState<TranslationView> {
         children: [
           Row(
             children: [
-              Button(
-                child: const Text('Add language'),
-                onPressed: () => showDialog(
-                  context: context,
-                  builder: (context) {
-                    return const AddLanguageDialog();
-                  },
-                ),
-              ),
-              Button(
-                child: const Text('Remove language'),
-                onPressed: () => ref.read(projectStateProvider.notifier).removeLanguage('de'),
-              ),
-            ],
-          ),
-          Row(
-            children: [
               const LanguageTitle('Id', Dimensions.idCellWidth),
-              for (var i in translations) LanguageTitle(i, Dimensions.languageCellWidth)
+              for (String langKey in translations)
+                LanguageTitle(
+                  langKey,
+                  Dimensions.languageCellWidth,
+                  isBaseLanguage: langKey == baseLang,
+                )
             ], // TODO put this into a provider
           ),
           const SizedBox(
@@ -105,10 +91,6 @@ class _TranslationViewState extends ConsumerState<TranslationView> {
           //     ),
           //   ),
           // ),
-          Button(
-            child: const Text('Add translation'),
-            onPressed: () => ref.read(projectStateProvider.notifier).addTranslation(key: DateTime.now().toString()),
-          )
         ],
       ),
     );
