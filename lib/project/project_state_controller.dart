@@ -71,14 +71,37 @@ class ProjectStateController extends StateNotifier<ProjectState> {
     }
   }
 
-  void addTranslation({required String key, String? translation}) {
+  /// Adds a new translation with given key
+  /// When no key is given a predefined key is used
+  void addTranslation({String? key, String? translation}) {
+    String keyToInsert = key ?? 'Todo key';
+
+    // TODO add test for that part
+    if (key == null) {
+      // as the key needs to be unique for new entries, increment count
+      final RegExp reg = RegExp(r'\d+');
+      while (state.arbDefinitions.keys.contains(keyToInsert)) {
+        final RegExpMatch? match = reg.firstMatch(keyToInsert);
+
+        if (match == null) {
+          // no number previously attached
+          keyToInsert += '1';
+          continue;
+        }
+        final String? intStr = match.group(0);
+
+        keyToInsert = 'Todo key${(int.tryParse(intStr!) ?? 0) + 1}';
+      }
+    }
+
     final Map<String, Language> modifiedLanguages = {};
 
     for (final item in state.languages.keys) {
-      modifiedLanguages[item] = Language(existingTranslations: {...state.languages[item]!.translations, key: ''});
+      modifiedLanguages[item] =
+          Language(existingTranslations: {...state.languages[item]!.translations, keyToInsert: ''});
     }
-    state = state
-        .copyWith(languages: modifiedLanguages, arbDefinitions: {...state.arbDefinitions, key: const ArbDefinition()});
+    state = state.copyWith(
+        languages: modifiedLanguages, arbDefinitions: {...state.arbDefinitions, keyToInsert: const ArbDefinition()});
   }
 
   void removeTranslation(String keyToRemove) {

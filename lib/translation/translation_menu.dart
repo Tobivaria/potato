@@ -25,7 +25,7 @@ class _TranslationMenuState extends ConsumerState<TranslationMenu> {
   }
 
   void _addTranslation() {
-    ref.read(projectStateProvider.notifier).addTranslation(key: '');
+    ref.read(projectStateProvider.notifier).addTranslation();
   }
 
   @override

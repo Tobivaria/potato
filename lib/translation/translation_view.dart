@@ -81,7 +81,6 @@ class _TranslationViewState extends ConsumerState<TranslationView> {
                                 translation: tmp[i]?.getTranslation(key),
                                 translationKey: key,
                               ),
-                            //TranslationEntry() // tmp[project.baseLanaguage]!.translations[key]!
                           ],
                         ),
                       );
