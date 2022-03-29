@@ -23,7 +23,7 @@ class _TranslationViewState extends ConsumerState<TranslationView> {
     // TODO remove unnecessry stuff here
     final ProjectState projectState = ref.watch(projectStateProvider);
     final List<String> translations = ref.watch(languageListProvider);
-    final tmp = ref.watch(projectStateProvider).languages;
+    final languageMap = ref.watch(projectStateProvider).languages;
     final arbDefs = ref.watch(arbDefinitionProvider);
 
     final String? baseLang = ref.watch(projectFileProvider).baseLanguage;
@@ -82,9 +82,10 @@ class _TranslationViewState extends ConsumerState<TranslationView> {
                               definition: arbDefs[key]!,
                               translationKey: key,
                             ),
-                            for (var i in tmp.keys)
+                            for (String languageKey in languageMap.keys)
                               TranslationEntry(
-                                translation: tmp[i]?.getTranslation(key),
+                                languageKey: languageKey,
+                                translation: languageMap[languageKey]?.getTranslation(key),
                                 translationKey: key,
                               ),
                           ],

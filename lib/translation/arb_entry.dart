@@ -47,6 +47,8 @@ class _ArbEntryState extends ConsumerState<ArbEntry> {
     _translationKeyController.dispose();
     _descriptionController.dispose();
     _flyoutController.dispose();
+
+    _translationKeyFocusNode.removeListener(_updateTranslationKeyState);
     _translationKeyFocusNode.dispose();
 
     super.dispose();

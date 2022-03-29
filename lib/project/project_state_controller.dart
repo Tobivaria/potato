@@ -134,9 +134,39 @@ class ProjectStateController extends StateNotifier<ProjectState> {
     }
   }
 
+  /// Updates the key in the arb definition and all languages
   void updateKey(String oldKey, String newKey) {
-    // TODO
-    print(oldKey);
-    print(newKey);
+    _logger.d('Updating key from "$oldKey" to "$newKey"');
+
+    final Map<String, Language> modifiedLanguages = {};
+
+    for (final languageKey in state.languages.keys) {
+      final Map<String, String> copy = Map.of(state.languages[languageKey]!.translations);
+      final String removedTranslation = copy.remove(oldKey)!;
+      copy[newKey] = removedTranslation;
+      modifiedLanguages[languageKey] = Language(existingTranslations: copy);
+    }
+
+    final Map<String, ArbDefinition> arbDefs = {...state.arbDefinitions};
+    final ArbDefinition removedDef = arbDefs.remove(oldKey)!;
+    arbDefs[newKey] = removedDef;
+
+    state = state.copyWith(languages: modifiedLanguages, arbDefinitions: arbDefs);
+  }
+
+  void updateTranslation(String langKey, String key, String translation) {
+    _logger.d('Updating translation for "$langKey" entry "$key" to "$translation"');
+
+    final Map<String, Language> modifiedLanguages = {};
+
+    for (final languageKey in state.languages.keys) {
+      final Map<String, String> copy = Map.of(state.languages[languageKey]!.translations);
+      if (languageKey == langKey) {
+        copy[key] = translation;
+      }
+      modifiedLanguages[languageKey] = Language(existingTranslations: copy);
+    }
+
+    state = state.copyWith(languages: modifiedLanguages);
   }
 }
