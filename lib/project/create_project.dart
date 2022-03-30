@@ -15,6 +15,8 @@ class _CreateProjectState extends ConsumerState<CreateProject> {
   void _createProject() {
     // TODO ask user for verification before overwriting all data
     ref.refresh(projectFileProvider);
+    ref.refresh(abosultProjectPath);
+    ref.refresh(abosultTranslationPath);
     // Due to the dependency of the project controller, project controller is also resetted. But probably shouldn't
   }
 

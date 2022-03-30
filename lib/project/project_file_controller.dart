@@ -6,6 +6,16 @@ import 'package:potato/file_handling/file_service.dart';
 import 'package:potato/potato_logger.dart';
 import 'package:potato/project/project_file.dart';
 
+/// Abosult path of the potato project file
+final StateProvider<String> abosultProjectPath = StateProvider<String>(
+  (ref) => '',
+);
+
+/// Abosult path of the translation files
+final StateProvider<String> abosultTranslationPath = StateProvider<String>(
+  (ref) => '',
+);
+
 final StateNotifierProvider<ProjectFileController, ProjectFile> projectFileProvider =
     StateNotifierProvider<ProjectFileController, ProjectFile>(
         (StateNotifierProviderRef<ProjectFileController, ProjectFile> ref) {
@@ -22,6 +32,7 @@ class ProjectFileController extends StateNotifier<ProjectFile> {
   final Logger _logger;
 
   void setPath(String path) {
+    _logger.i('Setting translation relative path: $path');
     state = state.copyWith(path: path);
   }
 
@@ -30,17 +41,12 @@ class ProjectFileController extends StateNotifier<ProjectFile> {
     state = state.copyWith(baseLanguage: languageKey);
   }
 
-  Future<void> saveProjectFile() async {
+  Future<void> saveProjectFile(String filePath) async {
     _logger.i('Saving project to file');
     _logger.d('$state');
 
-    if (state.path == null) {
-      _logger.w('Project file does not have any path yet');
-      return;
-    }
-
     final Map<String, String> data = state.toMap();
-    final File file = File(state.path!);
+    final File file = File(filePath);
     await _fileService.writeFile(file, data);
   }
 
@@ -59,8 +65,8 @@ class ProjectFileController extends StateNotifier<ProjectFile> {
     final ProjectFile project = ProjectFile.fromMap(data);
 
     // load all arb files and their content
-    if (project.path == null) {
-      _logger.w('Loading project failed ${file.path}');
+    if (project.path == null || project.path!.isEmpty) {
+      _logger.i('Skipping loading translations, as no path was provided');
       return null;
     }
 

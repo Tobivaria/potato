@@ -5,6 +5,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:potato/file_handling/file_picker_service.dart';
 import 'package:potato/navigation/navigation_controller.dart';
 import 'package:potato/navigation/navigation_view_pair.dart';
+import 'package:potato/potato_logger.dart';
 import 'package:potato/project/project_file_controller.dart';
 import 'package:potato/project/project_state.dart';
 import 'package:potato/project/project_state_controller.dart';
@@ -27,6 +28,11 @@ class _OpenProjectState extends ConsumerState<OpenProject> {
     if (file == null) {
       return;
     }
+
+    // set abosult project path, which is also used for exporting
+    final String aboslutePath = file.parent.path;
+    ref.read(abosultProjectPath.notifier).state = aboslutePath;
+    ref.read(loggerProvider).i('Setting abosulte project path: $aboslutePath');
 
     final List<Map<String, dynamic>>? jsons =
         await ref.read(projectFileProvider.notifier).loadProjectFileAndTranslations(file);

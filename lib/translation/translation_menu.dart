@@ -1,7 +1,11 @@
 import 'package:fluent_ui/fluent_ui.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:potato/file_handling/file_picker_service.dart';
+import 'package:potato/file_handling/file_service.dart';
 import 'package:potato/language/add_language_dialog.dart';
+import 'package:potato/potato_logger.dart';
 import 'package:potato/project/project_file_controller.dart';
+import 'package:potato/project/project_state.dart';
 import 'package:potato/project/project_state_controller.dart';
 
 class TranslationMenu extends ConsumerStatefulWidget {
@@ -20,8 +24,49 @@ class _TranslationMenuState extends ConsumerState<TranslationMenu> {
     super.dispose();
   }
 
-  void _exportData() {
-    ref.read(projectStateProvider.notifier).export(ref.read(projectFileProvider).path!);
+  Future<void> _importTranslations() async {
+    final String? path = await _pickLanguageDirectory();
+
+    // picking aborted
+    if (path == null) {
+      return;
+    }
+
+    final List<Map<String, dynamic>> jsons = await ref.read(fileServiceProvider).readFilesFromDirectory(path);
+
+    if (jsons.isEmpty) {
+      // TODO show error message
+      return;
+    }
+
+    ref.read(projectStateProvider.notifier).setProjectState(ProjectState.fromJsons(jsons));
+  }
+
+  Future<void> _exportData() async {
+    String? path = ref.read(abosultTranslationPath);
+
+    if (path!.isEmpty) {
+      path = await _pickLanguageDirectory();
+    }
+
+    // picking aborted
+    if (path == null) {
+      return;
+    }
+
+    ref.read(projectStateProvider.notifier).export(path);
+  }
+
+  Future<String?> _pickLanguageDirectory() async {
+    final String? path = await ref.read(filePickerProvider).pickDirectory();
+
+    if (path == null) {
+      return null;
+    }
+
+    ref.read(abosultTranslationPath.notifier).state = path;
+    ref.read(loggerProvider).i('Setting abosulte translation path: $path');
+    return path;
   }
 
   void _addTranslation() {
@@ -38,6 +83,10 @@ class _TranslationMenuState extends ConsumerState<TranslationMenu> {
           width: 20,
         ),
         const Text('Translations'),
+        Button(
+          onPressed: _importTranslations,
+          child: const Text('Import translations'),
+        ),
         Button(
           onPressed: _exportData,
           child: const Text('Export'),

@@ -22,6 +22,7 @@ class TopNavigation extends ConsumerWidget {
           reduced: true,
         ),
         if (navState.showSaveProject) const SaveProject(),
+        const SaveProject(),
         if (navState.route == ViewRoute.translations) const TranslationMenu(),
       ],
     );

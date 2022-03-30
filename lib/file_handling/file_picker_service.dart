@@ -1,10 +1,9 @@
 import 'dart:io';
 
 import 'package:file_picker/file_picker.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:logger/logger.dart';
-import 'package:riverpod/riverpod.dart';
-
-import '../potato_logger.dart';
+import 'package:potato/potato_logger.dart';
 
 final AutoDisposeProvider<FilePickerService> filePickerProvider =
     Provider.autoDispose<FilePickerService>((ProviderRef<FilePickerService> ref) {
@@ -22,7 +21,7 @@ class FilePickerService {
         .pickFiles(dialogTitle: 'Open project', type: FileType.custom, allowedExtensions: [extension]);
 
     if (result == null) {
-      _logger.i('File picker aborted');
+      _logger.v('File picker aborted');
       return null;
     }
 
@@ -33,7 +32,7 @@ class FilePickerService {
     final String? selectedDirectory = await FilePicker.platform.getDirectoryPath();
 
     if (selectedDirectory == null) {
-      _logger.i('File picker aborted');
+      _logger.v('File picker aborted');
       return null;
     }
 
@@ -49,8 +48,7 @@ class FilePickerService {
     );
 
     if (outputFilePath == null) {
-      // User canceled the picker
-      _logger.i('Save file aborted');
+      _logger.v('Save file aborted');
       return null;
     }
 
