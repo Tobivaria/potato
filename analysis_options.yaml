@@ -11,6 +11,8 @@ include: package:lint/analysis_options.yaml
 analyzer:
   exclude:
     #- '**.freezed.dart'
+  errors:
+    todo: info
 
 # You can customize the lint rules set to your own liking. A list of all rules
 # can be found at https://dart-lang.github.io/linter/lints/options/options.html
