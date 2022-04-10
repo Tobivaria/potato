@@ -87,7 +87,7 @@ class _ArbEntryState extends ConsumerState<ArbEntry> {
   }
 
   void _addEntry() {
-    _flyoutController.open = true;
+    _flyoutController.open();
     // TODO make the elements available which are not used
     // TODO add placeholder
     // TODO add description
@@ -137,14 +137,10 @@ class _ArbEntryState extends ConsumerState<ArbEntry> {
                 Flyout(
                   controller: _flyoutController,
                   verticalOffset: -80,
-                  contentWidth: 120, // TODO width
-                  content: FlyoutContent(
-                    child: SizedBox(
-                      height: 50,
-                      width: 120, // TODO width
-                      child: Column(
-                        children: const [Text('Placeholder'), Text('Description')],
-                      ),
+                  content: (context) => FlyoutContent(
+                    constraints: const BoxConstraints(maxWidth: 120),
+                    child: Column(
+                      children: const [Text('Placeholder'), Text('Description')],
                     ),
                   ),
                   child: IconButton(
