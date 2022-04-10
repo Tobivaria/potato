@@ -3,7 +3,6 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:potato/const/dimensions.dart';
 import 'package:potato/const/potato_color.dart';
 import 'package:potato/core/confirm_dialog.dart';
-import 'package:potato/project/project_file_controller.dart';
 import 'package:potato/project/project_state_controller.dart';
 
 class LanguageTitle extends ConsumerStatefulWidget {
@@ -39,7 +38,7 @@ class _LanguageTitleState extends ConsumerState<LanguageTitle> {
   }
 
   void _setBaseLanguage() {
-    ref.read(projectFileProvider.notifier).setBaseLanguage(widget.title);
+    ref.read(projectStateProvider.notifier).setBaseLanguage(widget.title);
   }
 
   @override

@@ -1,8 +1,8 @@
 import 'package:fluent_ui/fluent_ui.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:potato/const/dimensions.dart';
+import 'package:potato/language/language_data.dart';
 import 'package:potato/language/language_title.dart';
-import 'package:potato/project/project_file_controller.dart';
 import 'package:potato/project/project_state.dart';
 import 'package:potato/project/project_state_controller.dart';
 import 'package:potato/translation/arb_entry.dart';
@@ -22,13 +22,13 @@ class _TranslationViewState extends ConsumerState<TranslationView> {
   Widget build(BuildContext context) {
     // TODO remove unnecessry stuff here
     final ProjectState projectState = ref.watch(projectStateProvider);
-    final List<String> translations = ref.watch(languageListProvider);
-    final languageMap = ref.watch(projectStateProvider).languages;
-    final arbDefs = ref.watch(arbDefinitionProvider);
+    final List<String> translations = projectState.languageData.languages.keys.toList();
+    final LanguageData languageData = projectState.languageData;
+    final arbDefs = projectState.languageData.arbDefinitions;
 
-    final String? baseLang = ref.watch(projectFileProvider).baseLanguage;
+    final String? baseLang = projectState.file.baseLanguage;
 
-    return projectState.languages.isEmpty
+    return languageData.languages.isEmpty
         ? const Center(
             child: Text('Start by adding a language'),
           )
@@ -72,7 +72,7 @@ class _TranslationViewState extends ConsumerState<TranslationView> {
                     shrinkWrap: true,
                     itemCount: arbDefs.length,
                     itemBuilder: (context, index) {
-                      final String key = projectState.arbDefinitions.keys.elementAt(index);
+                      final String key = languageData.arbDefinitions.keys.elementAt(index);
                       return Padding(
                         padding: const EdgeInsets.symmetric(vertical: 8.0),
                         child: Row(
@@ -82,10 +82,10 @@ class _TranslationViewState extends ConsumerState<TranslationView> {
                               definition: arbDefs[key]!,
                               translationKey: key,
                             ),
-                            for (String languageKey in languageMap.keys)
+                            for (String languageKey in languageData.languages.keys)
                               TranslationEntry(
                                 languageKey: languageKey,
-                                translation: languageMap[languageKey]?.getTranslation(key),
+                                translation: languageData.languages[languageKey]?.getTranslation(key),
                                 translationKey: key,
                               ),
                           ],

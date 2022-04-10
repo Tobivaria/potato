@@ -2,7 +2,7 @@ import 'package:fluent_ui/fluent_ui.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:path/path.dart' as p;
 import 'package:potato/file_handling/file_picker_service.dart';
-import 'package:potato/project/project_file_controller.dart';
+import 'package:potato/project/project_state_controller.dart';
 
 class SaveProject extends ConsumerStatefulWidget {
   const SaveProject({Key? key}) : super(key: key);
@@ -17,16 +17,16 @@ class _OpenProjectState extends ConsumerState<SaveProject> {
 
     if (filePath != null) {
       // create relative path as long as it is not set
-      if (ref.read(projectFileProvider).path == null) {
+      if (ref.read(projectStateProvider).file.path == null) {
         if (ref.read(abosultProjectPath).isNotEmpty && ref.read(abosultTranslationPath).isNotEmpty) {
           final String realtiveFilePath = p.relative(
             ref.read(abosultTranslationPath),
             from: ref.read(abosultProjectPath),
           );
-          ref.read(projectFileProvider.notifier).setPath(realtiveFilePath);
+          ref.read(projectStateProvider.notifier).setPath(realtiveFilePath);
         }
       }
-      ref.read(projectFileProvider.notifier).saveProjectFile(filePath);
+      ref.read(projectStateProvider.notifier).saveProjectFile(filePath);
     }
   }
 

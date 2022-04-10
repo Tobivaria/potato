@@ -4,8 +4,6 @@ import 'package:potato/file_handling/file_picker_service.dart';
 import 'package:potato/file_handling/file_service.dart';
 import 'package:potato/language/add_language_dialog.dart';
 import 'package:potato/potato_logger.dart';
-import 'package:potato/project/project_file_controller.dart';
-import 'package:potato/project/project_state.dart';
 import 'package:potato/project/project_state_controller.dart';
 
 class TranslationMenu extends ConsumerStatefulWidget {
@@ -39,7 +37,7 @@ class _TranslationMenuState extends ConsumerState<TranslationMenu> {
       return;
     }
 
-    ref.read(projectStateProvider.notifier).setProjectState(ProjectState.fromJsons(jsons));
+    ref.read(projectStateProvider.notifier).loadfromJsons(jsons);
   }
 
   Future<void> _exportData() async {
@@ -51,6 +49,12 @@ class _TranslationMenuState extends ConsumerState<TranslationMenu> {
 
     // picking aborted
     if (path == null) {
+      return;
+    }
+
+    if (ref.read(projectStateProvider).file.baseLanguage == null ||
+        ref.read(projectStateProvider).file.baseLanguage!.isEmpty) {
+      // TODO notify user, that there is no base language set
       return;
     }
 

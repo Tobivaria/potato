@@ -1,6 +1,6 @@
 import 'package:fluent_ui/fluent_ui.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:potato/project/project_file_controller.dart';
+import 'package:potato/project/project_state_controller.dart';
 
 class CreateProject extends ConsumerStatefulWidget {
   const CreateProject({required this.reduced, Key? key}) : super(key: key);
@@ -14,10 +14,9 @@ class CreateProject extends ConsumerStatefulWidget {
 class _CreateProjectState extends ConsumerState<CreateProject> {
   void _createProject() {
     // TODO ask user for verification before overwriting all data
-    ref.refresh(projectFileProvider);
+    ref.refresh(projectStateProvider);
     ref.refresh(abosultProjectPath);
     ref.refresh(abosultTranslationPath);
-    // Due to the dependency of the project controller, project controller is also resetted. But probably shouldn't
   }
 
   @override
