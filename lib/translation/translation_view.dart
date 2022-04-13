@@ -20,7 +20,6 @@ class _TranslationViewState extends ConsumerState<TranslationView> {
 
   @override
   Widget build(BuildContext context) {
-    // TODO remove unnecessry stuff here
     final ProjectState projectState = ref.watch(projectStateProvider);
     final List<String> translations = projectState.languageData.languages.keys.toList();
     final LanguageData languageData = projectState.languageData;

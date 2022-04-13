@@ -1,10 +1,12 @@
 import 'dart:io';
 
+import 'package:fluent_ui/fluent_ui.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:logger/logger.dart';
 import 'package:potato/arb/arb_definition.dart';
 import 'package:potato/file_handling/file_service.dart';
 import 'package:potato/language/language.dart';
+import 'package:potato/notification/notification_controller.dart';
 import 'package:potato/potato_logger.dart';
 import 'package:potato/project/project_file.dart';
 import 'package:potato/project/project_state.dart';
@@ -22,17 +24,15 @@ final StateProvider<String> abosultTranslationPath = StateProvider<String>(
 final StateNotifierProvider<ProjectStateController, ProjectState> projectStateProvider =
     StateNotifierProvider<ProjectStateController, ProjectState>(
         (StateNotifierProviderRef<ProjectStateController, ProjectState> ref) {
-  return ProjectStateController(
-    ref.watch(fileServiceProvider),
-    ref.watch(loggerProvider),
-  );
+  return ProjectStateController(ref.watch(fileServiceProvider), ref.watch(loggerProvider), ref);
 });
 
 class ProjectStateController extends StateNotifier<ProjectState> {
-  ProjectStateController(this._fileService, this._logger, [ProjectState? init]) : super(init ?? ProjectState());
+  ProjectStateController(this.fileService, this.logger, this.ref, [ProjectState? init]) : super(init ?? ProjectState());
 
-  final FileService _fileService;
-  final Logger _logger;
+  final FileService fileService;
+  final Logger logger;
+  Ref ref;
 
   void loadfromJsons(List<Map<String, dynamic>> data) {
     final Map<String, ArbDefinition> arbDefinitions = {};
@@ -63,7 +63,7 @@ class ProjectStateController extends StateNotifier<ProjectState> {
     }
 
     if (baseLang == null) {
-      // TODO show error message, that there is not base langue set
+      ref.read(notificationNotifier.notifier).add('Base language missing', 'Please define one.', InfoBarSeverity.error);
     }
 
     setBaseLanguage(baseLang);
@@ -72,7 +72,7 @@ class ProjectStateController extends StateNotifier<ProjectState> {
   }
 
   void addLanguage(String langKey) {
-    _logger.d('Adding language: $langKey');
+    logger.d('Adding language: $langKey');
 
     if (state.languageData.languages.isEmpty) {
       // mark first language as base language
@@ -93,7 +93,7 @@ class ProjectStateController extends StateNotifier<ProjectState> {
 
   /// Remove an existing language from the project
   void removeLanguage(String langToRemove) {
-    _logger.d('Removing language: $langToRemove');
+    logger.d('Removing language: $langToRemove');
 
     final Map<String, Language> previousLanguages = {...state.languageData.languages};
     previousLanguages.remove(langToRemove);
@@ -143,7 +143,7 @@ class ProjectStateController extends StateNotifier<ProjectState> {
   }
 
   void removeTranslation(String keyToRemove) {
-    _logger.d('Removing translation with key: $keyToRemove');
+    logger.d('Removing translation with key: $keyToRemove');
 
     final Map<String, Language> modifiedLanguages = {};
 
@@ -170,13 +170,13 @@ class ProjectStateController extends StateNotifier<ProjectState> {
     for (final item in state.languageData.languages.keys) {
       final data = state.languageData.exportLanguage(item, keys);
       final File file = File('$pathToExportTo/app_$item.arb');
-      await _fileService.writeFile(file, data);
+      await fileService.writeFile(file, data);
     }
   }
 
   /// Updates the key in the arb definition and all languages
   void updateKey(String oldKey, String newKey) {
-    _logger.d('Updating key from "$oldKey" to "$newKey"');
+    logger.d('Updating key from "$oldKey" to "$newKey"');
 
     final Map<String, Language> modifiedLanguages = {};
 
@@ -197,7 +197,7 @@ class ProjectStateController extends StateNotifier<ProjectState> {
   }
 
   void updateTranslation(String langKey, String key, String translation) {
-    _logger.d('Updating translation for "$langKey" entry "$key" to "$translation"');
+    logger.d('Updating translation for "$langKey" entry "$key" to "$translation"');
 
     final Map<String, Language> modifiedLanguages = {};
 
@@ -216,33 +216,33 @@ class ProjectStateController extends StateNotifier<ProjectState> {
   // Methods related to project file class
   ///////////////////////////////////////////////
   void setPath(String path) {
-    _logger.i('Setting translation relative path: $path');
+    logger.i('Setting translation relative path: $path');
     state = state.copyWith(file: state.file.copyWith(path: path));
   }
 
   void setBaseLanguage(String? languageKey) {
-    _logger.i('Setting base language: $languageKey');
+    logger.i('Setting base language: $languageKey');
     state = state.copyWith(file: state.file.copyWith(baseLanguage: languageKey));
   }
 
   Future<void> saveProjectFile(String filePath) async {
-    _logger.i('Saving project to file');
-    _logger.d('$state');
+    logger.i('Saving project to file');
+    logger.d('$state');
 
     final Map<String, String> data = state.file.toMap();
     final File file = File(filePath);
-    await _fileService.writeFile(file, data);
+    await fileService.writeFile(file, data);
   }
 
-  // TODO error handling on loading, return enum
   // TODO absolut and relative pathes
   Future<List<Map<String, dynamic>>?> loadProjectFileAndTranslations(File file) async {
-    _logger.i('Loading project');
+    logger.i('Loading project');
 
-    final Map<String, dynamic>? data = await _fileService.readJsonFromFile(file);
+    final Map<String, dynamic>? data = await fileService.readJsonFromFile(file);
 
     if (data == null) {
-      _logger.w('Loading project failed ${file.path}');
+      logger.w('Loading project failed ${file.path}');
+      ref.read(notificationNotifier.notifier).add('Loading failed', 'See logs for more info', InfoBarSeverity.error);
       return null;
     }
 
@@ -250,10 +250,10 @@ class ProjectStateController extends StateNotifier<ProjectState> {
 
     // load all arb files and their content
     if (project.path == null || project.path!.isEmpty) {
-      _logger.i('Skipping loading translations, as no path was provided');
+      logger.i('Skipping loading translations, as no path was provided');
       return null;
     }
 
-    return _fileService.readFilesFromDirectory(project.path!);
+    return fileService.readFilesFromDirectory(project.path!);
   }
 }
