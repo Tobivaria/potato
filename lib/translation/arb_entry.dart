@@ -67,7 +67,7 @@ class _ArbEntryState extends ConsumerState<ArbEntry> {
 
   // update the translation key, once the textfield is losing focus
   void _updateTranslationKeyState() {
-    if (!_translationKeyFocusNode.hasFocus) {
+    if (!_translationKeyFocusNode.hasFocus && (widget.translationKey != _translationKeyController.text)) {
       ref.read(projectStateProvider.notifier).updateKey(widget.translationKey, _translationKeyController.text);
     }
   }

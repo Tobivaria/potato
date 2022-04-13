@@ -178,6 +178,15 @@ class ProjectStateController extends StateNotifier<ProjectState> {
   void updateKey(String oldKey, String newKey) {
     logger.d('Updating key from "$oldKey" to "$newKey"');
 
+    // TODO test that this conditions works
+    if (state.languageData.arbDefinitions.containsKey(newKey)) {
+      logger.w('Key already exists and cannot be renamed');
+      ref
+          .read(notificationNotifier.notifier)
+          .add('Duplicate key', '$newKey as key already exists', InfoBarSeverity.error);
+      return;
+    }
+
     final Map<String, Language> modifiedLanguages = {};
 
     for (final languageKey in state.languageData.languages.keys) {

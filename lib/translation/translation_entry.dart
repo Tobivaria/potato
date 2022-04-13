@@ -36,7 +36,7 @@ class _TranslationEntryState extends ConsumerState<TranslationEntry> {
 
   // update the translation key, once the textfield is losing focus
   void _updateTranslation() {
-    if (!_focus.hasFocus) {
+    if (!_focus.hasFocus && (widget.translation != _controller.text)) {
       ref
           .read(projectStateProvider.notifier)
           .updateTranslation(widget.languageKey, widget.translationKey, _controller.text);
