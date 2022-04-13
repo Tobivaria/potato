@@ -1,5 +1,6 @@
 import 'package:fluent_ui/fluent_ui.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:potato/arb/arb_definition.dart';
 import 'package:potato/const/dimensions.dart';
 import 'package:potato/language/language_data.dart';
 import 'package:potato/language/language_title.dart';
@@ -23,7 +24,9 @@ class _TranslationViewState extends ConsumerState<TranslationView> {
     final ProjectState projectState = ref.watch(projectStateProvider);
     final List<String> translations = projectState.languageData.languages.keys.toList();
     final LanguageData languageData = projectState.languageData;
-    final arbDefs = projectState.languageData.arbDefinitions;
+    final Map<String, ArbDefinition> arbDefs = projectState.languageData.arbDefinitions;
+
+    final List<String> orderedKeys = arbDefs.keys.toList()..sort();
 
     final String? baseLang = projectState.file.baseLanguage;
 
@@ -69,9 +72,9 @@ class _TranslationViewState extends ConsumerState<TranslationView> {
                   child: ListView.separated(
                     controller: _controller,
                     shrinkWrap: true,
-                    itemCount: arbDefs.length,
+                    itemCount: orderedKeys.length,
                     itemBuilder: (context, index) {
-                      final String key = languageData.arbDefinitions.keys.elementAt(index);
+                      final String key = orderedKeys.elementAt(index);
                       return Padding(
                         padding: const EdgeInsets.symmetric(vertical: 8.0),
                         child: Row(
@@ -86,6 +89,7 @@ class _TranslationViewState extends ConsumerState<TranslationView> {
                                 languageKey: languageKey,
                                 translation: languageData.languages[languageKey]?.getTranslation(key),
                                 translationKey: key,
+                                key: ValueKey('$languageKey-$key'),
                               ),
                           ],
                         ),
