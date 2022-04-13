@@ -15,11 +15,6 @@ class PotatoApp extends StatelessWidget {
     return ProviderScope(
       child: FluentApp(
         theme: PotatoTheme.getTheme(),
-        darkTheme: ThemeData(
-          scaffoldBackgroundColor: Colors.black,
-          accentColor: Colors.blue,
-          iconTheme: const IconThemeData(size: 24),
-        ),
         home: const NavigationManager(),
       ),
     );

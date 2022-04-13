@@ -1,8 +1,10 @@
 import 'package:fluent_ui/fluent_ui.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:potato/debug/debug_view.dart';
 import 'package:potato/navigation/navigation_controller.dart';
 import 'package:potato/navigation/navigation_view_pair.dart';
 import 'package:potato/navigation/top_navigation.dart';
+import 'package:potato/notification/notification_view.dart';
 import 'package:potato/project/start_view.dart';
 import 'package:potato/translation/translation_view.dart';
 
@@ -37,7 +39,7 @@ class _SideNavigationBarState extends ConsumerState<NavigationManager> {
         title: const Text('Settings'),
       ),
       route: ViewRoute.settings,
-      view: const TranslationView(),
+      view: const DebugView(),
     ),
   ];
 
@@ -60,7 +62,12 @@ class _SideNavigationBarState extends ConsumerState<NavigationManager> {
         items: _navigationViewPairs.getRange(0, _navigationViewPairs.length - 1).map((e) => e.navigation).toList(),
         footerItems: [_navigationViewPairs.last.navigation],
       ),
-      content: NavigationBody(index: navIndex, children: _navigationViewPairs.map((e) => e.view).toList()),
+      content: Stack(
+        children: [
+          NavigationBody(index: navIndex, children: _navigationViewPairs.map((e) => e.view).toList()),
+          const NotificationView()
+        ],
+      ),
     );
   }
 }
