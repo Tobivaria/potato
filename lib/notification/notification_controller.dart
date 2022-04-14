@@ -5,16 +5,16 @@ import 'package:potato/notification/potato_notification.dart';
 import 'package:potato/potato_logger.dart';
 
 final Provider<List<PotatoNotification>> notificationProvider = Provider<List<PotatoNotification>>((ref) {
-  return ref.watch(notificationNotifier);
+  return ref.watch(notificationController);
 });
 
-final StateNotifierProvider<NotificationNotifier, List<PotatoNotification>> notificationNotifier =
-    StateNotifierProvider<NotificationNotifier, List<PotatoNotification>>((ref) {
-  return NotificationNotifier(ref.watch(loggerProvider));
+final StateNotifierProvider<NotificationController, List<PotatoNotification>> notificationController =
+    StateNotifierProvider<NotificationController, List<PotatoNotification>>((ref) {
+  return NotificationController(ref.watch(loggerProvider));
 });
 
-class NotificationNotifier extends StateNotifier<List<PotatoNotification>> {
-  NotificationNotifier(this._logger) : super([]);
+class NotificationController extends StateNotifier<List<PotatoNotification>> {
+  NotificationController(this._logger) : super([]);
 
   final Logger _logger;
 

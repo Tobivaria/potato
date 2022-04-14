@@ -63,7 +63,9 @@ class ProjectStateController extends StateNotifier<ProjectState> {
     }
 
     if (baseLang == null) {
-      ref.read(notificationNotifier.notifier).add('Base language missing', 'Please define one.', InfoBarSeverity.error);
+      ref
+          .read(notificationController.notifier)
+          .add('Base language missing', 'Please define one.', InfoBarSeverity.error);
     }
 
     setBaseLanguage(baseLang);
@@ -178,11 +180,10 @@ class ProjectStateController extends StateNotifier<ProjectState> {
   void updateKey(String oldKey, String newKey) {
     logger.d('Updating key from "$oldKey" to "$newKey"');
 
-    // TODO test that this conditions works
     if (state.languageData.arbDefinitions.containsKey(newKey)) {
       logger.w('Key already exists and cannot be renamed');
       ref
-          .read(notificationNotifier.notifier)
+          .read(notificationController.notifier)
           .add('Duplicate key', '$newKey as key already exists', InfoBarSeverity.error);
       return;
     }
@@ -251,7 +252,7 @@ class ProjectStateController extends StateNotifier<ProjectState> {
 
     if (data == null) {
       logger.w('Loading project failed ${file.path}');
-      ref.read(notificationNotifier.notifier).add('Loading failed', 'See logs for more info', InfoBarSeverity.error);
+      ref.read(notificationController.notifier).add('Loading failed', 'See logs for more info', InfoBarSeverity.error);
       return null;
     }
 

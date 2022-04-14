@@ -25,7 +25,7 @@ class _NotificationViewState extends ConsumerState<NotificationView> {
             if (notifications[i].isVisible == true)
               NotificationPopup(
                 notification: notifications[i],
-                onDismiss: () => ref.read(notificationNotifier.notifier).hideNotification(i),
+                onDismiss: () => ref.read(notificationController.notifier).hideNotification(i),
                 key: ValueKey(i),
               )
         ],

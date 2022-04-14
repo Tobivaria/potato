@@ -34,7 +34,7 @@ class _TranslationMenuState extends ConsumerState<TranslationMenu> {
     final List<Map<String, dynamic>> jsons = await ref.read(fileServiceProvider).readFilesFromDirectory(path);
 
     if (jsons.isEmpty) {
-      ref.read(notificationNotifier.notifier).add('No data', 'No translations to import', InfoBarSeverity.warning);
+      ref.read(notificationController.notifier).add('No data', 'No translations to import', InfoBarSeverity.warning);
       return;
     }
 
@@ -56,7 +56,7 @@ class _TranslationMenuState extends ConsumerState<TranslationMenu> {
     if (ref.read(projectStateProvider).file.baseLanguage == null ||
         ref.read(projectStateProvider).file.baseLanguage!.isEmpty) {
       ref
-          .read(notificationNotifier.notifier)
+          .read(notificationController.notifier)
           .add('Export aborted', 'Please set a base language first', InfoBarSeverity.error);
       return;
     }

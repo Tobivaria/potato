@@ -17,11 +17,11 @@ class _DebugViewState extends ConsumerState<DebugView> {
         children: [
           Button(
             onPressed: () =>
-                ref.read(notificationNotifier.notifier).add('Some title', 'some msg', InfoBarSeverity.info),
+                ref.read(notificationController.notifier).add('Some title', 'some msg', InfoBarSeverity.info),
             child: const Text('Show'),
           ),
           Button(
-            onPressed: () => ref.read(notificationNotifier.notifier).hideNotification(0),
+            onPressed: () => ref.read(notificationController.notifier).hideNotification(0),
             child: const Text('Hide'),
           ),
         ],

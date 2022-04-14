@@ -1,3 +1,4 @@
+import 'package:fluent_ui/fluent_ui.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:logger/logger.dart';
@@ -6,6 +7,7 @@ import 'package:potato/arb/arb_definition.dart';
 import 'package:potato/file_handling/file_service.dart';
 import 'package:potato/language/language.dart';
 import 'package:potato/language/language_data.dart';
+import 'package:potato/notification/notification_controller.dart';
 import 'package:potato/potato_logger.dart';
 import 'package:potato/project/project_file.dart';
 import 'package:potato/project/project_state.dart';
@@ -17,20 +19,24 @@ import '../mocks.dart';
 void main() {
   late ProviderContainer container;
   late FileService mockFileService;
+  late NotificationController mockNotificationController;
   late Logger mockLogger;
 
   setUpAll(() {
     registerFallbackValue(FakeFile());
+    registerFallbackValue(InfoBarSeverity.info);
   });
 
   setUp(() {
     mockLogger = MockLogger();
     mockFileService = MockFileService();
+    mockNotificationController = MockNotificationController();
 
     container = ProviderContainer(
       overrides: [
         fileServiceProvider.overrideWithValue(mockFileService),
         loggerProvider.overrideWithValue(mockLogger),
+        notificationController.overrideWithValue(mockNotificationController)
       ],
     );
   });
@@ -187,6 +193,64 @@ void main() {
     expect(projectState.languageData.languages['en']!.translations.length, 0);
     expect(projectState.languageData.languages['de']!.translations.length, 0);
     expect(projectState.languageData.arbDefinitions.length, 0);
+  });
+
+  test('Expect key to update all corresponding keys in arb definition and languages', () {
+    when(() => mockNotificationController.add(any(), any(), any())).thenAnswer((_) async {});
+
+    final List<Map<String, dynamic>> input = [
+      {
+        '@@locale': 'en',
+        'greeting': 'hello',
+        '@greeting': {'description': 'Say hello'},
+      },
+      {'@@locale': 'de', 'greeting': 'hallo'}
+    ];
+
+    final LanguageData expected = LanguageData(
+      existingArdbDefinitions: const {
+        'bye': ArbDefinition(description: 'Say hello'),
+      },
+      existingLanguages: {
+        'en': Language(existingTranslations: {'bye': 'hello'}),
+        'de': Language(existingTranslations: {'bye': 'hallo'}),
+      },
+    );
+
+    container.read(projectStateProvider.notifier).loadfromJsons(input);
+
+    // when the key does not exists, trigger a user notification and state does not change
+    final ProjectState prev = container.read(projectStateProvider);
+    container.read(projectStateProvider.notifier).updateKey('greeting', 'bye');
+    final ProjectState after = container.read(projectStateProvider);
+
+    verifyNever(() => mockNotificationController.add(any(), any(), any()));
+    expect(after.languageData, expected);
+  });
+
+  test('Expect key to not update any, when key already exists / duplicates another', () {
+    when(() => mockNotificationController.add(any(), any(), any())).thenAnswer((_) async {});
+
+    final List<Map<String, dynamic>> input = [
+      {
+        '@@locale': 'en',
+        'greeting': 'Blue',
+        '@greeting': {'description': 'Say hello'},
+        'theme': 'Blue',
+        '@theme': {'description': 'Say hello'},
+      },
+      {'@@locale': 'de', 'greeting': 'hallo', 'theme': 'blau'}
+    ];
+
+    container.read(projectStateProvider.notifier).loadfromJsons(input);
+
+    // when the key does not exists, trigger a user notification and state does not change
+    final ProjectState prev = container.read(projectStateProvider);
+    container.read(projectStateProvider.notifier).updateKey('greeting', 'theme');
+    final ProjectState after = container.read(projectStateProvider);
+
+    verify(() => mockNotificationController.add(any(), any(), any())).called(1);
+    expect(prev, after);
   });
 
   test('Export every language and its translations to a separate file', () async {
