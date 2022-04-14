@@ -219,13 +219,11 @@ void main() {
 
     container.read(projectStateProvider.notifier).loadfromJsons(input);
 
-    // when the key does not exists, trigger a user notification and state does not change
-    final ProjectState prev = container.read(projectStateProvider);
     container.read(projectStateProvider.notifier).updateKey('greeting', 'bye');
-    final ProjectState after = container.read(projectStateProvider);
+    final ProjectState actual = container.read(projectStateProvider);
 
     verifyNever(() => mockNotificationController.add(any(), any(), any()));
-    expect(after.languageData, expected);
+    expect(actual.languageData, expected);
   });
 
   test('Expect key to not update any, when key already exists / duplicates another', () {
@@ -251,6 +249,34 @@ void main() {
 
     verify(() => mockNotificationController.add(any(), any(), any())).called(1);
     expect(prev, after);
+  });
+
+  test('Expect a translation to update for the correct language', () {
+    final List<Map<String, dynamic>> input = [
+      {
+        '@@locale': 'en',
+        'greeting': 'hello',
+        '@greeting': {'description': 'Say hello'},
+      },
+      {'@@locale': 'de', 'greeting': 'hallo'}
+    ];
+
+    final LanguageData expected = LanguageData(
+      existingArdbDefinitions: const {
+        'greeting': ArbDefinition(description: 'Say hello'),
+      },
+      existingLanguages: {
+        'en': Language(existingTranslations: {'greeting': 'hello'}),
+        'de': Language(existingTranslations: {'greeting': 'Servus'}),
+      },
+    );
+
+    container.read(projectStateProvider.notifier).loadfromJsons(input);
+
+    container.read(projectStateProvider.notifier).updateTranslation('de', 'greeting', 'Servus');
+    final ProjectState actual = container.read(projectStateProvider);
+
+    expect(actual.languageData, expected);
   });
 
   test('Export every language and its translations to a separate file', () async {
