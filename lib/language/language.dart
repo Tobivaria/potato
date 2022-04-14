@@ -13,7 +13,6 @@ class Language {
     );
   }
 
-  // TODO translation not available?
   String getTranslation(String key) {
     return translations[key]!;
   }

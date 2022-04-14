@@ -5,6 +5,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:potato/file_handling/file_picker_service.dart';
 import 'package:potato/navigation/navigation_controller.dart';
 import 'package:potato/navigation/navigation_view_pair.dart';
+import 'package:potato/notification/notification_controller.dart';
 import 'package:potato/potato_logger.dart';
 import 'package:potato/project/project_state_controller.dart';
 
@@ -36,7 +37,7 @@ class _OpenProjectState extends ConsumerState<OpenProject> {
         await ref.read(projectStateProvider.notifier).loadProjectFileAndTranslations(file);
 
     if (jsons == null) {
-      // TODO show error message
+      ref.read(notificationController.notifier).add('No data', 'No translations to import', InfoBarSeverity.warning);
       return;
     }
 

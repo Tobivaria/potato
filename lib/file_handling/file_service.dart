@@ -43,7 +43,6 @@ class FileService {
     return data;
   }
 
-// TODO error handling: idea, create an error/ info service, which is directly feeded from here
   Future<void> writeFile(File file, Map<String, dynamic> data) async {
     final String pretty = _prettyEncoder.convert(data);
     await file.writeAsString(pretty);
