@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:potato/file_handling/file_picker_service.dart';
 import 'package:potato/file_handling/file_service.dart';
 import 'package:potato/language/add_language_dialog.dart';
+import 'package:potato/notification/notification_controller.dart';
 import 'package:potato/potato_logger.dart';
 import 'package:potato/project/project_state_controller.dart';
 
@@ -33,7 +34,7 @@ class _TranslationMenuState extends ConsumerState<TranslationMenu> {
     final List<Map<String, dynamic>> jsons = await ref.read(fileServiceProvider).readFilesFromDirectory(path);
 
     if (jsons.isEmpty) {
-      // TODO show error message
+      ref.read(notificationNotifier.notifier).add('No data', 'No translations to import', InfoBarSeverity.warning);
       return;
     }
 
@@ -54,7 +55,9 @@ class _TranslationMenuState extends ConsumerState<TranslationMenu> {
 
     if (ref.read(projectStateProvider).file.baseLanguage == null ||
         ref.read(projectStateProvider).file.baseLanguage!.isEmpty) {
-      // TODO notify user, that there is no base language set
+      ref
+          .read(notificationNotifier.notifier)
+          .add('Export aborted', 'Please set a base language first', InfoBarSeverity.error);
       return;
     }
 
