@@ -63,7 +63,7 @@ void main() {
         'decimalDigits': 2,
         'name': 'Solo',
         'symbol': '€',
-        'pattern': '#0.00'
+        'customPattern': '#0.00'
       };
       const ArbNumberOptionsFull options = ArbNumberOptionsFull(
         pattern: '#0.00',

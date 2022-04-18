@@ -7,9 +7,9 @@ import 'package:potato/arb/arb_definition.dart';
 import 'package:potato/file_handling/file_service.dart';
 import 'package:potato/language/language.dart';
 import 'package:potato/notification/notification_controller.dart';
-import 'package:potato/utils/potato_logger.dart';
 import 'package:potato/project/project_file.dart';
 import 'package:potato/project/project_state.dart';
+import 'package:potato/utils/potato_logger.dart';
 
 /// Abosult path of the potato project file
 final StateProvider<String> abosultProjectPath = StateProvider<String>(
@@ -26,7 +26,10 @@ final StateNotifierProvider<ProjectStateController, ProjectState>
     StateNotifierProvider<ProjectStateController, ProjectState>(
         (StateNotifierProviderRef<ProjectStateController, ProjectState> ref) {
   return ProjectStateController(
-      ref.watch(fileServiceProvider), ref.watch(loggerProvider), ref);
+    ref.watch(fileServiceProvider),
+    ref.watch(loggerProvider),
+    ref,
+  );
 });
 
 class ProjectStateController extends StateNotifier<ProjectState> {
@@ -69,13 +72,17 @@ class ProjectStateController extends StateNotifier<ProjectState> {
 
     if (baseLang == null) {
       ref.read(notificationController.notifier).add(
-          'Base language missing', 'Please define one.', InfoBarSeverity.error);
+            'Base language missing',
+            'Please define one.',
+            InfoBarSeverity.error,
+          );
     }
 
     setBaseLanguage(baseLang);
     state = state.copyWith(
-        languageData: state.languageData
-            .copyWith(arbDefinitions: arbDefinitions, languages: languages));
+      languageData: state.languageData
+          .copyWith(arbDefinitions: arbDefinitions, languages: languages),
+    );
   }
 
   void addLanguage(String langKey) {
@@ -112,8 +119,8 @@ class ProjectStateController extends StateNotifier<ProjectState> {
     };
     previousLanguages.remove(langToRemove);
     state = state.copyWith(
-        languageData:
-            state.languageData.copyWith(languages: previousLanguages));
+      languageData: state.languageData.copyWith(languages: previousLanguages),
+    );
 
     if (langToRemove == state.file.baseLanguage) {
       // invalidate base language
@@ -124,7 +131,8 @@ class ProjectStateController extends StateNotifier<ProjectState> {
   /// Adds a new translation with given key
   /// When no key is given a predefined key is used
   void addTranslation({String? key, String? translation}) {
-    String keyToInsert = key ?? 'Todo key';
+    const String emptyKey = '@Add key';
+    String keyToInsert = key ?? emptyKey;
 
     // TODO add test for that part
     if (key == null) {
@@ -140,17 +148,19 @@ class ProjectStateController extends StateNotifier<ProjectState> {
         }
         final String? intStr = match.group(0);
 
-        keyToInsert = 'Todo key${(int.tryParse(intStr!) ?? 0) + 1}';
+        keyToInsert = '$emptyKey ${(int.tryParse(intStr!) ?? 0) + 1}';
       }
     }
 
     final Map<String, Language> modifiedLanguages = {};
 
     for (final item in state.languageData.languages.keys) {
-      modifiedLanguages[item] = Language(existingTranslations: {
-        ...state.languageData.languages[item]!.translations,
-        keyToInsert: ''
-      });
+      modifiedLanguages[item] = Language(
+        existingTranslations: {
+          ...state.languageData.languages[item]!.translations,
+          keyToInsert: ''
+        },
+      );
     }
     state = state.copyWith(
       languageData: state.languageData.copyWith(
@@ -205,8 +215,11 @@ class ProjectStateController extends StateNotifier<ProjectState> {
 
     if (state.languageData.arbDefinitions.containsKey(newKey)) {
       logger.w('Key already exists and cannot be renamed');
-      ref.read(notificationController.notifier).add('Duplicate key',
-          '$newKey as key already exists', InfoBarSeverity.error);
+      ref.read(notificationController.notifier).add(
+            'Duplicate key',
+            '$newKey as key already exists',
+            InfoBarSeverity.error,
+          );
       return;
     }
 
@@ -234,7 +247,8 @@ class ProjectStateController extends StateNotifier<ProjectState> {
 
   void updateTranslation(String langKey, String key, String translation) {
     logger.d(
-        'Updating translation for "$langKey" entry "$key" to "$translation"');
+      'Updating translation for "$langKey" entry "$key" to "$translation"',
+    );
 
     final Map<String, Language> modifiedLanguages = {};
 
@@ -248,8 +262,8 @@ class ProjectStateController extends StateNotifier<ProjectState> {
     }
 
     state = state.copyWith(
-        languageData:
-            state.languageData.copyWith(languages: modifiedLanguages));
+      languageData: state.languageData.copyWith(languages: modifiedLanguages),
+    );
   }
 
   ///////////////////////////////////////////////
@@ -285,7 +299,10 @@ class ProjectStateController extends StateNotifier<ProjectState> {
     if (data == null) {
       logger.w('Loading project failed ${file.path}');
       ref.read(notificationController.notifier).add(
-          'Loading failed', 'See logs for more info', InfoBarSeverity.error);
+            'Loading failed',
+            'See logs for more info',
+            InfoBarSeverity.error,
+          );
       return null;
     }
 
