@@ -89,6 +89,7 @@ class _TranslationViewState extends ConsumerState<TranslationView> {
                                 languageKey: languageKey,
                                 translation: languageData.languages[languageKey]?.getTranslation(key),
                                 translationKey: key,
+                                definition: arbDefs[key]!,
                                 key: ValueKey('$languageKey-$key'),
                               ),
                           ],

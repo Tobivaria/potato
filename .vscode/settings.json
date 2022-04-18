@@ -1,6 +1,5 @@
 {
     "dart.sdkPath": "C:\\Programming\\SDKs\\flutter\\bin\\cache\\dart-sdk\\bin",
-    "dart.lineLength": 120,
     "[dart]": {
     "editor.rulers": [
         120

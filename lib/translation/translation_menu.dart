@@ -4,8 +4,8 @@ import 'package:potato/file_handling/file_picker_service.dart';
 import 'package:potato/file_handling/file_service.dart';
 import 'package:potato/language/add_language_dialog.dart';
 import 'package:potato/notification/notification_controller.dart';
-import 'package:potato/utils/potato_logger.dart';
 import 'package:potato/project/project_state_controller.dart';
+import 'package:potato/utils/potato_logger.dart';
 
 class TranslationMenu extends ConsumerStatefulWidget {
   const TranslationMenu({Key? key}) : super(key: key);
@@ -31,10 +31,13 @@ class _TranslationMenuState extends ConsumerState<TranslationMenu> {
       return;
     }
 
-    final List<Map<String, dynamic>> jsons = await ref.read(fileServiceProvider).readFilesFromDirectory(path);
+    final List<Map<String, dynamic>> jsons =
+        await ref.read(fileServiceProvider).readFilesFromDirectory(path);
 
     if (jsons.isEmpty) {
-      ref.read(notificationController.notifier).add('No data', 'No translations to import', InfoBarSeverity.warning);
+      ref
+          .read(notificationController.notifier)
+          .add('No data', 'No translations to import', InfoBarSeverity.warning);
       return;
     }
 
@@ -55,9 +58,8 @@ class _TranslationMenuState extends ConsumerState<TranslationMenu> {
 
     if (ref.read(projectStateProvider).file.baseLanguage == null ||
         ref.read(projectStateProvider).file.baseLanguage!.isEmpty) {
-      ref
-          .read(notificationController.notifier)
-          .add('Export aborted', 'Please set a base language first', InfoBarSeverity.error);
+      ref.read(notificationController.notifier).add('Export aborted',
+          'Please set a base language first', InfoBarSeverity.error);
       return;
     }
 
