@@ -2,7 +2,7 @@ import 'package:fluent_ui/fluent_ui.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:logger/logger.dart';
 import 'package:potato/notification/potato_notification.dart';
-import 'package:potato/potato_logger.dart';
+import 'package:potato/utils/potato_logger.dart';
 
 final Provider<List<PotatoNotification>> notificationProvider = Provider<List<PotatoNotification>>((ref) {
   return ref.watch(notificationController);

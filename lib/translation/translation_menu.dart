@@ -4,7 +4,7 @@ import 'package:potato/file_handling/file_picker_service.dart';
 import 'package:potato/file_handling/file_service.dart';
 import 'package:potato/language/add_language_dialog.dart';
 import 'package:potato/notification/notification_controller.dart';
-import 'package:potato/potato_logger.dart';
+import 'package:potato/utils/potato_logger.dart';
 import 'package:potato/project/project_state_controller.dart';
 
 class TranslationMenu extends ConsumerStatefulWidget {

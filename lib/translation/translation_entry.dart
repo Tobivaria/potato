@@ -17,6 +17,7 @@ class TranslationEntry extends ConsumerStatefulWidget {
 class _TranslationEntryState extends ConsumerState<TranslationEntry> {
   final TextEditingController _controller = TextEditingController();
   final FocusNode _focus = FocusNode();
+  bool _isValid = true;
 
   @override
   void initState() {

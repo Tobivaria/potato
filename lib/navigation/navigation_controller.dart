@@ -2,7 +2,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:logger/logger.dart';
 import 'package:potato/navigation/navigation_state.dart';
 import 'package:potato/navigation/navigation_view_pair.dart';
-import 'package:potato/potato_logger.dart';
+import 'package:potato/utils/potato_logger.dart';
 
 final Provider routeProvider = Provider<ViewRoute>((ref) {
   return ref.watch(navigationProvider).route;

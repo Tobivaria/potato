@@ -6,7 +6,7 @@ import 'package:potato/file_handling/file_picker_service.dart';
 import 'package:potato/navigation/navigation_controller.dart';
 import 'package:potato/navigation/navigation_view_pair.dart';
 import 'package:potato/notification/notification_controller.dart';
-import 'package:potato/potato_logger.dart';
+import 'package:potato/utils/potato_logger.dart';
 import 'package:potato/project/project_state_controller.dart';
 
 /// Widget for opening / loading a previous project

@@ -3,7 +3,7 @@ import 'dart:io';
 
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:logger/logger.dart';
-import 'package:potato/potato_logger.dart';
+import 'package:potato/utils/potato_logger.dart';
 
 final Provider<FileService> fileServiceProvider = Provider<FileService>((ProviderRef<FileService> ref) {
   return FileService(ref.watch(loggerProvider));

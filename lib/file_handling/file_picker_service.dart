@@ -3,7 +3,7 @@ import 'dart:io';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:logger/logger.dart';
-import 'package:potato/potato_logger.dart';
+import 'package:potato/utils/potato_logger.dart';
 
 final AutoDisposeProvider<FilePickerService> filePickerProvider =
     Provider.autoDispose<FilePickerService>((ProviderRef<FilePickerService> ref) {

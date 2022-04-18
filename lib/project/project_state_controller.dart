@@ -7,7 +7,7 @@ import 'package:potato/arb/arb_definition.dart';
 import 'package:potato/file_handling/file_service.dart';
 import 'package:potato/language/language.dart';
 import 'package:potato/notification/notification_controller.dart';
-import 'package:potato/potato_logger.dart';
+import 'package:potato/utils/potato_logger.dart';
 import 'package:potato/project/project_file.dart';
 import 'package:potato/project/project_state.dart';
 
