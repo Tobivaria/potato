@@ -21,14 +21,18 @@ final StateProvider<String> abosultTranslationPath = StateProvider<String>(
   (ref) => '',
 );
 
-final StateNotifierProvider<ProjectStateController, ProjectState> projectStateProvider =
+final StateNotifierProvider<ProjectStateController, ProjectState>
+    projectStateProvider =
     StateNotifierProvider<ProjectStateController, ProjectState>(
         (StateNotifierProviderRef<ProjectStateController, ProjectState> ref) {
-  return ProjectStateController(ref.watch(fileServiceProvider), ref.watch(loggerProvider), ref);
+  return ProjectStateController(
+      ref.watch(fileServiceProvider), ref.watch(loggerProvider), ref);
 });
 
 class ProjectStateController extends StateNotifier<ProjectState> {
-  ProjectStateController(this.fileService, this.logger, this.ref, [ProjectState? init]) : super(init ?? ProjectState());
+  ProjectStateController(this.fileService, this.logger, this.ref,
+      [ProjectState? init])
+      : super(init ?? ProjectState());
 
   final FileService fileService;
   final Logger logger;
@@ -52,7 +56,8 @@ class ProjectStateController extends StateNotifier<ProjectState> {
         if (key == '@@locale') {
           locale = item as String;
         } else if (key.startsWith('@')) {
-          arbDefinitions[key.substring(1)] = ArbDefinition.fromMap(item as Map<String, dynamic>);
+          arbDefinitions[key.substring(1)] =
+              ArbDefinition.fromMap(item as Map<String, dynamic>);
           baseLang ??= locale;
         } else {
           translations[key] = item as String;
@@ -63,14 +68,14 @@ class ProjectStateController extends StateNotifier<ProjectState> {
     }
 
     if (baseLang == null) {
-      ref
-          .read(notificationController.notifier)
-          .add('Base language missing', 'Please define one.', InfoBarSeverity.error);
+      ref.read(notificationController.notifier).add(
+          'Base language missing', 'Please define one.', InfoBarSeverity.error);
     }
 
     setBaseLanguage(baseLang);
-    state =
-        state.copyWith(languageData: state.languageData.copyWith(arbDefinitions: arbDefinitions, languages: languages));
+    state = state.copyWith(
+        languageData: state.languageData
+            .copyWith(arbDefinitions: arbDefinitions, languages: languages));
   }
 
   void addLanguage(String langKey) {
@@ -79,6 +84,8 @@ class ProjectStateController extends StateNotifier<ProjectState> {
     if (state.languageData.languages.isEmpty) {
       // mark first language as base language
       setBaseLanguage(langKey);
+      // add an empty translation
+      addTranslation();
     }
 
     final Map<String, String> newLanguage = {};
@@ -88,7 +95,10 @@ class ProjectStateController extends StateNotifier<ProjectState> {
 
     state = state.copyWith(
       languageData: state.languageData.copyWith(
-        languages: {...state.languageData.languages, langKey: Language(existingTranslations: newLanguage)},
+        languages: {
+          ...state.languageData.languages,
+          langKey: Language(existingTranslations: newLanguage)
+        },
       ),
     );
   }
@@ -97,9 +107,13 @@ class ProjectStateController extends StateNotifier<ProjectState> {
   void removeLanguage(String langToRemove) {
     logger.d('Removing language: $langToRemove');
 
-    final Map<String, Language> previousLanguages = {...state.languageData.languages};
+    final Map<String, Language> previousLanguages = {
+      ...state.languageData.languages
+    };
     previousLanguages.remove(langToRemove);
-    state = state.copyWith(languageData: state.languageData.copyWith(languages: previousLanguages));
+    state = state.copyWith(
+        languageData:
+            state.languageData.copyWith(languages: previousLanguages));
 
     if (langToRemove == state.file.baseLanguage) {
       // invalidate base language
@@ -133,13 +147,18 @@ class ProjectStateController extends StateNotifier<ProjectState> {
     final Map<String, Language> modifiedLanguages = {};
 
     for (final item in state.languageData.languages.keys) {
-      modifiedLanguages[item] =
-          Language(existingTranslations: {...state.languageData.languages[item]!.translations, keyToInsert: ''});
+      modifiedLanguages[item] = Language(existingTranslations: {
+        ...state.languageData.languages[item]!.translations,
+        keyToInsert: ''
+      });
     }
     state = state.copyWith(
       languageData: state.languageData.copyWith(
         languages: modifiedLanguages,
-        arbDefinitions: {...state.languageData.arbDefinitions, keyToInsert: const ArbDefinition()},
+        arbDefinitions: {
+          ...state.languageData.arbDefinitions,
+          keyToInsert: const ArbDefinition()
+        },
       ),
     );
   }
@@ -150,15 +169,19 @@ class ProjectStateController extends StateNotifier<ProjectState> {
     final Map<String, Language> modifiedLanguages = {};
 
     for (final key in state.languageData.languages.keys) {
-      final Map<String, String> copy = Map.of(state.languageData.languages[key]!.translations);
+      final Map<String, String> copy =
+          Map.of(state.languageData.languages[key]!.translations);
       copy.remove(keyToRemove);
       modifiedLanguages[key] = Language(existingTranslations: copy);
     }
 
-    final Map<String, ArbDefinition> arbDefs = {...state.languageData.arbDefinitions};
+    final Map<String, ArbDefinition> arbDefs = {
+      ...state.languageData.arbDefinitions
+    };
     arbDefs.remove(keyToRemove);
     state = state.copyWith(
-      languageData: state.languageData.copyWith(languages: modifiedLanguages, arbDefinitions: arbDefs),
+      languageData: state.languageData
+          .copyWith(languages: modifiedLanguages, arbDefinitions: arbDefs),
     );
   }
 
@@ -182,44 +205,51 @@ class ProjectStateController extends StateNotifier<ProjectState> {
 
     if (state.languageData.arbDefinitions.containsKey(newKey)) {
       logger.w('Key already exists and cannot be renamed');
-      ref
-          .read(notificationController.notifier)
-          .add('Duplicate key', '$newKey as key already exists', InfoBarSeverity.error);
+      ref.read(notificationController.notifier).add('Duplicate key',
+          '$newKey as key already exists', InfoBarSeverity.error);
       return;
     }
 
     final Map<String, Language> modifiedLanguages = {};
 
     for (final languageKey in state.languageData.languages.keys) {
-      final Map<String, String> copy = Map.of(state.languageData.languages[languageKey]!.translations);
+      final Map<String, String> copy =
+          Map.of(state.languageData.languages[languageKey]!.translations);
       final String removedTranslation = copy.remove(oldKey)!;
       copy[newKey] = removedTranslation;
       modifiedLanguages[languageKey] = Language(existingTranslations: copy);
     }
 
-    final Map<String, ArbDefinition> arbDefs = {...state.languageData.arbDefinitions};
+    final Map<String, ArbDefinition> arbDefs = {
+      ...state.languageData.arbDefinitions
+    };
     final ArbDefinition removedDef = arbDefs.remove(oldKey)!;
     arbDefs[newKey] = removedDef;
 
     state = state.copyWith(
-      languageData: state.languageData.copyWith(languages: modifiedLanguages, arbDefinitions: arbDefs),
+      languageData: state.languageData
+          .copyWith(languages: modifiedLanguages, arbDefinitions: arbDefs),
     );
   }
 
   void updateTranslation(String langKey, String key, String translation) {
-    logger.d('Updating translation for "$langKey" entry "$key" to "$translation"');
+    logger.d(
+        'Updating translation for "$langKey" entry "$key" to "$translation"');
 
     final Map<String, Language> modifiedLanguages = {};
 
     for (final languageKey in state.languageData.languages.keys) {
-      final Map<String, String> copy = Map.of(state.languageData.languages[languageKey]!.translations);
+      final Map<String, String> copy =
+          Map.of(state.languageData.languages[languageKey]!.translations);
       if (languageKey == langKey) {
         copy[key] = translation;
       }
       modifiedLanguages[languageKey] = Language(existingTranslations: copy);
     }
 
-    state = state.copyWith(languageData: state.languageData.copyWith(languages: modifiedLanguages));
+    state = state.copyWith(
+        languageData:
+            state.languageData.copyWith(languages: modifiedLanguages));
   }
 
   ///////////////////////////////////////////////
@@ -232,7 +262,8 @@ class ProjectStateController extends StateNotifier<ProjectState> {
 
   void setBaseLanguage(String? languageKey) {
     logger.i('Setting base language: $languageKey');
-    state = state.copyWith(file: state.file.copyWith(baseLanguage: languageKey));
+    state =
+        state.copyWith(file: state.file.copyWith(baseLanguage: languageKey));
   }
 
   Future<void> saveProjectFile(String filePath) async {
@@ -245,14 +276,16 @@ class ProjectStateController extends StateNotifier<ProjectState> {
   }
 
   // TODO absolut and relative pathes
-  Future<List<Map<String, dynamic>>?> loadProjectFileAndTranslations(File file) async {
+  Future<List<Map<String, dynamic>>?> loadProjectFileAndTranslations(
+      File file) async {
     logger.i('Loading project');
 
     final Map<String, dynamic>? data = await fileService.readJsonFromFile(file);
 
     if (data == null) {
       logger.w('Loading project failed ${file.path}');
-      ref.read(notificationController.notifier).add('Loading failed', 'See logs for more info', InfoBarSeverity.error);
+      ref.read(notificationController.notifier).add(
+          'Loading failed', 'See logs for more info', InfoBarSeverity.error);
       return null;
     }
 
