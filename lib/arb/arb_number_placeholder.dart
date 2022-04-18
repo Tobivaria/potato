@@ -1,5 +1,6 @@
 import 'package:fluent_ui/fluent_ui.dart';
 import 'package:potato/arb/arb_definition.dart';
+import 'package:potato/arb/arb_number_options.dart';
 
 import 'package:potato/arb/arb_placerholder.dart';
 
@@ -19,10 +20,40 @@ enum ArbNumberFormat {
 @immutable
 class ArbNumberPlaceholder extends ArbPlaceholder {
   final ArbNumberFormat format;
+  ArbNumberOptionsBase? options;
 
-  const ArbNumberPlaceholder({required String id, required ArbType type, required this.format, String? example})
-      : assert(type == ArbType.DateTime || type == ArbType.String),
-        super(id: id, type: type, example: example);
+  ArbNumberPlaceholder({
+    required String id,
+    required ArbType type,
+    required this.format,
+    String? example,
+  })  : assert(type == ArbType.DateTime || type == ArbType.String),
+        super(id: id, type: type, example: example) {
+    switch (format) {
+      case ArbNumberFormat.compactCurrency:
+        options = const ArbNumberOptionsExtended();
+        break;
+
+      case ArbNumberFormat.compactSimpleCurrency:
+        options = const ArbNumberOptionsSimple();
+        break;
+
+      case ArbNumberFormat.currency:
+        options = const ArbNumberOptionsFull();
+        break;
+
+      case ArbNumberFormat.decimalPercentPattern:
+        options = const ArbNumberOptionsBase();
+        break;
+
+      case ArbNumberFormat.simpleCurrency:
+        options = const ArbNumberOptionsSimple();
+        break;
+
+      default:
+        options = null;
+    }
+  }
 
   @override
   Map<String, dynamic> toMap() {

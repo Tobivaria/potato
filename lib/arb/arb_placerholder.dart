@@ -1,10 +1,6 @@
 import 'package:fluent_ui/fluent_ui.dart';
 import 'package:potato/arb/arb_definition.dart';
 
-// TODO "optionalParameters": {
-//         "decimalDigits": 2
-//         }
-
 @immutable
 class ArbPlaceholder {
   final String id;
@@ -41,7 +37,10 @@ class ArbPlaceholder {
   bool operator ==(Object other) {
     if (identical(this, other)) return true;
 
-    return other is ArbPlaceholder && other.id == id && other.type == type && other.example == example;
+    return other is ArbPlaceholder &&
+        other.id == id &&
+        other.type == type &&
+        other.example == example;
   }
 
   @override
