@@ -9,7 +9,7 @@ environment:
 
 dependencies:
   file_picker: ^4.5.1
-  fluent_ui: ^3.10.2
+  fluent_ui: ^3.11.0
   flutter:
     sdk: flutter
 
