@@ -101,6 +101,7 @@ class _ArbEntryState extends ConsumerState<ArbEntry> {
       onEnter: _enterRegion,
       onExit: _leaveRegion,
       child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Column(
             children: [

@@ -54,12 +54,12 @@ class _ArbDescriptionState extends ConsumerState<ArbDescription> {
         IconButton(
           icon: const Icon(
             FluentIcons.clear,
-            // size: Dimensions.clear, // TODO make smaller
+            size: Dimensions.arbSettingIconSize,
           ),
           onPressed: _removeDescription,
         ),
         SizedBox(
-          width: Dimensions.languageCellWidth,
+          width: Dimensions.languageCellWidth - Dimensions.arbOptionOffset,
           child: TextBox(
             controller: _textontroller,
             focusNode: _focusNode,
