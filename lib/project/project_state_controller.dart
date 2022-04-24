@@ -60,7 +60,7 @@ class ProjectStateController extends StateNotifier<ProjectState> {
           locale = item as String;
         } else if (key.startsWith('@')) {
           arbDefinitions[key.substring(1)] =
-              ArbDefinition.fromMap(item as Map<String, dynamic>);
+              ArbDefinition.fromMap(Map<String, dynamic>.from(item as Map));
           baseLang ??= locale;
         } else {
           translations[key] = item as String;
@@ -143,7 +143,7 @@ class ProjectStateController extends StateNotifier<ProjectState> {
 
         if (match == null) {
           // no number previously attached
-          keyToInsert += '1';
+          keyToInsert += ' 1';
           continue;
         }
         final String? intStr = match.group(0);
@@ -245,27 +245,6 @@ class ProjectStateController extends StateNotifier<ProjectState> {
     );
   }
 
-  // TODO test
-  void updateDescription(String key, String description) {
-    logger.d('Updating description of key "$key" to "$description"');
-    final Map<String, ArbDefinition> defs = {};
-
-    // add all other deinifitions except the one with the same key
-    for (final String entryKey in state.languageData.arbDefinitions.keys) {
-      if (entryKey != key) {
-        defs[entryKey] = state.languageData.arbDefinitions[entryKey]!;
-      } else {
-        defs[entryKey] = state.languageData.arbDefinitions[entryKey]!
-            .copyWith(description: description);
-      }
-    }
-
-    state = state.copyWith(
-      languageData: state.languageData.copyWith(arbDefinitions: defs),
-    );
-  }
-
-  // TODO test
   void addDescription(String key) {
     logger.d('Add description for key "$key"');
     final Map<String, ArbDefinition> defs = {};
@@ -285,7 +264,6 @@ class ProjectStateController extends StateNotifier<ProjectState> {
     );
   }
 
-  // TODO test
   void removeDescription(String key) {
     logger.d('Removing description of key "$key"');
     final Map<String, ArbDefinition> defs = {
@@ -299,6 +277,25 @@ class ProjectStateController extends StateNotifier<ProjectState> {
         defs[entryKey] = state.languageData.arbDefinitions[entryKey]!;
       }
     }
+    state = state.copyWith(
+      languageData: state.languageData.copyWith(arbDefinitions: defs),
+    );
+  }
+
+  void updateDescription(String key, String description) {
+    logger.d('Updating description of key "$key" to "$description"');
+    final Map<String, ArbDefinition> defs = {};
+
+    // add all other deinifitions except the one with the same key
+    for (final String entryKey in state.languageData.arbDefinitions.keys) {
+      if (entryKey != key) {
+        defs[entryKey] = state.languageData.arbDefinitions[entryKey]!;
+      } else {
+        defs[entryKey] = state.languageData.arbDefinitions[entryKey]!
+            .copyWith(description: description);
+      }
+    }
+
     state = state.copyWith(
       languageData: state.languageData.copyWith(arbDefinitions: defs),
     );

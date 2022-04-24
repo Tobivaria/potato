@@ -8,10 +8,10 @@ import 'package:potato/file_handling/file_service.dart';
 import 'package:potato/language/language.dart';
 import 'package:potato/language/language_data.dart';
 import 'package:potato/notification/notification_controller.dart';
-import 'package:potato/utils/potato_logger.dart';
 import 'package:potato/project/project_file.dart';
 import 'package:potato/project/project_state.dart';
 import 'package:potato/project/project_state_controller.dart';
+import 'package:potato/utils/potato_logger.dart';
 
 import '../fakes.dart';
 import '../mocks.dart';
@@ -55,21 +55,31 @@ void main() {
   });
 
   test('Save project to a file', () async {
-    when(() => mockFileService.writeFile(any(), any())).thenAnswer((_) async {});
+    when(() => mockFileService.writeFile(any(), any()))
+        .thenAnswer((_) async {});
 
-    await container.read(projectStateProvider.notifier).saveProjectFile('some/path');
+    await container
+        .read(projectStateProvider.notifier)
+        .saveProjectFile('some/path');
 
     verify(() => mockFileService.writeFile(any(), any())).called(1);
   });
 
   test('Load project file and all translations', () async {
-    when(() => mockFileService.readJsonFromFile(any()))
-        .thenAnswer((_) async => <String, dynamic>{'baseLanguage': 'en', 'path': 'expected/path', 'version': '1'});
+    when(() => mockFileService.readJsonFromFile(any())).thenAnswer(
+      (_) async => <String, dynamic>{
+        'baseLanguage': 'en',
+        'path': 'expected/path',
+        'version': '1'
+      },
+    );
 
     when(() => mockFileService.readFilesFromDirectory('expected/path'))
         .thenAnswer((_) async => <Map<String, dynamic>>[]);
 
-    await container.read(projectStateProvider.notifier).loadProjectFileAndTranslations(FakeFile());
+    await container
+        .read(projectStateProvider.notifier)
+        .loadProjectFileAndTranslations(FakeFile());
 
     verify(() => mockFileService.readJsonFromFile(any())).called(1);
     verify(() => mockFileService.readFilesFromDirectory(any())).called(1);
@@ -86,7 +96,12 @@ void main() {
         'themeGreen': 'Green',
         '@themeGreen': {'description': 'Title of the green theme'},
       },
-      {'@@locale': 'es', 'themeBlue': 'Azul', 'themeDefault': 'Por defecto', 'themeGreen': 'Verde'}
+      {
+        '@@locale': 'es',
+        'themeBlue': 'Azul',
+        'themeDefault': 'Por defecto',
+        'themeGreen': 'Verde'
+      }
     ];
 
     // expect to detect base language 'en, as it contains the arb definitions
@@ -95,13 +110,24 @@ void main() {
       languageData: LanguageData(
         existingArdbDefinitions: const {
           'themeBlue': ArbDefinition(description: 'Title of the blue theme'),
-          'themeDefault': ArbDefinition(description: 'Title of the default theme'),
+          'themeDefault':
+              ArbDefinition(description: 'Title of the default theme'),
           'themeGreen': ArbDefinition(description: 'Title of the green theme'),
         },
         existingLanguages: {
-          'en': Language(existingTranslations: {'themeBlue': 'Blue', 'themeDefault': 'Default', 'themeGreen': 'Green'}),
+          'en': Language(
+            existingTranslations: {
+              'themeBlue': 'Blue',
+              'themeDefault': 'Default',
+              'themeGreen': 'Green'
+            },
+          ),
           'es': Language(
-            existingTranslations: {'themeBlue': 'Azul', 'themeDefault': 'Por defecto', 'themeGreen': 'Verde'},
+            existingTranslations: {
+              'themeBlue': 'Azul',
+              'themeDefault': 'Por defecto',
+              'themeGreen': 'Verde'
+            },
           )
         },
       ),
@@ -113,7 +139,9 @@ void main() {
     expect(actual, expected);
   });
 
-  test('Adding a new language, creates a new language entry with the already existing translations, but empty', () {
+  test(
+      'Adding a new language, creates a new language entry with the already existing translations, but empty',
+      () {
     final List<Map<String, dynamic>> input = [
       {
         '@@locale': 'en',
@@ -129,7 +157,8 @@ void main() {
     final ProjectState projectState = container.read(projectStateProvider);
     expect(projectState.languageData.languages.length, 3);
 
-    final Map<String, String> translations = projectState.languageData.languages['es']!.translations;
+    final Map<String, String> translations =
+        projectState.languageData.languages['es']!.translations;
     expect(translations.length, 1);
     expect(translations['greeting'], '');
   });
@@ -153,7 +182,9 @@ void main() {
     expect(projectState.languageData.languages.keys, ['de']);
   });
 
-  test('Adding a translation, adds a new map entry for each language and arb definition', () {
+  test(
+      'Adding a translation, adds a new map entry for each language and arb definition',
+      () {
     final List<Map<String, dynamic>> input = [
       {
         '@@locale': 'en',
@@ -173,10 +204,15 @@ void main() {
 
     expect(projectState.languageData.languages['en']!.translations['food'], '');
     expect(projectState.languageData.languages['de']!.translations['food'], '');
-    expect(projectState.languageData.arbDefinitions['food'], const ArbDefinition());
+    expect(
+      projectState.languageData.arbDefinitions['food'],
+      const ArbDefinition(),
+    );
   });
 
-  test('Removing a translation, remove the key from translation and arb definition', () {
+  test(
+      'Removing a translation, remove the key from translation and arb definition',
+      () {
     final List<Map<String, dynamic>> input = [
       {
         '@@locale': 'en',
@@ -195,8 +231,11 @@ void main() {
     expect(projectState.languageData.arbDefinitions.length, 0);
   });
 
-  test('Expect key to update all corresponding keys in arb definition and languages', () {
-    when(() => mockNotificationController.add(any(), any(), any())).thenAnswer((_) async {});
+  test(
+      'Expect key to update all corresponding keys in arb definition and languages',
+      () {
+    when(() => mockNotificationController.add(any(), any(), any()))
+        .thenAnswer((_) async {});
 
     final List<Map<String, dynamic>> input = [
       {
@@ -226,8 +265,11 @@ void main() {
     expect(actual.languageData, expected);
   });
 
-  test('Expect key to not update any, when key already exists / duplicates another', () {
-    when(() => mockNotificationController.add(any(), any(), any())).thenAnswer((_) async {});
+  test(
+      'Expect key to not update any, when key already exists / duplicates another',
+      () {
+    when(() => mockNotificationController.add(any(), any(), any()))
+        .thenAnswer((_) async {});
 
     final List<Map<String, dynamic>> input = [
       {
@@ -244,11 +286,78 @@ void main() {
 
     // when the key does not exists, trigger a user notification and state does not change
     final ProjectState prev = container.read(projectStateProvider);
-    container.read(projectStateProvider.notifier).updateKey('greeting', 'theme');
+    container
+        .read(projectStateProvider.notifier)
+        .updateKey('greeting', 'theme');
     final ProjectState after = container.read(projectStateProvider);
 
     verify(() => mockNotificationController.add(any(), any(), any())).called(1);
     expect(prev, after);
+  });
+
+  test('Adding a descriptions to the definition, does not affect others', () {
+    final List<Map<String, dynamic>> input = [
+      {
+        '@@locale': 'en',
+        'greeting': 'Blue',
+        '@greeting': {},
+        'theme': 'Blue',
+      },
+      {'@@locale': 'de', 'greeting': 'hallo'}
+    ];
+
+    container.read(projectStateProvider.notifier).loadfromJsons(input);
+
+    container.read(projectStateProvider.notifier).addDescription('greeting');
+    final ProjectState state = container.read(projectStateProvider);
+    final ArbDefinition actual = state.languageData.arbDefinitions['greeting']!;
+
+    expect(actual.description, '');
+    expect(actual.placeholders, isNull);
+  });
+
+  test('Removing a descriptions to the definition, does not affect others', () {
+    final List<Map<String, dynamic>> input = [
+      {
+        '@@locale': 'en',
+        'greeting': 'Blue',
+        '@greeting': {'description': 'Say hello'},
+        'theme': 'Blue',
+      },
+      {'@@locale': 'de', 'greeting': 'hallo'}
+    ];
+
+    container.read(projectStateProvider.notifier).loadfromJsons(input);
+
+    container.read(projectStateProvider.notifier).removeDescription('greeting');
+    final ProjectState state = container.read(projectStateProvider);
+    final ArbDefinition actual = state.languageData.arbDefinitions['greeting']!;
+
+    expect(actual.description, isNull);
+    expect(actual.placeholders, isNull);
+  });
+
+  test('Updating a descriptions to the definition, does not affect others', () {
+    final List<Map<String, dynamic>> input = [
+      {
+        '@@locale': 'en',
+        'greeting': 'Blue',
+        '@greeting': {'description': 'Say hello'},
+        'theme': 'Blue',
+      },
+      {'@@locale': 'de', 'greeting': 'hallo'}
+    ];
+
+    container.read(projectStateProvider.notifier).loadfromJsons(input);
+
+    container
+        .read(projectStateProvider.notifier)
+        .updateDescription('greeting', 'Go home!');
+    final ProjectState state = container.read(projectStateProvider);
+    final ArbDefinition actual = state.languageData.arbDefinitions['greeting']!;
+
+    expect(actual.description, 'Go home!');
+    expect(actual.placeholders, isNull);
   });
 
   test('Expect a translation to update for the correct language', () {
@@ -273,13 +382,16 @@ void main() {
 
     container.read(projectStateProvider.notifier).loadfromJsons(input);
 
-    container.read(projectStateProvider.notifier).updateTranslation('de', 'greeting', 'Servus');
+    container
+        .read(projectStateProvider.notifier)
+        .updateTranslation('de', 'greeting', 'Servus');
     final ProjectState actual = container.read(projectStateProvider);
 
     expect(actual.languageData, expected);
   });
 
-  test('Export every language and its translations to a separate file', () async {
+  test('Export every language and its translations to a separate file',
+      () async {
     final List<Map<String, dynamic>> input = [
       {
         '@@locale': 'en',
@@ -291,7 +403,8 @@ void main() {
 
     container.read(projectStateProvider.notifier).loadfromJsons(input);
 
-    when(() => mockFileService.writeFile(any(), any())).thenAnswer((_) async {});
+    when(() => mockFileService.writeFile(any(), any()))
+        .thenAnswer((_) async {});
     await container.read(projectStateProvider.notifier).export('some/path');
 
     verify(() => mockFileService.writeFile(any(), any())).called(2);
