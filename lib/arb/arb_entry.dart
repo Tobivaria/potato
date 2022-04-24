@@ -150,8 +150,9 @@ class _ArbEntryState extends ConsumerState<ArbEntry> {
                   ),
                 ),
                 ArbOptionMenu(
-                    arbDefinition: widget.definition,
-                    definitionKey: widget.definitionKey),
+                  arbDefinition: widget.definition,
+                  definitionKey: widget.definitionKey,
+                ),
               ],
             ),
           ),

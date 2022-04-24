@@ -24,7 +24,8 @@ class _TranslationMenuState extends ConsumerState<TranslationMenu> {
   }
 
   Future<void> _importTranslations() async {
-    final String? path = await _pickLanguageDirectory();
+    final String? path =
+        await _pickLanguageDirectory('Import existing translations');
 
     // picking aborted
     if (path == null) {
@@ -44,8 +45,9 @@ class _TranslationMenuState extends ConsumerState<TranslationMenu> {
     ref.read(projectStateProvider.notifier).loadfromJsons(jsons);
   }
 
-  Future<String?> _pickLanguageDirectory() async {
-    final String? path = await ref.read(filePickerProvider).pickDirectory();
+  Future<String?> _pickLanguageDirectory(String dialogTitle) async {
+    final String? path =
+        await ref.read(filePickerProvider).pickDirectory(dialogTitle);
 
     if (path == null) {
       return null;
@@ -64,7 +66,7 @@ class _TranslationMenuState extends ConsumerState<TranslationMenu> {
     String? path = ref.read(abosultTranslationPath);
 
     if (path!.isEmpty) {
-      path = await _pickLanguageDirectory();
+      path = await _pickLanguageDirectory('Export translations');
     }
 
     // picking aborted
