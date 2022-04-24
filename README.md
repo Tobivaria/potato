@@ -6,12 +6,16 @@ Potato supports you in adding and maintaining translations.
 
 ## Roadmap
 
-- [ ] Add language feature
-- [ ] Add translation feature
-- [ ] Save/ load projects
+- [x] Add language feature
+- [x] Add translation feature
+- [x] Save/ load projects
+- [ ] Support arb definitions features: e.g. placeholders, numberformats, etc.
+- [ ] Highlight errors, e.g. missing placeholders
 - [ ] Include translation services
 
 ## Getting Started
+
+- Flutter Arb specification https://docs.google.com/document/d/10e0saTfAv32OZLRmONy866vnaw0I2jwL8zukykpgWBc/edit
 
 ## Contributions
 
