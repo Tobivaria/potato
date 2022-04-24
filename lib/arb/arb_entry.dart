@@ -2,13 +2,18 @@ import 'package:fluent_ui/fluent_ui.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:potato/arb/arb_definition.dart';
+import 'package:potato/arb/arb_option_menu.dart';
 import 'package:potato/const/dimensions.dart';
 import 'package:potato/const/potato_color.dart';
 import 'package:potato/core/confirm_dialog.dart';
 import 'package:potato/project/project_state_controller.dart';
 
 class ArbEntry extends ConsumerStatefulWidget {
-  const ArbEntry({required this.definition, required this.translationKey, Key? key}) : super(key: key);
+  const ArbEntry({
+    required this.definition,
+    required this.translationKey,
+    Key? key,
+  }) : super(key: key);
   final ArbDefinition definition;
   final String translationKey;
 
@@ -17,9 +22,9 @@ class ArbEntry extends ConsumerStatefulWidget {
 }
 
 class _ArbEntryState extends ConsumerState<ArbEntry> {
-  final TextEditingController _translationKeyController = TextEditingController();
+  final TextEditingController _translationKeyController =
+      TextEditingController();
   final TextEditingController _descriptionController = TextEditingController();
-  final _flyoutController = FlyoutController();
 
   final FocusNode _translationKeyFocusNode = FocusNode();
 
@@ -46,7 +51,6 @@ class _ArbEntryState extends ConsumerState<ArbEntry> {
   void dispose() {
     _translationKeyController.dispose();
     _descriptionController.dispose();
-    _flyoutController.dispose();
 
     _translationKeyFocusNode.removeListener(_updateTranslationKeyState);
     _translationKeyFocusNode.dispose();
@@ -67,8 +71,11 @@ class _ArbEntryState extends ConsumerState<ArbEntry> {
 
   // update the translation key, once the textfield is losing focus
   void _updateTranslationKeyState() {
-    if (!_translationKeyFocusNode.hasFocus && (widget.translationKey != _translationKeyController.text)) {
-      ref.read(projectStateProvider.notifier).updateKey(widget.translationKey, _translationKeyController.text);
+    if (!_translationKeyFocusNode.hasFocus &&
+        (widget.translationKey != _translationKeyController.text)) {
+      ref
+          .read(projectStateProvider.notifier)
+          .updateKey(widget.translationKey, _translationKeyController.text);
     }
   }
 
@@ -86,15 +93,10 @@ class _ArbEntryState extends ConsumerState<ArbEntry> {
     });
   }
 
-  void _addEntry() {
-    _flyoutController.open();
-    // TODO make the elements available which are not used
-    // TODO add placeholder
-    // TODO add description
-  }
-
   void _deleteEntry() {
-    ref.read(projectStateProvider.notifier).removeTranslation(_translationKeyController.text);
+    ref
+        .read(projectStateProvider.notifier)
+        .removeTranslation(_translationKeyController.text);
   }
 
   @override
@@ -114,7 +116,9 @@ class _ArbEntryState extends ConsumerState<ArbEntry> {
                   onEditingComplete: () => _translationKeyFocusNode.unfocus(),
                   placeholder: 'Unique key',
                   inputFormatters: [
-                    FilteringTextInputFormatter.deny(RegExp(r'[/\s]')), // prevent whitespaces in the keys
+                    FilteringTextInputFormatter.deny(
+                      RegExp(r'[/\s]'),
+                    ), // prevent whitespaces in the keys
                   ],
                 ),
               ),
@@ -134,23 +138,6 @@ class _ArbEntryState extends ConsumerState<ArbEntry> {
             duration: const Duration(milliseconds: 300),
             child: Column(
               children: [
-                Flyout(
-                  controller: _flyoutController,
-                  verticalOffset: -80,
-                  content: (context) => FlyoutContent(
-                    constraints: const BoxConstraints(maxWidth: 120),
-                    child: Column(
-                      children: const [Text('Placeholder'), Text('Description')],
-                    ),
-                  ),
-                  child: IconButton(
-                    icon: const Icon(
-                      FluentIcons.add,
-                      size: Dimensions.arbSettingIconSize,
-                    ),
-                    onPressed: _addEntry,
-                  ),
-                ),
                 IconButton(
                   icon: const Icon(
                     FluentIcons.delete,
@@ -160,13 +147,15 @@ class _ArbEntryState extends ConsumerState<ArbEntry> {
                     context: context,
                     builder: (_) => ConfirmDialog(
                       title: 'Remove ${_translationKeyController.text}',
-                      text: 'This will also remove any translations for this entry. This cannot be undone!',
+                      text:
+                          'This will also remove any translations for this entry. This cannot be undone!',
                       confirmButtonText: 'Delete',
                       confirmButtonColor: PotatoColor.warning,
                       onConfirmPressed: _deleteEntry,
                     ),
                   ),
                 ),
+                const ArbOptionMenu(),
               ],
             ),
           ),
