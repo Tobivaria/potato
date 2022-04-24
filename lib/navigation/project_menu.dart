@@ -20,7 +20,16 @@ class ProjectMenu extends ConsumerStatefulWidget {
 }
 
 class _ProjectMenuState extends ConsumerState<ProjectMenu> {
+  final FlyoutController _flyoutController = FlyoutController();
+
+  @override
+  void dispose() {
+    _flyoutController.dispose();
+    super.dispose();
+  }
+
   void _showConfirmDialog() {
+    _flyoutController.close();
     showDialog(
       context: context,
       builder: (_) => ConfirmDialog(
@@ -41,6 +50,7 @@ class _ProjectMenuState extends ConsumerState<ProjectMenu> {
   }
 
   Future<void> _openFile() async {
+    _flyoutController.close();
     final File? file = await ref.read(filePickerProvider).pickFile();
     if (file == null) {
       return;
@@ -67,6 +77,7 @@ class _ProjectMenuState extends ConsumerState<ProjectMenu> {
   }
 
   Future<void> _saveProject() async {
+    _flyoutController.close();
     final String? filePath = await ref.read(filePickerProvider).saveFile();
 
     if (filePath != null) {
@@ -85,41 +96,41 @@ class _ProjectMenuState extends ConsumerState<ProjectMenu> {
     }
   }
 
-  // TODO close flyout after clicking by using flyout controller
   @override
   Widget build(BuildContext context) {
-    return Flyout(
-      content: (context) {
-        return MenuFlyout(
-          items: [
-            MenuFlyoutItem(
-              leading: const Icon(FluentIcons.copy),
-              text: const Text('New'),
-              onPressed: _showConfirmDialog,
-            ),
-            MenuFlyoutItem(
-              leading: const Icon(FluentIcons.fabric_open_folder_horizontal),
-              text: const Text('Open'),
-              onPressed: _openFile,
-            ),
-            MenuFlyoutItem(
-              leading: const Icon(FluentIcons.save),
-              text: const Text('Save'),
-              onPressed: _saveProject,
-            ),
-            MenuFlyoutItem(
-              leading: const Icon(FluentIcons.share),
-              text: const Text('Export Translations'),
-              onPressed: () {},
-            ),
-          ],
-        );
-      },
-      openMode: FlyoutOpenMode.press,
-      child: Container(
-        padding: const EdgeInsets.all(10.0),
-        child: const Text('Project'),
-      ),
+    return Row(
+      children: [
+        Flyout(
+          content: (context) {
+            return MenuFlyout(
+              items: [
+                MenuFlyoutItem(
+                  leading: const Icon(FluentIcons.copy),
+                  text: const Text('New'),
+                  onPressed: _showConfirmDialog,
+                ),
+                MenuFlyoutItem(
+                  leading:
+                      const Icon(FluentIcons.fabric_open_folder_horizontal),
+                  text: const Text('Open'),
+                  onPressed: _openFile,
+                ),
+                MenuFlyoutItem(
+                  leading: const Icon(FluentIcons.save),
+                  text: const Text('Save'),
+                  onPressed: _saveProject,
+                ),
+              ],
+            );
+          },
+          openMode: FlyoutOpenMode.press,
+          controller: _flyoutController,
+          child: Container(
+            padding: const EdgeInsets.all(10.0),
+            child: const Text('Project'),
+          ),
+        ),
+      ],
     );
   }
 }

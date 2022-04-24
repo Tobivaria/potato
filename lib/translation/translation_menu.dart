@@ -15,11 +15,11 @@ class TranslationMenu extends ConsumerStatefulWidget {
 }
 
 class _TranslationMenuState extends ConsumerState<TranslationMenu> {
-  final flyoutController = FlyoutController();
+  final FlyoutController _flyoutController = FlyoutController();
 
   @override
   void dispose() {
-    flyoutController.dispose();
+    _flyoutController.dispose();
     super.dispose();
   }
 
@@ -44,6 +44,22 @@ class _TranslationMenuState extends ConsumerState<TranslationMenu> {
     ref.read(projectStateProvider.notifier).loadfromJsons(jsons);
   }
 
+  Future<String?> _pickLanguageDirectory() async {
+    final String? path = await ref.read(filePickerProvider).pickDirectory();
+
+    if (path == null) {
+      return null;
+    }
+
+    ref.read(abosultTranslationPath.notifier).state = path;
+    ref.read(loggerProvider).i('Setting absolute translation path: $path');
+    return path;
+  }
+
+  void _addTranslation() {
+    ref.read(projectStateProvider.notifier).addTranslation();
+  }
+
   Future<void> _exportData() async {
     String? path = ref.read(abosultTranslationPath);
 
@@ -58,62 +74,50 @@ class _TranslationMenuState extends ConsumerState<TranslationMenu> {
 
     if (ref.read(projectStateProvider).file.baseLanguage == null ||
         ref.read(projectStateProvider).file.baseLanguage!.isEmpty) {
-      ref.read(notificationController.notifier).add('Export aborted',
-          'Please set a base language first', InfoBarSeverity.error);
+      ref.read(notificationController.notifier).add(
+            'Export aborted',
+            'Please set a base language first',
+            InfoBarSeverity.error,
+          );
       return;
     }
 
     ref.read(projectStateProvider.notifier).export(path);
   }
 
-  Future<String?> _pickLanguageDirectory() async {
-    final String? path = await ref.read(filePickerProvider).pickDirectory();
-
-    if (path == null) {
-      return null;
-    }
-
-    ref.read(abosultTranslationPath.notifier).state = path;
-    ref.read(loggerProvider).i('Setting abosulte translation path: $path');
-    return path;
-  }
-
-  void _addTranslation() {
-    ref.read(projectStateProvider.notifier).addTranslation();
-  }
-
   @override
   Widget build(BuildContext context) {
-    // TODO use a real menu, when this is merged and release
-    // https://github.com/bdlukaa/fluent_ui/pull/232
-    return Row(
-      children: [
-        const SizedBox(
-          width: 20,
+    final List<CommandBarButton> _menu = [
+      CommandBarButton(
+        icon: const Icon(FluentIcons.download),
+        label: const Text('Import'),
+        onPressed: _importTranslations,
+      ),
+      CommandBarButton(
+        icon: const Icon(FluentIcons.share),
+        label: const Text('Export'),
+        onPressed: _exportData,
+      ),
+      CommandBarButton(
+        icon: const Icon(FluentIcons.locale_language),
+        label: const Text('New language'),
+        onPressed: () => showDialog(
+          context: context,
+          builder: (context) {
+            return const AddLanguageDialog();
+          },
         ),
-        const Text('Translations'),
-        Button(
-          onPressed: _importTranslations,
-          child: const Text('Import translations'),
-        ),
-        Button(
-          onPressed: _exportData,
-          child: const Text('Export'),
-        ),
-        Button(
-          child: const Text('Add language'),
-          onPressed: () => showDialog(
-            context: context,
-            builder: (context) {
-              return const AddLanguageDialog();
-            },
-          ),
-        ),
-        Button(
-          onPressed: _addTranslation,
-          child: const Text('Add translation'),
-        ),
-      ],
+      ),
+      CommandBarButton(
+        icon: const Icon(FluentIcons.add),
+        label: const Text('Add translation'),
+        onPressed: _addTranslation,
+      ),
+    ];
+
+    return CommandBar(
+      compactBreakpointWidth: 768,
+      primaryItems: [..._menu],
     );
   }
 }
