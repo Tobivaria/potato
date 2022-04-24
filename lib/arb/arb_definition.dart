@@ -22,12 +22,16 @@ class ArbDefinition {
 
     if (map['placeholders'] != null) {
       placeholderList = [];
-      final Map<String, dynamic> placeholderMap = map['placeholders'] as Map<String, dynamic>;
+      final Map<String, dynamic> placeholderMap =
+          map['placeholders'] as Map<String, dynamic>;
       for (final MapEntry<String, dynamic> entry in placeholderMap.entries) {
         placeholderList.add(ArbPlaceholder.fromMap(entry));
       }
     }
-    return ArbDefinition(description: map['description'] as String?, placeholders: placeholderList);
+    return ArbDefinition(
+      description: map['description'] as String?,
+      placeholders: placeholderList,
+    );
   }
 
   Map<String, dynamic> toMap() {
@@ -44,11 +48,23 @@ class ArbDefinition {
     return out;
   }
 
+  ArbDefinition copyWith({
+    String? description,
+    List<ArbPlaceholder>? placeholders,
+  }) {
+    return ArbDefinition(
+      description: description ?? this.description,
+      placeholders: placeholders ?? this.placeholders,
+    );
+  }
+
   @override
   bool operator ==(Object other) {
     if (identical(this, other)) return true;
 
-    return other is ArbDefinition && other.description == description && listEquals(other.placeholders, placeholders);
+    return other is ArbDefinition &&
+        other.description == description &&
+        listEquals(other.placeholders, placeholders);
   }
 
   @override

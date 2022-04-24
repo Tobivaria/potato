@@ -245,6 +245,65 @@ class ProjectStateController extends StateNotifier<ProjectState> {
     );
   }
 
+  // TODO test
+  void updateDescription(String key, String description) {
+    logger.d('Updating description of key "$key" to "$description"');
+    final Map<String, ArbDefinition> defs = {};
+
+    // add all other deinifitions except the one with the same key
+    for (final String entryKey in state.languageData.arbDefinitions.keys) {
+      if (entryKey != key) {
+        defs[entryKey] = state.languageData.arbDefinitions[entryKey]!;
+      } else {
+        defs[entryKey] = state.languageData.arbDefinitions[entryKey]!
+            .copyWith(description: description);
+      }
+    }
+
+    state = state.copyWith(
+      languageData: state.languageData.copyWith(arbDefinitions: defs),
+    );
+  }
+
+  // TODO test
+  void addDescription(String key) {
+    logger.d('Add description for key "$key"');
+    final Map<String, ArbDefinition> defs = {};
+
+    // add all other deinifitions except the one with the same key
+    for (final String entryKey in state.languageData.arbDefinitions.keys) {
+      if (entryKey != key) {
+        defs[entryKey] = state.languageData.arbDefinitions[entryKey]!;
+      } else {
+        defs[entryKey] = state.languageData.arbDefinitions[entryKey]!
+            .copyWith(description: '');
+      }
+    }
+
+    state = state.copyWith(
+      languageData: state.languageData.copyWith(arbDefinitions: defs),
+    );
+  }
+
+  // TODO test
+  void removeDescription(String key) {
+    logger.d('Removing description of key "$key"');
+    final Map<String, ArbDefinition> defs = {
+      key: ArbDefinition(
+        placeholders: state.languageData.arbDefinitions[key]?.placeholders,
+      )
+    };
+    // add all other deinifitions except the one with the same key
+    for (final String entryKey in state.languageData.arbDefinitions.keys) {
+      if (entryKey != key) {
+        defs[entryKey] = state.languageData.arbDefinitions[entryKey]!;
+      }
+    }
+    state = state.copyWith(
+      languageData: state.languageData.copyWith(arbDefinitions: defs),
+    );
+  }
+
   void updateTranslation(String langKey, String key, String translation) {
     logger.d(
       'Updating translation for "$langKey" entry "$key" to "$translation"',

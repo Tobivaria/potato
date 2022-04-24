@@ -2,6 +2,7 @@ import 'package:fluent_ui/fluent_ui.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:potato/arb/arb_definition.dart';
+import 'package:potato/arb/arb_description.dart';
 import 'package:potato/arb/arb_option_menu.dart';
 import 'package:potato/const/dimensions.dart';
 import 'package:potato/const/potato_color.dart';
@@ -11,32 +12,29 @@ import 'package:potato/project/project_state_controller.dart';
 class ArbEntry extends ConsumerStatefulWidget {
   const ArbEntry({
     required this.definition,
-    required this.translationKey,
+    required this.definitionKey,
     Key? key,
   }) : super(key: key);
   final ArbDefinition definition;
-  final String translationKey;
+  final String definitionKey;
 
   @override
   ConsumerState<ArbEntry> createState() => _ArbEntryState();
 }
 
 class _ArbEntryState extends ConsumerState<ArbEntry> {
-  final TextEditingController _translationKeyController =
-      TextEditingController();
-  final TextEditingController _descriptionController = TextEditingController();
+  final TextEditingController _keyController = TextEditingController();
 
-  final FocusNode _translationKeyFocusNode = FocusNode();
+  final FocusNode _keyFocusNode = FocusNode();
 
   bool _showDescription = false;
-
   double _controlsOpacity = 0.0;
 
   @override
   void initState() {
     super.initState();
     _initializeFields();
-    _translationKeyFocusNode.addListener(_updateTranslationKeyState);
+    _keyFocusNode.addListener(_updateKeyState);
   }
 
   @override
@@ -49,18 +47,16 @@ class _ArbEntryState extends ConsumerState<ArbEntry> {
 
   @override
   void dispose() {
-    _translationKeyController.dispose();
-    _descriptionController.dispose();
+    _keyController.dispose();
 
-    _translationKeyFocusNode.removeListener(_updateTranslationKeyState);
-    _translationKeyFocusNode.dispose();
+    _keyFocusNode.removeListener(_updateKeyState);
+    _keyFocusNode.dispose();
 
     super.dispose();
   }
 
   void _initializeFields() {
-    _translationKeyController.text = widget.translationKey;
-    _descriptionController.text = widget.definition.description ?? '';
+    _keyController.text = widget.definitionKey;
 
     if (widget.definition.description != null) {
       _showDescription = true;
@@ -69,13 +65,13 @@ class _ArbEntryState extends ConsumerState<ArbEntry> {
     }
   }
 
-  // update the translation key, once the textfield is losing focus
-  void _updateTranslationKeyState() {
-    if (!_translationKeyFocusNode.hasFocus &&
-        (widget.translationKey != _translationKeyController.text)) {
+  // update the key, once the textfield is losing focus
+  void _updateKeyState() {
+    if (!_keyFocusNode.hasFocus &&
+        (widget.definitionKey != _keyController.text)) {
       ref
           .read(projectStateProvider.notifier)
-          .updateKey(widget.translationKey, _translationKeyController.text);
+          .updateKey(widget.definitionKey, _keyController.text);
     }
   }
 
@@ -96,7 +92,7 @@ class _ArbEntryState extends ConsumerState<ArbEntry> {
   void _deleteEntry() {
     ref
         .read(projectStateProvider.notifier)
-        .removeTranslation(_translationKeyController.text);
+        .removeTranslation(_keyController.text);
   }
 
   @override
@@ -111,9 +107,9 @@ class _ArbEntryState extends ConsumerState<ArbEntry> {
               SizedBox(
                 width: Dimensions.languageCellWidth,
                 child: TextBox(
-                  controller: _translationKeyController,
-                  focusNode: _translationKeyFocusNode,
-                  onEditingComplete: () => _translationKeyFocusNode.unfocus(),
+                  controller: _keyController,
+                  focusNode: _keyFocusNode,
+                  onEditingComplete: () => _keyFocusNode.unfocus(),
                   placeholder: 'Unique key',
                   inputFormatters: [
                     FilteringTextInputFormatter.deny(
@@ -123,12 +119,9 @@ class _ArbEntryState extends ConsumerState<ArbEntry> {
                 ),
               ),
               if (_showDescription)
-                SizedBox(
-                  width: Dimensions.languageCellWidth,
-                  child: TextBox(
-                    controller: _descriptionController,
-                    placeholder: 'Description',
-                  ),
+                ArbDescription(
+                  arbKey: widget.definitionKey,
+                  description: widget.definition.description,
                 ),
             ],
           ),
@@ -146,7 +139,7 @@ class _ArbEntryState extends ConsumerState<ArbEntry> {
                   onPressed: () => showDialog(
                     context: context,
                     builder: (_) => ConfirmDialog(
-                      title: 'Remove ${_translationKeyController.text}',
+                      title: 'Remove ${_keyController.text}',
                       text:
                           'This will also remove any translations for this entry. This cannot be undone!',
                       confirmButtonText: 'Delete',
@@ -155,7 +148,9 @@ class _ArbEntryState extends ConsumerState<ArbEntry> {
                     ),
                   ),
                 ),
-                const ArbOptionMenu(),
+                ArbOptionMenu(
+                    arbDefinition: widget.definition,
+                    definitionKey: widget.definitionKey),
               ],
             ),
           ),

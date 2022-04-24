@@ -1,22 +1,35 @@
 import 'package:fluent_ui/fluent_ui.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:potato/arb/arb_definition.dart';
 import 'package:potato/const/dimensions.dart';
+import 'package:potato/project/project_state_controller.dart';
 
-class ArbOptionMenu extends StatefulWidget {
-  const ArbOptionMenu({Key? key}) : super(key: key);
+class ArbOptionMenu extends ConsumerStatefulWidget {
+  const ArbOptionMenu({
+    required this.definitionKey,
+    required this.arbDefinition,
+    Key? key,
+  }) : super(key: key);
+
+  final String definitionKey;
+  final ArbDefinition arbDefinition;
 
   @override
-  State<ArbOptionMenu> createState() => _ArbOptionMenuState();
+  ConsumerState<ArbOptionMenu> createState() => _ArbOptionMenuState();
 }
 
-class _ArbOptionMenuState extends State<ArbOptionMenu> {
+class _ArbOptionMenuState extends ConsumerState<ArbOptionMenu> {
   final FlyoutController _flyoutController = FlyoutController();
 
-  void _addEntry() {
-    // _flyoutController.open();
-    // TODO make the elements available which are not used
-    // TODO add placeholder
-    // TODO add description
+  void _addDescription() {
+    _flyoutController.close();
+    ref
+        .read(projectStateProvider.notifier)
+        .addDescription(widget.definitionKey);
   }
+
+  // TODO make the elements available which are not used
+  // TODO add placeholder
 
   @override
   Widget build(BuildContext context) {
@@ -24,11 +37,12 @@ class _ArbOptionMenuState extends State<ArbOptionMenu> {
       content: (context) {
         return MenuFlyout(
           items: [
-            MenuFlyoutItem(
-              leading: const Icon(FluentIcons.copy),
-              text: const Text('Description'),
-              onPressed: () {},
-            ),
+            if (widget.arbDefinition.description == null)
+              MenuFlyoutItem(
+                leading: const Icon(FluentIcons.copy),
+                text: const Text('Description'),
+                onPressed: _addDescription,
+              ),
             MenuFlyoutItem(
               leading: const Icon(FluentIcons.fabric_open_folder_horizontal),
               text: const Text('Placeholder'),

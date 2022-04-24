@@ -87,7 +87,7 @@ class _TranslationViewState extends ConsumerState<TranslationView> {
                           children: [
                             ArbEntry(
                               definition: arbDefs[key]!,
-                              translationKey: key,
+                              definitionKey: key,
                             ),
                             for (String languageKey
                                 in languageData.languages.keys)
