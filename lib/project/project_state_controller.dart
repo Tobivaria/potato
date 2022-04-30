@@ -33,9 +33,12 @@ final StateNotifierProvider<ProjectStateController, ProjectState>
 });
 
 class ProjectStateController extends StateNotifier<ProjectState> {
-  ProjectStateController(this.fileService, this.logger, this.ref,
-      [ProjectState? init])
-      : super(init ?? ProjectState());
+  ProjectStateController(
+    this.fileService,
+    this.logger,
+    this.ref, [
+    ProjectState? init,
+  ]) : super(init ?? ProjectState());
 
   final FileService fileService;
   final Logger logger;
@@ -79,9 +82,10 @@ class ProjectStateController extends StateNotifier<ProjectState> {
     }
 
     setBaseLanguage(baseLang);
-    state = state.copyWith(
-      languageData: state.languageData
-          .copyWith(arbDefinitions: arbDefinitions, languages: languages),
+
+    _updateState(
+      updateLanguages: languages,
+      updateArbDefs: arbDefinitions,
     );
   }
 
@@ -100,13 +104,11 @@ class ProjectStateController extends StateNotifier<ProjectState> {
       newLanguage[entry] = '';
     }
 
-    state = state.copyWith(
-      languageData: state.languageData.copyWith(
-        languages: {
-          ...state.languageData.languages,
-          langKey: Language(existingTranslations: newLanguage)
-        },
-      ),
+    _updateState(
+      updateLanguages: {
+        ...state.languageData.languages,
+        langKey: Language(existingTranslations: newLanguage)
+      },
     );
   }
 
@@ -118,9 +120,8 @@ class ProjectStateController extends StateNotifier<ProjectState> {
       ...state.languageData.languages
     };
     previousLanguages.remove(langToRemove);
-    state = state.copyWith(
-      languageData: state.languageData.copyWith(languages: previousLanguages),
-    );
+
+    _updateState(updateLanguages: previousLanguages);
 
     if (langToRemove == state.file.baseLanguage) {
       // invalidate base language
@@ -162,14 +163,13 @@ class ProjectStateController extends StateNotifier<ProjectState> {
         },
       );
     }
-    state = state.copyWith(
-      languageData: state.languageData.copyWith(
-        languages: modifiedLanguages,
-        arbDefinitions: {
-          ...state.languageData.arbDefinitions,
-          keyToInsert: const ArbDefinition()
-        },
-      ),
+
+    _updateState(
+      updateLanguages: modifiedLanguages,
+      updateArbDefs: {
+        ...state.languageData.arbDefinitions,
+        keyToInsert: const ArbDefinition()
+      },
     );
   }
 
@@ -189,10 +189,8 @@ class ProjectStateController extends StateNotifier<ProjectState> {
       ...state.languageData.arbDefinitions
     };
     arbDefs.remove(keyToRemove);
-    state = state.copyWith(
-      languageData: state.languageData
-          .copyWith(languages: modifiedLanguages, arbDefinitions: arbDefs),
-    );
+
+    _updateState(updateLanguages: modifiedLanguages, updateArbDefs: arbDefs);
   }
 
   Future<void> export(String pathToExportTo) async {
@@ -239,10 +237,7 @@ class ProjectStateController extends StateNotifier<ProjectState> {
     final ArbDefinition removedDef = arbDefs.remove(oldKey)!;
     arbDefs[newKey] = removedDef;
 
-    state = state.copyWith(
-      languageData: state.languageData
-          .copyWith(languages: modifiedLanguages, arbDefinitions: arbDefs),
-    );
+    _updateState(updateLanguages: modifiedLanguages, updateArbDefs: arbDefs);
   }
 
   void addDescription(String key) {
@@ -259,9 +254,7 @@ class ProjectStateController extends StateNotifier<ProjectState> {
       }
     }
 
-    state = state.copyWith(
-      languageData: state.languageData.copyWith(arbDefinitions: defs),
-    );
+    _updateState(updateArbDefs: defs);
   }
 
   void removeDescription(String key) {
@@ -277,9 +270,8 @@ class ProjectStateController extends StateNotifier<ProjectState> {
         defs[entryKey] = state.languageData.arbDefinitions[entryKey]!;
       }
     }
-    state = state.copyWith(
-      languageData: state.languageData.copyWith(arbDefinitions: defs),
-    );
+
+    _updateState(updateArbDefs: defs);
   }
 
   void updateDescription(String key, String description) {
@@ -296,9 +288,7 @@ class ProjectStateController extends StateNotifier<ProjectState> {
       }
     }
 
-    state = state.copyWith(
-      languageData: state.languageData.copyWith(arbDefinitions: defs),
-    );
+    _updateState(updateArbDefs: defs);
   }
 
   void updateTranslation(String langKey, String key, String translation) {
@@ -317,8 +307,16 @@ class ProjectStateController extends StateNotifier<ProjectState> {
       modifiedLanguages[languageKey] = Language(existingTranslations: copy);
     }
 
+    _updateState(updateLanguages: modifiedLanguages);
+  }
+
+  void _updateState({
+    Map<String, Language>? updateLanguages,
+    Map<String, ArbDefinition>? updateArbDefs,
+  }) {
     state = state.copyWith(
-      languageData: state.languageData.copyWith(languages: modifiedLanguages),
+      languageData: state.languageData
+          .copyWith(languages: updateLanguages, arbDefinitions: updateArbDefs),
     );
   }
 
@@ -347,7 +345,8 @@ class ProjectStateController extends StateNotifier<ProjectState> {
 
   // TODO absolut and relative pathes
   Future<List<Map<String, dynamic>>?> loadProjectFileAndTranslations(
-      File file) async {
+    File file,
+  ) async {
     logger.i('Loading project');
 
     final Map<String, dynamic>? data = await fileService.readJsonFromFile(file);
