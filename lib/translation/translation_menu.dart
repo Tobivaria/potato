@@ -117,9 +117,12 @@ class _TranslationMenuState extends ConsumerState<TranslationMenu> {
       ),
     ];
 
-    return CommandBar(
-      compactBreakpointWidth: 768,
-      primaryItems: [..._menu],
+    return SizedBox(
+      height: 40,
+      child: CommandBar(
+        compactBreakpointWidth: 768,
+        primaryItems: [..._menu],
+      ),
     );
   }
 }

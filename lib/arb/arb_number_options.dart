@@ -1,5 +1,30 @@
 import 'package:fluent_ui/fluent_ui.dart';
 
+enum NumberOptions {
+  decimalDigits,
+  name,
+  symbol,
+  pattern,
+}
+
+abstract class ArbNumberOptions {
+  List<NumberOptions> getOptions();
+  // Map<String, dynamic> getValues;
+}
+
+class ArbNumberOptionsBaseNew implements ArbNumberOptions {
+  final List<NumberOptions> _options = [NumberOptions.decimalDigits];
+  @override
+  List<NumberOptions> getOptions() {
+    return _options;
+  }
+
+  // factory ArbNumberOptionsBaseNew.fromMap(Map<String, dynamic> map) {
+  //   return decimalCount != null ? {'decimalDigits': decimalCount!} : null;
+  // }
+
+}
+
 /// Options:
 /// * decimalDigits
 @immutable

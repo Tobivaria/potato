@@ -2,7 +2,6 @@ import 'package:fluent_ui/fluent_ui.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:potato/navigation/navigation_controller.dart';
 import 'package:potato/navigation/navigation_state.dart';
-import 'package:potato/navigation/navigation_view_pair.dart';
 import 'package:potato/navigation/project_menu.dart';
 import 'package:potato/translation/translation_menu.dart';
 
@@ -12,9 +11,18 @@ class TopNavigation extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final NavigationState navState = ref.watch(navigationProvider);
+    return Container();
+    return Column(
+      children: [
+        Row(
+          children: [const ProjectMenu()],
+        ),
+        const TranslationMenu()
+      ],
+    );
 
-    return navState.route == ViewRoute.home
-        ? const ProjectMenu()
-        : const TranslationMenu();
+    // return navState.route == ViewRoute.home
+    //     ? const ProjectMenu()
+    //     : const TranslationMenu();
   }
 }

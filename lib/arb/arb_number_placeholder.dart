@@ -1,7 +1,6 @@
 import 'package:fluent_ui/fluent_ui.dart';
 import 'package:potato/arb/arb_definition.dart';
 import 'package:potato/arb/arb_number_options.dart';
-
 import 'package:potato/arb/arb_placerholder.dart';
 
 enum ArbNumberFormat {
@@ -20,7 +19,7 @@ enum ArbNumberFormat {
 @immutable
 class ArbNumberPlaceholder extends ArbPlaceholder {
   final ArbNumberFormat format;
-  ArbNumberOptionsBase? options;
+  late final ArbNumberOptionsBase? options;
 
   ArbNumberPlaceholder({
     required String id,

@@ -3,7 +3,6 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:potato/debug/debug_view.dart';
 import 'package:potato/navigation/navigation_controller.dart';
 import 'package:potato/navigation/navigation_view_pair.dart';
-import 'package:potato/navigation/top_navigation.dart';
 import 'package:potato/notification/notification_view.dart';
 import 'package:potato/project/start_view.dart';
 import 'package:potato/translation/translation_view.dart';
@@ -27,44 +26,54 @@ class _SideNavigationBarState extends ConsumerState<NavigationManager> {
     ),
     NavigationViewPair(
       navigation: PaneItem(
-        icon: const Icon(FluentIcons.text_document_edit),
-        title: const Text('Translations'),
-      ),
-      route: ViewRoute.translations,
-      view: const TranslationView(),
-    ),
-    NavigationViewPair(
-      navigation: PaneItem(
         icon: const Icon(FluentIcons.settings),
         title: const Text('Settings'),
       ),
       route: ViewRoute.settings,
       view: const DebugView(),
     ),
+    NavigationViewPair(
+      navigation: PaneItem(
+        icon: const Icon(FluentIcons.text_document_edit),
+        title: const Text('Translations'),
+      ),
+      route: ViewRoute.translations,
+      view: const TranslationView(),
+    ),
   ];
 
   @override
   Widget build(BuildContext context) {
     final route = ref.watch(routeProvider);
-    final int navIndex = _navigationViewPairs.indexWhere((e) => e.route == route);
+    final int navIndex =
+        _navigationViewPairs.indexWhere((e) => e.route == route);
+
+    var tmp = _navigationViewPairs
+        .getRange(0, _navigationViewPairs.length)
+        .map((e) => e.navigation)
+        .toList();
 
     return NavigationView(
-      appBar: const NavigationAppBar(
-        actions: TopNavigation(),
-      ),
+      // appBar: const NavigationAppBar(
+      //   actions: TopNavigation(),
+      // ),
       pane: NavigationPane(
-        displayMode: PaneDisplayMode.compact,
-        size: const NavigationPaneSize(
-          openWidth: 150,
-        ),
+        displayMode: PaneDisplayMode.top,
         selected: navIndex,
-        onChanged: (newIndex) => ref.read(navigationProvider.notifier).navigateTo(_navigationViewPairs[newIndex].route),
-        items: _navigationViewPairs.getRange(0, _navigationViewPairs.length - 1).map((e) => e.navigation).toList(),
-        footerItems: [_navigationViewPairs.last.navigation],
+        onChanged: (newIndex) => ref
+            .read(navigationProvider.notifier)
+            .navigateTo(_navigationViewPairs[newIndex].route),
+        items: _navigationViewPairs
+            .getRange(0, _navigationViewPairs.length)
+            .map((e) => e.navigation)
+            .toList(),
       ),
       content: Stack(
         children: [
-          NavigationBody(index: navIndex, children: _navigationViewPairs.map((e) => e.view).toList()),
+          NavigationBody(
+            index: navIndex,
+            children: _navigationViewPairs.map((e) => e.view).toList(),
+          ),
           const NotificationView()
         ],
       ),

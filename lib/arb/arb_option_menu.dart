@@ -28,8 +28,13 @@ class _ArbOptionMenuState extends ConsumerState<ArbOptionMenu> {
         .addDescription(widget.definitionKey);
   }
 
-  // TODO make the elements available which are not used
-  // TODO add placeholder
+  void _addPlaceholder() {
+    // TODO add placeholder
+    _flyoutController.close();
+    ref
+        .read(projectStateProvider.notifier)
+        .addDescription(widget.definitionKey);
+  }
 
   @override
   Widget build(BuildContext context) {
