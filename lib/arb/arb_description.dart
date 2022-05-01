@@ -59,7 +59,7 @@ class _ArbDescriptionState extends ConsumerState<ArbDescription> {
           onPressed: _removeDescription,
         ),
         SizedBox(
-          width: Dimensions.languageCellWidth - Dimensions.arbOptionOffset,
+          width: Dimensions.idTextfieldWidth - Dimensions.arbOptionOffset,
           child: TextBox(
             controller: _textontroller,
             focusNode: _focusNode,

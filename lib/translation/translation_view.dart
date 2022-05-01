@@ -53,20 +53,23 @@ class _TranslationViewState extends ConsumerState<TranslationView> {
           )
         else
           Expanded(
-            child: Column(
-              children: [
-                TableHeader(
-                  languages: translations,
-                  baseLanguage: baseLang,
-                  scrollController: _headerController,
-                ),
-                const SizedBox(
-                  height: 4,
-                ),
-                TableBody(
-                  scrollController: _bodyController,
-                ),
-              ],
+            child: Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: Column(
+                children: [
+                  TableHeader(
+                    languages: translations,
+                    baseLanguage: baseLang,
+                    scrollController: _headerController,
+                  ),
+                  const SizedBox(
+                    height: 4,
+                  ),
+                  TableBody(
+                    scrollController: _bodyController,
+                  ),
+                ],
+              ),
             ),
           ),
       ],

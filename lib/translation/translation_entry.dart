@@ -1,6 +1,7 @@
 import 'package:fluent_ui/fluent_ui.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:potato/arb/arb_definition.dart';
+import 'package:potato/const/dimensions.dart';
 import 'package:potato/core/entry_state.dart';
 import 'package:potato/notification/notification_controller.dart';
 import 'package:potato/project/project_state_controller.dart';
@@ -100,19 +101,23 @@ class _TranslationEntryState extends ConsumerState<TranslationEntry> {
   @override
   Widget build(BuildContext context) {
     return SizedBox(
-      width: 300, // TODO put this into a provider
-      child: TextBox(
-        controller: _controller,
-        focusNode: _focus,
-        onChanged: _onTranslationChange,
-        maxLines: 3,
-        placeholder: 'Translation',
-        decoration: const BoxDecoration(
-          border: Border(),
+      width: Dimensions.languageCellWidth,
+      child: Padding(
+        padding:
+            const EdgeInsets.only(right: Dimensions.languageCellRightPadding),
+        child: TextBox(
+          controller: _controller,
+          focusNode: _focus,
+          onChanged: _onTranslationChange,
+          maxLines: 3,
+          placeholder: 'Translation',
+          decoration: const BoxDecoration(
+            border: Border(),
+          ),
+          // foregroundDecoration: BoxDecoration(
+          //   border: Border(bottom: BorderSide.none),
+          // ),
         ),
-        // foregroundDecoration: BoxDecoration(
-        //   border: Border(bottom: BorderSide.none),
-        // ),
       ),
     );
   }

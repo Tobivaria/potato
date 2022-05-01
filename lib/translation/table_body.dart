@@ -43,7 +43,7 @@ class _TableBodyState extends ConsumerState<TableBody> {
   Widget build(BuildContext context) {
     // TODO optimize rebuilds
     final ProjectState projectState = ref.watch(projectStateProvider);
-    final List<String> translations =
+    final List<String> languages =
         projectState.languageData.languages.keys.toList();
     final LanguageData languageData = projectState.languageData;
     final Map<String, ArbDefinition> arbDefs =
@@ -80,7 +80,7 @@ class _TableBodyState extends ConsumerState<TableBody> {
               scrollDirection: Axis.horizontal,
               physics: const ClampingScrollPhysics(),
               child: SizedBox(
-                width: (orderedKeys.length - 1) * Dimensions.languageCellWidth,
+                width: languages.length * Dimensions.languageCellWidth,
                 child: ListView.separated(
                   controller: _restColumnsController,
                   physics: const AlwaysScrollableScrollPhysics(
@@ -91,7 +91,7 @@ class _TableBodyState extends ConsumerState<TableBody> {
                     final String key = orderedKeys.elementAt(index);
                     return Row(
                       children: [
-                        for (String languageKey in translations)
+                        for (String languageKey in languages)
                           TranslationEntry(
                             languageKey: languageKey,
                             translation: languageData.languages[languageKey]

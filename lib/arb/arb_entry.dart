@@ -99,7 +99,7 @@ class _ArbEntryState extends ConsumerState<ArbEntry> {
   Widget build(BuildContext context) {
     return ConstrainedBox(
       constraints: const BoxConstraints(
-        minHeight: 67.0, // TODO put in dimensions
+        minHeight: Dimensions.tableRowMinHeight,
       ),
       child: MouseRegion(
         onEnter: _enterRegion,
@@ -110,8 +110,7 @@ class _ArbEntryState extends ConsumerState<ArbEntry> {
             Column(
               children: [
                 SizedBox(
-                  width: Dimensions
-                      .languageCellWidth, // TODO is this the correct dimension?
+                  width: Dimensions.idTextfieldWidth,
                   child: TextBox(
                     controller: _keyController,
                     focusNode: _keyFocusNode,

@@ -18,7 +18,7 @@ class TableHeader extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     return SizedBox(
-      height: 50, // TODO add to Dimensions
+      height: Dimensions.tableHeaderHeight,
       child: Row(
         children: [
           const SizedBox(

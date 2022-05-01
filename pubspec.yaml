@@ -9,7 +9,7 @@ environment:
 
 dependencies:
   file_picker: ^4.5.1
-  fluent_ui: ^3.11.0
+  fluent_ui: ^3.11.1
   flutter:
     sdk: flutter
 
@@ -25,6 +25,3 @@ dev_dependencies:
     sdk: flutter
   lint: ^1.8.2
   mocktail: 0.3.0
-
-flutter:
-  uses-material-design: true
