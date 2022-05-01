@@ -4,6 +4,7 @@ import 'package:fluent_ui/fluent_ui.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:logger/logger.dart';
 import 'package:potato/arb/arb_definition.dart';
+import 'package:potato/arb/arb_placerholder.dart';
 import 'package:potato/file_handling/file_service.dart';
 import 'package:potato/language/language.dart';
 import 'package:potato/notification/notification_controller.dart';
@@ -308,6 +309,66 @@ class ProjectStateController extends StateNotifier<ProjectState> {
     }
 
     _updateState(updateLanguages: modifiedLanguages);
+  }
+
+  // TODO test
+  void addPlaceholder(String key) {
+    logger.d(
+      'Adding placeholder for entry "$key"',
+    );
+
+    const String defaultId = '';
+    const ArbType defaultType = ArbType.String;
+
+    final Map<String, ArbDefinition> modifiedDefs = {};
+    for (final String entry in state.languageData.arbDefinitions.keys) {
+      if (entry == key) {
+        final ArbDefinition copy = state.languageData.arbDefinitions[entry]!;
+        final ArbDefinition newOne = copy.copyWith(
+          placeholders: [
+            ...?copy.placeholders,
+            const ArbPlaceholder(id: defaultId, type: defaultType)
+          ],
+        );
+        modifiedDefs[entry] = newOne;
+      } else {
+        modifiedDefs[entry] = state.languageData.arbDefinitions[entry]!;
+      }
+    }
+
+    _updateState(updateArbDefs: modifiedDefs);
+  }
+
+  // TODO test
+  void updatePlaceholderID(String key, String oldId, String newId) {
+    logger.d(
+      'Updating placeholder id for entry "$key" from "$oldId" to "$newId"',
+    );
+
+    final Map<String, ArbDefinition> modifiedDefs = {};
+    for (final String entry in state.languageData.arbDefinitions.keys) {
+      if (entry == key) {
+        final ArbDefinition copy = state.languageData.arbDefinitions[entry]!;
+        final ArbDefinition newOne = copy.copyWith(
+          placeholders: [
+            for (ArbPlaceholder placeholder in copy.placeholders!)
+              if (placeholder.id == oldId)
+                ArbPlaceholder(
+                  id: newId,
+                  type: placeholder.type,
+                  example: placeholder.example,
+                )
+              else
+                placeholder
+          ],
+        );
+        modifiedDefs[entry] = newOne;
+      } else {
+        modifiedDefs[entry] = state.languageData.arbDefinitions[entry]!;
+      }
+    }
+
+    _updateState(updateArbDefs: modifiedDefs);
   }
 
   void _updateState({

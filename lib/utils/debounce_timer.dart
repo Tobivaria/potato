@@ -8,7 +8,8 @@ class DebounceTimer {
 
   void call(Function callback) {
     _timer?.cancel();
-    _timer = Timer(delay, () => callback);
+    // ignore: avoid_dynamic_calls
+    _timer = Timer(delay, () => callback());
   }
 
   void dispose() {

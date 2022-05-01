@@ -4,6 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:potato/arb/arb_definition.dart';
 import 'package:potato/arb/arb_description.dart';
 import 'package:potato/arb/arb_option_menu.dart';
+import 'package:potato/arb/meta_placeholder.dart';
 import 'package:potato/const/dimensions.dart';
 import 'package:potato/const/potato_color.dart';
 import 'package:potato/core/confirm_dialog.dart';
@@ -28,6 +29,7 @@ class _ArbEntryState extends ConsumerState<ArbEntry> {
   final FocusNode _keyFocusNode = FocusNode();
 
   bool _showDescription = false;
+  bool _showPlaceholder = false;
   double _controlsOpacity = 0.0;
 
   @override
@@ -62,6 +64,12 @@ class _ArbEntryState extends ConsumerState<ArbEntry> {
       _showDescription = true;
     } else {
       _showDescription = false;
+    }
+
+    if (widget.definition.placeholders != null) {
+      _showPlaceholder = true;
+    } else {
+      _showPlaceholder = false;
     }
   }
 
@@ -127,6 +135,11 @@ class _ArbEntryState extends ConsumerState<ArbEntry> {
                   ArbDescription(
                     arbKey: widget.definitionKey,
                     description: widget.definition.description,
+                  ),
+                if (_showPlaceholder)
+                  MetaPlaceholder(
+                    arbKey: widget.definitionKey,
+                    placeholder: widget.definition.placeholders![0],
                   ),
               ],
             ),

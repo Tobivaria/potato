@@ -29,11 +29,10 @@ class _ArbOptionMenuState extends ConsumerState<ArbOptionMenu> {
   }
 
   void _addPlaceholder() {
-    // TODO add placeholder
     _flyoutController.close();
     ref
         .read(projectStateProvider.notifier)
-        .addDescription(widget.definitionKey);
+        .addPlaceholder(widget.definitionKey);
   }
 
   @override
@@ -51,7 +50,7 @@ class _ArbOptionMenuState extends ConsumerState<ArbOptionMenu> {
             MenuFlyoutItem(
               leading: const Icon(FluentIcons.fabric_open_folder_horizontal),
               text: const Text('Placeholder'),
-              onPressed: () {},
+              onPressed: _addPlaceholder,
             ),
           ],
         );

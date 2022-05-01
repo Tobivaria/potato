@@ -7,6 +7,7 @@ import 'package:potato/notification/notification_controller.dart';
 import 'package:potato/project/project_state_controller.dart';
 import 'package:potato/translation/translation_verification.dart';
 import 'package:potato/utils/debounce_timer.dart';
+import 'package:potato/utils/potato_logger.dart';
 
 class TranslationEntry extends ConsumerStatefulWidget {
   const TranslationEntry({
@@ -57,6 +58,9 @@ class _TranslationEntryState extends ConsumerState<TranslationEntry> {
             widget.translationKey,
             _controller.text,
           );
+      if (_validtyState == EntryState.invalid) {
+        _showStateError();
+      }
     }
   }
 
@@ -71,20 +75,15 @@ class _TranslationEntryState extends ConsumerState<TranslationEntry> {
       switch (validator) {
         case TranslationStatus.missingPlaceholder:
           _validtyState = EntryState.invalid;
-          ref.read(notificationController.notifier).add(
-                'Placeholder missing',
-                'Add the placeholder or remove it from definition',
-                InfoBarSeverity.warning,
-              );
+
           break;
 
         case TranslationStatus.tooMuchPlaceholder:
           _validtyState = EntryState.invalid;
-          ref.read(notificationController.notifier).add(
-                'Too much placeholder',
-                'Decrease the number of placeholder',
-                InfoBarSeverity.warning,
-              );
+          break;
+
+        case TranslationStatus.placeholderDoesNotExist:
+          _validtyState = EntryState.invalid;
           break;
 
         default:
@@ -96,6 +95,41 @@ class _TranslationEntryState extends ConsumerState<TranslationEntry> {
           }
       }
     });
+  }
+
+  void _showStateError() {
+    final TranslationStatus validator =
+        TranslationVerification(widget.definition, _controller.text).verify();
+    switch (validator) {
+      case TranslationStatus.missingPlaceholder:
+        ref.read(notificationController.notifier).add(
+              'Placeholder missing',
+              'Add the placeholder or remove it from definition',
+              InfoBarSeverity.warning,
+            );
+        break;
+
+      case TranslationStatus.tooMuchPlaceholder:
+        ref.read(notificationController.notifier).add(
+              'Too much placeholder',
+              'Decrease the number of placeholder',
+              InfoBarSeverity.warning,
+            );
+        break;
+
+      case TranslationStatus.placeholderDoesNotExist:
+        ref.read(notificationController.notifier).add(
+              'Placeholder incorrect',
+              'The placeholder does not exist in the definition',
+              InfoBarSeverity.warning,
+            );
+        break;
+
+      default:
+        ref
+            .read(loggerProvider)
+            .wtf('Unimplemented verification status: $validator');
+    }
   }
 
   @override
