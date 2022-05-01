@@ -14,7 +14,8 @@ class AddLanguageDialog extends ConsumerStatefulWidget {
 class _AddLanguageState extends ConsumerState<AddLanguageDialog> {
   final ScrollController _controller = ScrollController();
 
-  final Map<String, Map<String, dynamic>> _languages = Map.from(ConstLanguages.languages);
+  final Map<String, Map<String, dynamic>> _languages =
+      Map.from(ConstLanguages.languages);
   late Map<String, Map<String, dynamic>> _filteredLanguages;
   final List<String> _selected = [];
 
@@ -22,7 +23,8 @@ class _AddLanguageState extends ConsumerState<AddLanguageDialog> {
   void initState() {
     super.initState();
     // remove languages already in the project
-    final List<String> existing = ref.read(projectStateProvider).languageData.languages.keys.toList();
+    final List<String> existing =
+        ref.read(projectStateProvider).languageData.languages.keys.toList();
     for (final lang in existing) {
       _languages.remove(lang);
     }
@@ -49,7 +51,10 @@ class _AddLanguageState extends ConsumerState<AddLanguageDialog> {
   void _onFilterChange(String val) {
     setState(() {
       _filteredLanguages = Map.from(_languages)
-        ..removeWhere((key, value) => !(_compare(key, val) || _compare(value['language'].toString(), val)));
+        ..removeWhere(
+          (key, value) => !(_compare(key, val) ||
+              _compare(value['language'].toString(), val)),
+        );
     });
   }
 
@@ -71,8 +76,7 @@ class _AddLanguageState extends ConsumerState<AddLanguageDialog> {
             onChanged: _onFilterChange,
             suffix: const Icon(FluentIcons.search),
           ),
-          SizedBox(
-            height: 400,
+          Expanded(
             child: ListView.builder(
               controller: _controller,
               itemCount: _filteredLanguages.length,
