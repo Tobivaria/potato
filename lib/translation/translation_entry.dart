@@ -4,6 +4,7 @@ import 'package:potato/arb/arb_definition.dart';
 import 'package:potato/const/dimensions.dart';
 import 'package:potato/core/entry_state.dart';
 import 'package:potato/notification/notification_controller.dart';
+import 'package:potato/project/project_error_controller.dart';
 import 'package:potato/project/project_state_controller.dart';
 import 'package:potato/translation/translation_verification.dart';
 import 'package:potato/utils/debounce_timer.dart';
@@ -59,6 +60,7 @@ class _TranslationEntryState extends ConsumerState<TranslationEntry> {
             _controller.text,
           );
       if (_validtyState == EntryState.invalid) {
+        _validateTranslation();
         _showStateError();
       }
     }
@@ -75,21 +77,33 @@ class _TranslationEntryState extends ConsumerState<TranslationEntry> {
       switch (validator) {
         case TranslationStatus.missingPlaceholder:
           _validtyState = EntryState.invalid;
-
+          ref
+              .read(projectErrorController.notifier)
+              .addError(widget.languageKey, widget.translationKey);
           break;
 
         case TranslationStatus.tooMuchPlaceholder:
           _validtyState = EntryState.invalid;
+          ref
+              .read(projectErrorController.notifier)
+              .addError(widget.languageKey, widget.translationKey);
           break;
 
         case TranslationStatus.placeholderDoesNotExist:
           _validtyState = EntryState.invalid;
+          ref
+              .read(projectErrorController.notifier)
+              .addError(widget.languageKey, widget.translationKey);
           break;
 
         default:
           // when the background was marked as error previously, mark as correct visually
           if (_validtyState == EntryState.invalid) {
             _validtyState = EntryState.fixed;
+
+            ref
+                .read(projectErrorController.notifier)
+                .removeError(widget.languageKey, widget.translationKey);
           } else {
             _validtyState = EntryState.valid;
           }
@@ -123,6 +137,10 @@ class _TranslationEntryState extends ConsumerState<TranslationEntry> {
               'The placeholder does not exist in the definition',
               InfoBarSeverity.warning,
             );
+        break;
+
+      case TranslationStatus.okay:
+        // show nothing
         break;
 
       default:

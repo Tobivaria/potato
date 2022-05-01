@@ -3,10 +3,13 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:potato/const/dimensions.dart';
 import 'package:potato/const/potato_color.dart';
 import 'package:potato/core/confirm_dialog.dart';
+import 'package:potato/project/project_error_controller.dart';
 import 'package:potato/project/project_state_controller.dart';
 
 class LanguageTitle extends ConsumerStatefulWidget {
-  const LanguageTitle(this.title, this.width, {this.isBaseLanguage = false, Key? key}) : super(key: key);
+  const LanguageTitle(this.title, this.width,
+      {this.isBaseLanguage = false, Key? key})
+      : super(key: key);
 
   final String title;
   final double width;
@@ -43,18 +46,26 @@ class _LanguageTitleState extends ConsumerState<LanguageTitle> {
 
   @override
   Widget build(BuildContext context) {
+    final Map<String, Set<String>> tmp = ref.watch(projectErrorController);
+    final bool hasError = tmp.containsKey(widget.title);
+
+    print(tmp);
+
     return MouseRegion(
       onEnter: _enterRegion,
       onExit: _leaveRegion,
-      child: SizedBox(
+      child: Container(
         width: widget.width,
+        color: hasError ? PotatoColor.highlightLanguageError : null,
         child: Padding(
           padding: const EdgeInsets.only(right: 8),
           child: Row(
             children: [
               Text(
                 widget.title,
-                style: const TextStyle(fontWeight: FontWeight.bold), // TODO move style to theme
+                style: const TextStyle(
+                  fontWeight: FontWeight.bold,
+                ), // TODO move style to theme
               ),
               const Spacer(),
               if (widget.isBaseLanguage)
@@ -92,7 +103,8 @@ class _LanguageTitleState extends ConsumerState<LanguageTitle> {
                         context: context,
                         builder: (_) => ConfirmDialog(
                           title: 'Remove ${widget.title}',
-                          text: 'This will also remove any translations for this language. This cannot be undone!',
+                          text:
+                              'This will also remove any translations for this language. This cannot be undone!',
                           confirmButtonText: 'Delete',
                           confirmButtonColor: PotatoColor.warning,
                           onConfirmPressed: _deleteEntry,

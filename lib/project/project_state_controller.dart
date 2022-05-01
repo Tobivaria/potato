@@ -34,16 +34,16 @@ final StateNotifierProvider<ProjectStateController, ProjectState>
 });
 
 class ProjectStateController extends StateNotifier<ProjectState> {
+  final FileService fileService;
+  final Logger logger;
+  Ref ref;
+
   ProjectStateController(
     this.fileService,
     this.logger,
     this.ref, [
     ProjectState? init,
   ]) : super(init ?? ProjectState());
-
-  final FileService fileService;
-  final Logger logger;
-  Ref ref;
 
   void loadfromJsons(List<Map<String, dynamic>> data) {
     final Map<String, ArbDefinition> arbDefinitions = {};

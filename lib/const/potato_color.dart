@@ -7,4 +7,6 @@ class PotatoColor {
   static Color warning = Colors.red; // e.g. delete button
 
   static Color tableDivider = Colors.blue.lightest; // e.g. selection color
+
+  static Color highlightLanguageError = Colors.red.lightest;
 }
