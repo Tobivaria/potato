@@ -14,6 +14,7 @@ dependencies:
     sdk: flutter
 
   flutter_riverpod: ^1.0.3
+  linked_scroll_controller: ^0.2.0
   logger: ^1.1.0
   path: ^1.8.0
   path_provider: ^2.0.9

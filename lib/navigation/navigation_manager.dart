@@ -48,11 +48,6 @@ class _SideNavigationBarState extends ConsumerState<NavigationManager> {
     final int navIndex =
         _navigationViewPairs.indexWhere((e) => e.route == route);
 
-    var tmp = _navigationViewPairs
-        .getRange(0, _navigationViewPairs.length)
-        .map((e) => e.navigation)
-        .toList();
-
     return NavigationView(
       // appBar: const NavigationAppBar(
       //   actions: TopNavigation(),

@@ -97,66 +97,72 @@ class _ArbEntryState extends ConsumerState<ArbEntry> {
 
   @override
   Widget build(BuildContext context) {
-    return MouseRegion(
-      onEnter: _enterRegion,
-      onExit: _leaveRegion,
-      child: Row(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Column(
-            children: [
-              SizedBox(
-                width: Dimensions.languageCellWidth,
-                child: TextBox(
-                  controller: _keyController,
-                  focusNode: _keyFocusNode,
-                  onEditingComplete: () => _keyFocusNode.unfocus(),
-                  placeholder: 'Unique key',
-                  inputFormatters: [
-                    FilteringTextInputFormatter.deny(
-                      RegExp(r'[/\s]'),
-                    ), // prevent whitespaces in the keys
-                  ],
-                ),
-              ),
-              if (_showDescription)
-                ArbDescription(
-                  arbKey: widget.definitionKey,
-                  description: widget.definition.description,
-                ),
-            ],
-          ),
-          const SizedBox(width: 20),
-          AnimatedOpacity(
-            opacity: _controlsOpacity,
-            duration: const Duration(milliseconds: 300),
-            child: Column(
+    return ConstrainedBox(
+      constraints: const BoxConstraints(
+        minHeight: 67.0, // TODO put in dimensions
+      ),
+      child: MouseRegion(
+        onEnter: _enterRegion,
+        onExit: _leaveRegion,
+        child: Row(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Column(
               children: [
-                IconButton(
-                  icon: const Icon(
-                    FluentIcons.delete,
-                    size: Dimensions.arbSettingIconSize,
-                  ),
-                  onPressed: () => showDialog(
-                    context: context,
-                    builder: (_) => ConfirmDialog(
-                      title: 'Remove ${_keyController.text}',
-                      text:
-                          'This will also remove any translations for this entry. This cannot be undone!',
-                      confirmButtonText: 'Delete',
-                      confirmButtonColor: PotatoColor.warning,
-                      onConfirmPressed: _deleteEntry,
-                    ),
+                SizedBox(
+                  width: Dimensions
+                      .languageCellWidth, // TODO is this the correct dimension?
+                  child: TextBox(
+                    controller: _keyController,
+                    focusNode: _keyFocusNode,
+                    onEditingComplete: () => _keyFocusNode.unfocus(),
+                    placeholder: 'Unique key',
+                    inputFormatters: [
+                      FilteringTextInputFormatter.deny(
+                        RegExp(r'[/\s]'),
+                      ), // prevent whitespaces in the keys
+                    ],
                   ),
                 ),
-                ArbOptionMenu(
-                  arbDefinition: widget.definition,
-                  definitionKey: widget.definitionKey,
-                ),
+                if (_showDescription)
+                  ArbDescription(
+                    arbKey: widget.definitionKey,
+                    description: widget.definition.description,
+                  ),
               ],
             ),
-          ),
-        ],
+            const SizedBox(width: 20),
+            AnimatedOpacity(
+              opacity: _controlsOpacity,
+              duration: const Duration(milliseconds: 300),
+              child: Column(
+                children: [
+                  IconButton(
+                    icon: const Icon(
+                      FluentIcons.delete,
+                      size: Dimensions.arbSettingIconSize,
+                    ),
+                    onPressed: () => showDialog(
+                      context: context,
+                      builder: (_) => ConfirmDialog(
+                        title: 'Remove ${_keyController.text}',
+                        text:
+                            'This will also remove any translations for this entry. This cannot be undone!',
+                        confirmButtonText: 'Delete',
+                        confirmButtonColor: PotatoColor.warning,
+                        onConfirmPressed: _deleteEntry,
+                      ),
+                    ),
+                  ),
+                  ArbOptionMenu(
+                    arbDefinition: widget.definition,
+                    definitionKey: widget.definitionKey,
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }
