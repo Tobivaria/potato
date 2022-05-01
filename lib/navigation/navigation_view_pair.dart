@@ -1,6 +1,6 @@
 import 'package:fluent_ui/fluent_ui.dart';
 
-enum ViewRoute { home, translations, settings }
+enum ViewRoute { translations, settings }
 
 class NavigationViewPair {
   final NavigationPaneItem navigation;

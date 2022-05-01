@@ -98,39 +98,34 @@ class _ProjectMenuState extends ConsumerState<ProjectMenu> {
 
   @override
   Widget build(BuildContext context) {
-    return Row(
-      children: [
-        Flyout(
-          content: (context) {
-            return MenuFlyout(
-              items: [
-                MenuFlyoutItem(
-                  leading: const Icon(FluentIcons.copy),
-                  text: const Text('New'),
-                  onPressed: _showConfirmDialog,
-                ),
-                MenuFlyoutItem(
-                  leading:
-                      const Icon(FluentIcons.fabric_open_folder_horizontal),
-                  text: const Text('Open'),
-                  onPressed: _openFile,
-                ),
-                MenuFlyoutItem(
-                  leading: const Icon(FluentIcons.save),
-                  text: const Text('Save'),
-                  onPressed: _saveProject,
-                ),
-              ],
-            );
-          },
-          openMode: FlyoutOpenMode.press,
-          controller: _flyoutController,
-          child: Container(
-            padding: const EdgeInsets.all(10.0),
-            child: const Text('Project'),
-          ),
-        ),
-      ],
+    return Flyout(
+      content: (context) {
+        return MenuFlyout(
+          items: [
+            MenuFlyoutItem(
+              leading: const Icon(FluentIcons.copy),
+              text: const Text('New'),
+              onPressed: _showConfirmDialog,
+            ),
+            MenuFlyoutItem(
+              leading: const Icon(FluentIcons.fabric_open_folder_horizontal),
+              text: const Text('Open'),
+              onPressed: _openFile,
+            ),
+            MenuFlyoutItem(
+              leading: const Icon(FluentIcons.save),
+              text: const Text('Save'),
+              onPressed: _saveProject,
+            ),
+          ],
+        );
+      },
+      openMode: FlyoutOpenMode.press,
+      controller: _flyoutController,
+      child: Container(
+        padding: const EdgeInsets.all(10.0),
+        child: const Text('Project'),
+      ),
     );
   }
 }

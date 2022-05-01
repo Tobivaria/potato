@@ -20,7 +20,7 @@ class NavigationController extends StateNotifier<NavigationState> {
           init ??
               // default state when launching the app
               const NavigationState(
-                route: ViewRoute.home,
+                route: ViewRoute.translations,
               ),
         );
 
