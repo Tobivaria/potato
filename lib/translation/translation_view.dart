@@ -45,7 +45,10 @@ class _TranslationViewState extends ConsumerState<TranslationView> {
 
     return Column(
       children: [
-        const TranslationMenu(),
+        TranslationMenu(
+          disableAddTranslation: translations.isEmpty,
+          disableExport: translations.isEmpty,
+        ),
         const Divider(),
         if (projectState.languageData.languages.isEmpty)
           const Center(

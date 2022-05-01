@@ -8,7 +8,13 @@ import 'package:potato/project/project_state_controller.dart';
 import 'package:potato/utils/potato_logger.dart';
 
 class TranslationMenu extends ConsumerStatefulWidget {
-  const TranslationMenu({Key? key}) : super(key: key);
+  final bool disableExport;
+  final bool disableAddTranslation;
+  const TranslationMenu(
+      {required this.disableExport,
+      required this.disableAddTranslation,
+      Key? key})
+      : super(key: key);
 
   @override
   ConsumerState<TranslationMenu> createState() => _TranslationMenuState();
@@ -98,7 +104,7 @@ class _TranslationMenuState extends ConsumerState<TranslationMenu> {
       CommandBarButton(
         icon: const Icon(FluentIcons.share),
         label: const Text('Export'),
-        onPressed: _exportData,
+        onPressed: widget.disableExport ? null : _exportData,
       ),
       CommandBarButton(
         icon: const Icon(FluentIcons.locale_language),
@@ -113,7 +119,7 @@ class _TranslationMenuState extends ConsumerState<TranslationMenu> {
       CommandBarButton(
         icon: const Icon(FluentIcons.add),
         label: const Text('Add translation'),
-        onPressed: _addTranslation,
+        onPressed: widget.disableAddTranslation ? null : _addTranslation,
       ),
     ];
 
