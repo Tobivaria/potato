@@ -20,6 +20,7 @@ class ArbDescription extends ConsumerStatefulWidget {
 class _ArbDescriptionState extends ConsumerState<ArbDescription> {
   final TextEditingController _textontroller = TextEditingController();
   final FocusNode _focusNode = FocusNode();
+  double _controlsOpacity = 0.0;
 
   @override
   void initState() {
@@ -47,26 +48,48 @@ class _ArbDescriptionState extends ConsumerState<ArbDescription> {
     ref.read(projectStateProvider.notifier).removeDescription(widget.arbKey);
   }
 
+  void _enterRegion(PointerEvent details) {
+    _toggleControlsOpacity(show: true);
+  }
+
+  void _leaveRegion(PointerEvent details) {
+    _toggleControlsOpacity(show: false);
+  }
+
+  void _toggleControlsOpacity({required bool show}) {
+    setState(() {
+      _controlsOpacity = show ? 1 : 0;
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
-    return Row(
-      children: [
-        IconButton(
-          icon: const Icon(
-            FluentIcons.clear,
-            size: Dimensions.arbSettingIconSize,
+    return MouseRegion(
+      onEnter: _enterRegion,
+      onExit: _leaveRegion,
+      child: Row(
+        children: [
+          AnimatedOpacity(
+            opacity: _controlsOpacity,
+            duration: const Duration(milliseconds: 300),
+            child: IconButton(
+              icon: const Icon(
+                FluentIcons.clear,
+                size: Dimensions.arbSettingIconSize,
+              ),
+              onPressed: _removeDescription,
+            ),
           ),
-          onPressed: _removeDescription,
-        ),
-        SizedBox(
-          width: Dimensions.idTextfieldWidth - Dimensions.arbOptionOffset,
-          child: TextBox(
-            controller: _textontroller,
-            focusNode: _focusNode,
-            placeholder: 'Description',
+          SizedBox(
+            width: Dimensions.idTextfieldWidth - Dimensions.arbOptionOffset,
+            child: TextBox(
+              controller: _textontroller,
+              focusNode: _focusNode,
+              placeholder: 'Description',
+            ),
           ),
-        ),
-      ],
+        ],
+      ),
     );
   }
 }

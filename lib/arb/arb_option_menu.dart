@@ -57,8 +57,8 @@ class _ArbOptionMenuState extends ConsumerState<ArbOptionMenu> {
         );
       },
       openMode: FlyoutOpenMode.press,
-      verticalOffset: -100,
       controller: _flyoutController,
+      position: FlyoutPosition.below,
       child: IconButton(
         icon: const Icon(
           FluentIcons.add,
