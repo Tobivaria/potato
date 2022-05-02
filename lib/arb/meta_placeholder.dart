@@ -2,6 +2,7 @@ import 'package:fluent_ui/fluent_ui.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:potato/arb/arb_definition.dart';
 import 'package:potato/arb/arb_placerholder.dart';
+import 'package:potato/const/dimensions.dart';
 import 'package:potato/project/project_state_controller.dart';
 
 class MetaPlaceholder extends ConsumerStatefulWidget {
@@ -25,6 +26,7 @@ class _MetaPlaceholderState extends ConsumerState<MetaPlaceholder> {
   final FocusNode _exFocus = FocusNode();
 
   late String _selectedOption;
+  double _controlsOpacity = 0.0;
 
   @override
   void initState() {
@@ -62,50 +64,86 @@ class _MetaPlaceholderState extends ConsumerState<MetaPlaceholder> {
     }
   }
 
+  void _enterRegion(PointerEvent details) {
+    _toggleControlsOpacity(show: true);
+  }
+
+  void _leaveRegion(PointerEvent details) {
+    _toggleControlsOpacity(show: false);
+  }
+
+  void _toggleControlsOpacity({required bool show}) {
+    setState(() {
+      _controlsOpacity = show ? 1 : 0;
+    });
+  }
+
+  void _removePlaceholder() {
+    print('Todo');
+  }
+
   // TODO update selections when implemeneted!
   final List<ArbType> _availableTypes = [ArbType.String];
 
   @override
   Widget build(BuildContext context) {
-    return Row(
-      children: [
-        DropDownButton(
-          title: Text(_selectedOption),
-          items: [
-            for (ArbType entry in _availableTypes)
-              MenuFlyoutItem(
-                text: Text(entry.name),
-                onPressed: () => _updateSelection(entry.name),
-              ),
-          ],
-        ),
-        Column(
-          children: [
-            SizedBox(
-              width: 200, // TODO move to dimensions
-              child: TextBox(
-                controller: _idController,
-                focusNode: _idFocus,
-                placeholder: 'Placeholder id',
-                decoration: const BoxDecoration(
-                  border: Border(),
+    return MouseRegion(
+      onEnter: _enterRegion,
+      onExit: _leaveRegion,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.end,
+        children: [
+          SizedBox(
+            width: Dimensions.idTextfieldWidth,
+            child: Row(
+              children: [
+                AnimatedOpacity(
+                  opacity: _controlsOpacity,
+                  duration: const Duration(milliseconds: 300),
+                  child: IconButton(
+                    icon: const Icon(
+                      FluentIcons.clear,
+                      size: Dimensions.arbSettingIconSize,
+                    ),
+                    onPressed: _removePlaceholder,
+                  ),
                 ),
+                DropDownButton(
+                  title: Text(_selectedOption),
+                  items: [
+                    for (ArbType entry in _availableTypes)
+                      MenuFlyoutItem(
+                        text: Text(entry.name),
+                        onPressed: () => _updateSelection(entry.name),
+                      ),
+                  ],
+                ),
+                Expanded(
+                  child: TextBox(
+                    controller: _idController,
+                    focusNode: _idFocus,
+                    placeholder: 'Placeholder id',
+                    decoration: const BoxDecoration(
+                      border: Border(),
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+          SizedBox(
+            width: Dimensions.idTextfieldWidth - Dimensions.arbOptionOffset,
+            child: TextBox(
+              controller: _exController,
+              focusNode: _exFocus,
+              placeholder: 'Placeholder example',
+              decoration: const BoxDecoration(
+                border: Border(),
               ),
             ),
-            SizedBox(
-              width: 200, // TODO move to dimensions
-              child: TextBox(
-                controller: _exController,
-                focusNode: _exFocus,
-                placeholder: 'Placeholder example',
-                decoration: const BoxDecoration(
-                  border: Border(),
-                ),
-              ),
-            ),
-          ],
-        ),
-      ],
+          ),
+        ],
+      ),
     );
   }
 }
