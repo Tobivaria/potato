@@ -47,4 +47,8 @@ class ArbPlaceholder {
   int get hashCode {
     return id.hashCode ^ type.hashCode ^ example.hashCode;
   }
+
+  @override
+  String toString() =>
+      'ArbPlaceholder(id: $id, type: $type, example: $example)';
 }

@@ -79,7 +79,9 @@ class _MetaPlaceholderState extends ConsumerState<MetaPlaceholder> {
   }
 
   void _removePlaceholder() {
-    print('Todo');
+    ref
+        .read(projectStateProvider.notifier)
+        .removePlaceholder(widget.arbKey, widget.placeholder.id);
   }
 
   // TODO update selections when implemeneted!

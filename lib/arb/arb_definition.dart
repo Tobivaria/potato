@@ -69,4 +69,8 @@ class ArbDefinition {
 
   @override
   int get hashCode => description.hashCode ^ placeholders.hashCode;
+
+  @override
+  String toString() =>
+      'ArbDefinition(description: $description, placeholders: $placeholders)';
 }

@@ -318,6 +318,8 @@ class ProjectStateController extends StateNotifier<ProjectState> {
       'Adding placeholder for entry "$key"',
     );
 
+    // TODO set default id, for more entries
+
     const String defaultId = '';
     const ArbType defaultType = ArbType.String;
 
@@ -346,6 +348,8 @@ class ProjectStateController extends StateNotifier<ProjectState> {
       'Updating placeholder id for entry "$key" from "$oldId" to "$newId"',
     );
 
+    // TODO prevent renaming to id that already exists
+
     final Map<String, ArbDefinition> modifiedDefs = {};
     for (final String entry in state.languageData.arbDefinitions.keys) {
       if (entry == key) {
@@ -363,6 +367,39 @@ class ProjectStateController extends StateNotifier<ProjectState> {
                 placeholder
           ],
         );
+        modifiedDefs[entry] = newOne;
+      } else {
+        modifiedDefs[entry] = state.languageData.arbDefinitions[entry]!;
+      }
+    }
+
+    _updateState(updateArbDefs: modifiedDefs);
+  }
+
+  // TODO Test
+  void updatePlaceholderExample(
+      String key, String placeholderId, String newDescription) {
+    // TODO implement
+  }
+
+  // TODO Test
+  void removePlaceholder(String key, String placeholderId) {
+    logger.d(
+      'Removing placeholder for entry "$key" with id "$placeholderId"',
+    );
+
+    final Map<String, ArbDefinition> modifiedDefs = {};
+    for (final String entry in state.languageData.arbDefinitions.keys) {
+      if (entry == key) {
+        final ArbDefinition copy = state.languageData.arbDefinitions[key]!;
+        final ArbDefinition newOne = copy.copyWith(
+          placeholders: [
+            for (ArbPlaceholder placeholder in copy.placeholders!)
+              if (placeholder.id != placeholderId) placeholder
+          ],
+        );
+        print(copy.placeholders);
+        print(newOne.placeholders);
         modifiedDefs[entry] = newOne;
       } else {
         modifiedDefs[entry] = state.languageData.arbDefinitions[entry]!;
