@@ -43,6 +43,8 @@ class _TranslationViewState extends ConsumerState<TranslationView> {
 
     final String? baseLang = projectState.file.baseLanguage;
 
+    print('rebuild');
+
     return Column(
       children: [
         TranslationMenu(

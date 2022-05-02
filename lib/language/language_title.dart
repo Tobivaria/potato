@@ -7,9 +7,12 @@ import 'package:potato/project/project_error_controller.dart';
 import 'package:potato/project/project_state_controller.dart';
 
 class LanguageTitle extends ConsumerStatefulWidget {
-  const LanguageTitle(this.title, this.width,
-      {this.isBaseLanguage = false, Key? key})
-      : super(key: key);
+  const LanguageTitle(
+    this.title,
+    this.width, {
+    this.isBaseLanguage = false,
+    Key? key,
+  }) : super(key: key);
 
   final String title;
   final double width;
@@ -50,6 +53,7 @@ class _LanguageTitleState extends ConsumerState<LanguageTitle> {
     final bool hasError = tmp.containsKey(widget.title);
 
     print(tmp);
+    print('title rebuilds');
 
     return MouseRegion(
       onEnter: _enterRegion,

@@ -51,6 +51,14 @@ class _TranslationEntryState extends ConsumerState<TranslationEntry> {
     super.dispose();
   }
 
+  @override
+  void didUpdateWidget(covariant TranslationEntry oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (oldWidget.definition != widget.definition) {
+      _validateTranslation();
+    }
+  }
+
   // update the translation key, once the textfield is losing focus
   void _updateTranslation() {
     if (!_focus.hasFocus && (widget.translation != _controller.text)) {
@@ -152,6 +160,7 @@ class _TranslationEntryState extends ConsumerState<TranslationEntry> {
 
   @override
   Widget build(BuildContext context) {
+    print('rebuild translation');
     return SizedBox(
       width: Dimensions.languageCellWidth,
       child: Padding(
