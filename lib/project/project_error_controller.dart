@@ -1,12 +1,19 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:logger/logger.dart';
+import 'package:potato/project/project_error.dart';
 import 'package:potato/utils/potato_logger.dart';
 
-final StateNotifierProvider<ProjectErrorController, Map<String, Set<String>>>
+final Provider<Set<String>> errorLanguageListProvider = Provider<Set<String>>(
+  (ref) => ref
+      .watch(projectErrorController)
+      .map((element) => element.language)
+      .toSet(),
+);
+
+final StateNotifierProvider<ProjectErrorController, List<ProjectError>>
     projectErrorController =
-    StateNotifierProvider<ProjectErrorController, Map<String, Set<String>>>((
-  StateNotifierProviderRef<ProjectErrorController, Map<String, Set<String>>>
-      ref,
+    StateNotifierProvider<ProjectErrorController, List<ProjectError>>((
+  StateNotifierProviderRef<ProjectErrorController, List<ProjectError>> ref,
 ) {
   return ProjectErrorController(
     ref.watch(loggerProvider),
@@ -14,33 +21,39 @@ final StateNotifierProvider<ProjectErrorController, Map<String, Set<String>>>
 });
 
 // TODO test
-class ProjectErrorController extends StateNotifier<Map<String, Set<String>>> {
+class ProjectErrorController extends StateNotifier<List<ProjectError>> {
   final Logger logger;
 
   ProjectErrorController(
     this.logger,
-  ) : super({});
+  ) : super([]);
 
   /// Add error (key where the error occurs) to the list of the language
   void addError(String language, String key) {
-    logger.d('Adding an error to the list of language: $language for key $key');
-    if (state.containsKey(language)) {
-      state[language]!.add(key);
-    } else {
-      state[language] = {key};
-    }
-    state = state;
+    logger
+        .d('Adding an error to the list for language: $language and key $key');
+    state = [...state, ProjectError(language: language, key: key)];
   }
 
   /// Remove error (key where the error was fixed) from the list of the language
-  void removeError(String language, String key) {
+  void removeErrorFromLanguage(String language, String key) {
     logger.d('Removing error of language: $language for key $key');
-    state[language]!.remove(key);
 
-    // remove language when there are no errors left
-    if (state[language]!.isEmpty) {
-      state.remove(language);
-    }
-    state = state;
+    state = state
+        .where(
+          (element) => element.language != language && element.key != key,
+        )
+        .toList();
+  }
+
+  /// Removes all errors for they key. E.g. error was fixed or key was removed
+  void removeError(String key) {
+    logger.d('Removing any error for key: $key');
+
+    state = state
+        .where(
+          (element) => element.key != key,
+        )
+        .toList();
   }
 }

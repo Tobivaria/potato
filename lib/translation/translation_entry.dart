@@ -55,7 +55,9 @@ class _TranslationEntryState extends ConsumerState<TranslationEntry> {
   void didUpdateWidget(covariant TranslationEntry oldWidget) {
     super.didUpdateWidget(oldWidget);
     if (oldWidget.definition != widget.definition) {
-      _validateTranslation();
+      // postpone rebuilding after build finished
+      WidgetsBinding.instance
+          ?.addPostFrameCallback((_) => _validateTranslation());
     }
   }
 
@@ -109,9 +111,8 @@ class _TranslationEntryState extends ConsumerState<TranslationEntry> {
           if (_validtyState == EntryState.invalid) {
             _validtyState = EntryState.fixed;
 
-            ref
-                .read(projectErrorController.notifier)
-                .removeError(widget.languageKey, widget.translationKey);
+            ref.read(projectErrorController.notifier).removeErrorFromLanguage(
+                widget.languageKey, widget.translationKey);
           } else {
             _validtyState = EntryState.valid;
           }

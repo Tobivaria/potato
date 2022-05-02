@@ -8,6 +8,7 @@ import 'package:potato/arb/meta_placeholder.dart';
 import 'package:potato/const/dimensions.dart';
 import 'package:potato/const/potato_color.dart';
 import 'package:potato/core/confirm_dialog.dart';
+import 'package:potato/project/project_error_controller.dart';
 import 'package:potato/project/project_state_controller.dart';
 
 class ArbEntry extends ConsumerStatefulWidget {
@@ -98,6 +99,7 @@ class _ArbEntryState extends ConsumerState<ArbEntry> {
   }
 
   void _deleteEntry() {
+    ref.read(projectErrorController.notifier).removeError(_keyController.text);
     ref
         .read(projectStateProvider.notifier)
         .removeTranslation(_keyController.text);

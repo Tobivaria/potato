@@ -49,11 +49,8 @@ class _LanguageTitleState extends ConsumerState<LanguageTitle> {
 
   @override
   Widget build(BuildContext context) {
-    final Map<String, Set<String>> tmp = ref.watch(projectErrorController);
-    final bool hasError = tmp.containsKey(widget.title);
-
-    print(tmp);
-    print('title rebuilds');
+    final Set<String> languageErrors = ref.watch(errorLanguageListProvider);
+    final bool hasError = languageErrors.contains(widget.title);
 
     return MouseRegion(
       onEnter: _enterRegion,

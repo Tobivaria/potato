@@ -174,6 +174,7 @@ class ProjectStateController extends StateNotifier<ProjectState> {
     );
   }
 
+  /// Removes the key itself and from all languages
   void removeTranslation(String keyToRemove) {
     logger.d('Removing translation with key: $keyToRemove');
 
