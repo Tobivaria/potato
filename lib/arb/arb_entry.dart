@@ -4,6 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:potato/arb/arb_definition.dart';
 import 'package:potato/arb/arb_description.dart';
 import 'package:potato/arb/arb_option_menu.dart';
+import 'package:potato/arb/arb_placerholder.dart';
 import 'package:potato/arb/meta_placeholder.dart';
 import 'package:potato/const/dimensions.dart';
 import 'package:potato/const/potato_color.dart';
@@ -134,15 +135,28 @@ class _ArbEntryState extends ConsumerState<ArbEntry> {
                   ),
                 ),
                 if (_showDescription)
-                  ArbDescription(
-                    arbKey: widget.definitionKey,
-                    description: widget.definition.description,
+                  Padding(
+                    padding: const EdgeInsets.only(
+                      top: Dimensions.paddingBetweenArbOptions,
+                    ),
+                    child: ArbDescription(
+                      arbKey: widget.definitionKey,
+                      description: widget.definition.description,
+                    ),
                   ),
-                if (_showPlaceholder)
-                  MetaPlaceholder(
-                    arbKey: widget.definitionKey,
-                    placeholder: widget.definition.placeholders![0],
-                  ),
+                if (_showPlaceholder) ...[
+                  for (ArbPlaceholder placeholder
+                      in widget.definition.placeholders!)
+                    Padding(
+                      padding: const EdgeInsets.only(
+                        top: Dimensions.paddingBetweenArbOptions,
+                      ),
+                      child: MetaPlaceholder(
+                        arbKey: widget.definitionKey,
+                        placeholder: placeholder,
+                      ),
+                    ),
+                ]
               ],
             ),
             const SizedBox(width: 20),

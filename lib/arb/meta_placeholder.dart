@@ -69,18 +69,14 @@ class _MetaPlaceholderState extends ConsumerState<MetaPlaceholder> {
   Widget build(BuildContext context) {
     return Row(
       children: [
-        Column(
-          children: [
-            DropDownButton(
-              title: Text(_selectedOption),
-              items: [
-                for (ArbType entry in _availableTypes)
-                  MenuFlyoutItem(
-                    text: Text(entry.name),
-                    onPressed: () => _updateSelection(entry.name),
-                  ),
-              ],
-            ),
+        DropDownButton(
+          title: Text(_selectedOption),
+          items: [
+            for (ArbType entry in _availableTypes)
+              MenuFlyoutItem(
+                text: Text(entry.name),
+                onPressed: () => _updateSelection(entry.name),
+              ),
           ],
         ),
         Column(

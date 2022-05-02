@@ -112,7 +112,9 @@ class _TranslationEntryState extends ConsumerState<TranslationEntry> {
             _validtyState = EntryState.fixed;
 
             ref.read(projectErrorController.notifier).removeErrorFromLanguage(
-                widget.languageKey, widget.translationKey);
+                  widget.languageKey,
+                  widget.translationKey,
+                );
           } else {
             _validtyState = EntryState.valid;
           }
@@ -159,11 +161,34 @@ class _TranslationEntryState extends ConsumerState<TranslationEntry> {
     }
   }
 
+  double _calculateHeight() {
+    double height = Dimensions.arbKeyHeight;
+    final ArbDefinition def = widget.definition;
+
+    // description height
+    if (def.description != null) {
+      height +=
+          Dimensions.arbDescriptionHeight + Dimensions.paddingBetweenArbOptions;
+    }
+
+    if (def.placeholders != null) {
+      height += (Dimensions.arbPlaceholderHeight +
+              Dimensions.paddingBetweenArbOptions) *
+          def.placeholders!.length;
+    }
+
+    if (height < Dimensions.tableRowMinHeight) {
+      height = Dimensions.tableRowMinHeight;
+    }
+    print(height);
+    return height;
+  }
+
   @override
   Widget build(BuildContext context) {
-    print('rebuild translation');
     return SizedBox(
       width: Dimensions.languageCellWidth,
+      height: _calculateHeight(),
       child: Padding(
         padding:
             const EdgeInsets.only(right: Dimensions.languageCellRightPadding),
