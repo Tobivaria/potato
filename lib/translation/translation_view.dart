@@ -1,7 +1,7 @@
 import 'package:fluent_ui/fluent_ui.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:linked_scroll_controller/linked_scroll_controller.dart';
-import 'package:potato/project/project_state.dart';
+import 'package:potato/language/language.dart';
 import 'package:potato/project/project_state_controller.dart';
 import 'package:potato/translation/table_body.dart';
 import 'package:potato/translation/table_header.dart';
@@ -36,23 +36,21 @@ class _TranslationViewState extends ConsumerState<TranslationView> {
 
   @override
   Widget build(BuildContext context) {
-    // TODO optimize rebuilds
-    final ProjectState projectState = ref.watch(projectStateProvider);
-    final List<String> translations =
-        projectState.languageData.languages.keys.toList();
-
-    final String? baseLang = projectState.file.baseLanguage;
-
-    print('rebuild');
+    final Map<String, Language> languageMap = ref.watch(
+      projectStateProvider.select((value) => value.languageData.languages),
+    );
+    final List<String> languages = languageMap.keys.toList();
+    final String? baseLang = ref
+        .watch(projectStateProvider.select((value) => value.file.baseLanguage));
 
     return Column(
       children: [
         TranslationMenu(
-          disableAddTranslation: translations.isEmpty,
-          disableExport: translations.isEmpty,
+          disableAddTranslation: languages.isEmpty,
+          disableExport: languages.isEmpty,
         ),
         const Divider(),
-        if (projectState.languageData.languages.isEmpty)
+        if (languages.isEmpty)
           const Center(
             child: Text('Start by adding a language'),
           )
@@ -63,7 +61,7 @@ class _TranslationViewState extends ConsumerState<TranslationView> {
               child: Column(
                 children: [
                   TableHeader(
-                    languages: translations,
+                    languages: languages,
                     baseLanguage: baseLang,
                     scrollController: _headerController,
                   ),
