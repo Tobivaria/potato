@@ -180,7 +180,6 @@ class _TranslationEntryState extends ConsumerState<TranslationEntry> {
     if (height < Dimensions.tableRowMinHeight) {
       height = Dimensions.tableRowMinHeight;
     }
-    print(height);
     return height;
   }
 

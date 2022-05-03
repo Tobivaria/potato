@@ -318,10 +318,26 @@ class ProjectStateController extends StateNotifier<ProjectState> {
       'Adding placeholder for entry "$key"',
     );
 
-    // TODO set default id, for more entries
-
     const String defaultId = '';
     const ArbType defaultType = ArbType.String;
+
+    String placeHolderKey = defaultId;
+
+    // as the key needs to be unique for new entries, increment count
+    final RegExp reg = RegExp(r'\d+');
+    while (state.languageData.arbDefinitions[key]!.placeholders!
+        .any((element) => element.id == placeHolderKey)) {
+      final RegExpMatch? match = reg.firstMatch(placeHolderKey);
+
+      if (match == null) {
+        // no number previously attached
+        placeHolderKey += '1';
+        continue;
+      }
+      final String? intStr = match.group(0);
+
+      placeHolderKey = '$defaultId ${(int.tryParse(intStr!) ?? 0) + 1}';
+    }
 
     final Map<String, ArbDefinition> modifiedDefs = {};
     for (final String entry in state.languageData.arbDefinitions.keys) {
@@ -330,7 +346,7 @@ class ProjectStateController extends StateNotifier<ProjectState> {
         final ArbDefinition newOne = copy.copyWith(
           placeholders: [
             ...?copy.placeholders,
-            const ArbPlaceholder(id: defaultId, type: defaultType)
+            ArbPlaceholder(id: placeHolderKey, type: defaultType)
           ],
         );
         modifiedDefs[entry] = newOne;
@@ -348,7 +364,16 @@ class ProjectStateController extends StateNotifier<ProjectState> {
       'Updating placeholder id for entry "$key" from "$oldId" to "$newId"',
     );
 
-    // TODO prevent renaming to id that already exists
+    if (state.languageData.arbDefinitions[key]!.placeholders!
+        .any((element) => element.id == newId)) {
+      logger.w('Placeholder already exists and cannot be renamed');
+      ref.read(notificationController.notifier).add(
+            'Duplicated placeholder',
+            '$newId placeholder already exists',
+            InfoBarSeverity.error,
+          );
+      return;
+    }
 
     final Map<String, ArbDefinition> modifiedDefs = {};
     for (final String entry in state.languageData.arbDefinitions.keys) {
@@ -398,8 +423,7 @@ class ProjectStateController extends StateNotifier<ProjectState> {
               if (placeholder.id != placeholderId) placeholder
           ],
         );
-        print(copy.placeholders);
-        print(newOne.placeholders);
+
         modifiedDefs[entry] = newOne;
       } else {
         modifiedDefs[entry] = state.languageData.arbDefinitions[entry]!;

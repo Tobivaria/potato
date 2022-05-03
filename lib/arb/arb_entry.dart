@@ -154,6 +154,9 @@ class _ArbEntryState extends ConsumerState<ArbEntry> {
                       child: MetaPlaceholder(
                         arbKey: widget.definitionKey,
                         placeholder: placeholder,
+                        key: ValueKey(
+                          '${widget.definitionKey}-${placeholder.id}',
+                        ),
                       ),
                     ),
                 ]
