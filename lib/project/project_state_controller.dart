@@ -4,9 +4,9 @@ import 'package:fluent_ui/fluent_ui.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:logger/logger.dart';
 import 'package:potato/arb/arb_definition.dart';
-import 'package:potato/arb/arb_placerholder.dart';
 import 'package:potato/file_handling/file_service.dart';
 import 'package:potato/language/language.dart';
+import 'package:potato/language/mutable_language_data.dart';
 import 'package:potato/notification/notification_controller.dart';
 import 'package:potato/project/project_file.dart';
 import 'package:potato/project/project_state.dart';
@@ -100,99 +100,22 @@ class ProjectStateController extends StateNotifier<ProjectState> {
       addTranslation();
     }
 
-    final Map<String, String> newLanguage = {};
-    for (final entry in state.languageData.arbDefinitions.keys) {
-      newLanguage[entry] = '';
-    }
-
-    _updateState(
-      updateLanguages: {
-        ...state.languageData.languages,
-        langKey: Language(existingTranslations: newLanguage)
-      },
-    );
+    state =
+        state.copyWith(languageData: state.languageData.addLanguage(langKey));
   }
 
   /// Remove an existing language from the project
   void removeLanguage(String langToRemove) {
     logger.d('Removing language: $langToRemove');
 
-    final Map<String, Language> previousLanguages = {
-      ...state.languageData.languages
-    };
-    previousLanguages.remove(langToRemove);
-
-    _updateState(updateLanguages: previousLanguages);
+    state = state.copyWith(
+      languageData: state.languageData.removeLanguage(langToRemove),
+    );
 
     if (langToRemove == state.file.baseLanguage) {
       // invalidate base language
       setBaseLanguage(null);
     }
-  }
-
-  /// Adds a new translation with given key
-  /// When no key is given a predefined key is used
-  void addTranslation({String? key, String? translation}) {
-    const String emptyKey = '@Add key';
-    String keyToInsert = key ?? emptyKey;
-
-    // TODO add test for that part
-    if (key == null) {
-      // as the key needs to be unique for new entries, increment count
-      final RegExp reg = RegExp(r'\d+');
-      while (state.languageData.arbDefinitions.keys.contains(keyToInsert)) {
-        final RegExpMatch? match = reg.firstMatch(keyToInsert);
-
-        if (match == null) {
-          // no number previously attached
-          keyToInsert += ' 1';
-          continue;
-        }
-        final String? intStr = match.group(0);
-
-        keyToInsert = '$emptyKey ${(int.tryParse(intStr!) ?? 0) + 1}';
-      }
-    }
-
-    final Map<String, Language> modifiedLanguages = {};
-
-    for (final item in state.languageData.languages.keys) {
-      modifiedLanguages[item] = Language(
-        existingTranslations: {
-          ...state.languageData.languages[item]!.translations,
-          keyToInsert: ''
-        },
-      );
-    }
-
-    _updateState(
-      updateLanguages: modifiedLanguages,
-      updateArbDefs: {
-        ...state.languageData.arbDefinitions,
-        keyToInsert: const ArbDefinition()
-      },
-    );
-  }
-
-  /// Removes the key itself and from all languages
-  void removeTranslation(String keyToRemove) {
-    logger.d('Removing translation with key: $keyToRemove');
-
-    final Map<String, Language> modifiedLanguages = {};
-
-    for (final key in state.languageData.languages.keys) {
-      final Map<String, String> copy =
-          Map.of(state.languageData.languages[key]!.translations);
-      copy.remove(keyToRemove);
-      modifiedLanguages[key] = Language(existingTranslations: copy);
-    }
-
-    final Map<String, ArbDefinition> arbDefs = {
-      ...state.languageData.arbDefinitions
-    };
-    arbDefs.remove(keyToRemove);
-
-    _updateState(updateLanguages: modifiedLanguages, updateArbDefs: arbDefs);
   }
 
   Future<void> export(String pathToExportTo) async {
@@ -209,6 +132,21 @@ class ProjectStateController extends StateNotifier<ProjectState> {
     }
   }
 
+  void addTranslation() {
+    state = state.copyWith(
+      languageData: state.languageData.addKey(),
+    );
+  }
+
+  /// Removes the key itself and from all languages
+  void removeTranslation(String keyToRemove) {
+    logger.d('Removing translation with key: $keyToRemove');
+
+    state = state.copyWith(
+      languageData: state.languageData.removeKey(keyToRemove),
+    );
+  }
+
   /// Updates the key in the arb definition and all languages
   void updateKey(String oldKey, String newKey) {
     logger.d('Updating key from "$oldKey" to "$newKey"');
@@ -223,74 +161,31 @@ class ProjectStateController extends StateNotifier<ProjectState> {
       return;
     }
 
-    final Map<String, Language> modifiedLanguages = {};
-
-    for (final languageKey in state.languageData.languages.keys) {
-      final Map<String, String> copy =
-          Map.of(state.languageData.languages[languageKey]!.translations);
-      final String removedTranslation = copy.remove(oldKey)!;
-      copy[newKey] = removedTranslation;
-      modifiedLanguages[languageKey] = Language(existingTranslations: copy);
-    }
-
-    final Map<String, ArbDefinition> arbDefs = {
-      ...state.languageData.arbDefinitions
-    };
-    final ArbDefinition removedDef = arbDefs.remove(oldKey)!;
-    arbDefs[newKey] = removedDef;
-
-    _updateState(updateLanguages: modifiedLanguages, updateArbDefs: arbDefs);
+    state = state.copyWith(
+      languageData: state.languageData.updateKey(oldKey, newKey),
+    );
   }
 
   void addDescription(String key) {
     logger.d('Add description for key "$key"');
-    final Map<String, ArbDefinition> defs = {};
 
-    // add all other deinifitions except the one with the same key
-    for (final String entryKey in state.languageData.arbDefinitions.keys) {
-      if (entryKey != key) {
-        defs[entryKey] = state.languageData.arbDefinitions[entryKey]!;
-      } else {
-        defs[entryKey] = state.languageData.arbDefinitions[entryKey]!
-            .copyWith(description: '');
-      }
-    }
-
-    _updateState(updateArbDefs: defs);
+    state =
+        state.copyWith(languageData: state.languageData.addDescription(key));
   }
 
   void removeDescription(String key) {
     logger.d('Removing description of key "$key"');
-    final Map<String, ArbDefinition> defs = {
-      key: ArbDefinition(
-        placeholders: state.languageData.arbDefinitions[key]?.placeholders,
-      )
-    };
-    // add all other deinifitions except the one with the same key
-    for (final String entryKey in state.languageData.arbDefinitions.keys) {
-      if (entryKey != key) {
-        defs[entryKey] = state.languageData.arbDefinitions[entryKey]!;
-      }
-    }
 
-    _updateState(updateArbDefs: defs);
+    state =
+        state.copyWith(languageData: state.languageData.removeDescription(key));
   }
 
   void updateDescription(String key, String description) {
     logger.d('Updating description of key "$key" to "$description"');
-    final Map<String, ArbDefinition> defs = {};
 
-    // add all other deinifitions except the one with the same key
-    for (final String entryKey in state.languageData.arbDefinitions.keys) {
-      if (entryKey != key) {
-        defs[entryKey] = state.languageData.arbDefinitions[entryKey]!;
-      } else {
-        defs[entryKey] = state.languageData.arbDefinitions[entryKey]!
-            .copyWith(description: description);
-      }
-    }
-
-    _updateState(updateArbDefs: defs);
+    state = state.copyWith(
+      languageData: state.languageData.updateDescription(key, description),
+    );
   }
 
   void updateTranslation(String langKey, String key, String translation) {
@@ -298,139 +193,65 @@ class ProjectStateController extends StateNotifier<ProjectState> {
       'Updating translation for "$langKey" entry "$key" to "$translation"',
     );
 
-    final Map<String, Language> modifiedLanguages = {};
-
-    for (final languageKey in state.languageData.languages.keys) {
-      final Map<String, String> copy =
-          Map.of(state.languageData.languages[languageKey]!.translations);
-      if (languageKey == langKey) {
-        copy[key] = translation;
-      }
-      modifiedLanguages[languageKey] = Language(existingTranslations: copy);
-    }
-
-    _updateState(updateLanguages: modifiedLanguages);
+    state = state.copyWith(
+      languageData:
+          state.languageData.updateTranslation(langKey, key, translation),
+    );
   }
 
-  // TODO test
   void addPlaceholder(String key) {
     logger.d(
       'Adding placeholder for entry "$key"',
     );
 
-    const String defaultId = '';
-    const ArbType defaultType = ArbType.String;
-
-    String placeHolderKey = defaultId;
-
-    // as the key needs to be unique for new entries, increment count
-    final RegExp reg = RegExp(r'\d+');
-    while (state.languageData.arbDefinitions[key]!.placeholders!
-        .any((element) => element.id == placeHolderKey)) {
-      final RegExpMatch? match = reg.firstMatch(placeHolderKey);
-
-      if (match == null) {
-        // no number previously attached
-        placeHolderKey += '1';
-        continue;
-      }
-      final String? intStr = match.group(0);
-
-      placeHolderKey = '$defaultId ${(int.tryParse(intStr!) ?? 0) + 1}';
-    }
-
-    final Map<String, ArbDefinition> modifiedDefs = {};
-    for (final String entry in state.languageData.arbDefinitions.keys) {
-      if (entry == key) {
-        final ArbDefinition copy = state.languageData.arbDefinitions[entry]!;
-        final ArbDefinition newOne = copy.copyWith(
-          placeholders: [
-            ...?copy.placeholders,
-            ArbPlaceholder(id: placeHolderKey, type: defaultType)
-          ],
-        );
-        modifiedDefs[entry] = newOne;
-      } else {
-        modifiedDefs[entry] = state.languageData.arbDefinitions[entry]!;
-      }
-    }
-
-    _updateState(updateArbDefs: modifiedDefs);
+    state =
+        state.copyWith(languageData: state.languageData.addPlaceholder(key));
   }
 
-  // TODO test
-  void updatePlaceholderID(String key, String oldId, String newId) {
+  void updatePlaceholder({
+    required String key,
+    required String placeholderId,
+    String? updatedId,
+    String? updatedExample,
+    MetaType? updatedType,
+  }) {
     logger.d(
-      'Updating placeholder id for entry "$key" from "$oldId" to "$newId"',
+      'Updating placeholder id "$placeholderId" for entry "$key" to ${updatedId == null ? "" : "id: $updatedId"} ${updatedExample == null ? "" : "example: $updatedExample"} ${updatedType == null ? "" : "type: $updatedType"} ',
     );
 
-    if (state.languageData.arbDefinitions[key]!.placeholders!
-        .any((element) => element.id == newId)) {
-      logger.w('Placeholder already exists and cannot be renamed');
-      ref.read(notificationController.notifier).add(
-            'Duplicated placeholder',
-            '$newId placeholder already exists',
-            InfoBarSeverity.error,
-          );
-      return;
-    }
-
-    final Map<String, ArbDefinition> modifiedDefs = {};
-    for (final String entry in state.languageData.arbDefinitions.keys) {
-      if (entry == key) {
-        final ArbDefinition copy = state.languageData.arbDefinitions[entry]!;
-        final ArbDefinition newOne = copy.copyWith(
-          placeholders: [
-            for (ArbPlaceholder placeholder in copy.placeholders!)
-              if (placeholder.id == oldId)
-                ArbPlaceholder(
-                  id: newId,
-                  type: placeholder.type,
-                  example: placeholder.example,
-                )
-              else
-                placeholder
-          ],
-        );
-        modifiedDefs[entry] = newOne;
-      } else {
-        modifiedDefs[entry] = state.languageData.arbDefinitions[entry]!;
+    // TODO move this into the UI/ Widget, then get rid of the notifier dependency
+    if (updatedId != null) {
+      // validate the new id is not already in use
+      if (!state.languageData.isPlaceholderIdUnique(key, updatedId)) {
+        logger.w('Placeholder already exists and cannot be renamed');
+        ref.read(notificationController.notifier).add(
+              'Duplicated placeholder',
+              '$updatedId placeholder already exists',
+              InfoBarSeverity.error,
+            );
+        return;
       }
     }
 
-    _updateState(updateArbDefs: modifiedDefs);
+    state = state.copyWith(
+      languageData: state.languageData.updatePlaceholder(
+        key: key,
+        id: placeholderId,
+        updatedId: updatedId,
+        updatedExample: updatedExample,
+        updatedType: updatedType,
+      ),
+    );
   }
 
-  // TODO Test
-  void updatePlaceholderExample(
-      String key, String placeholderId, String newDescription) {
-    // TODO implement
-  }
-
-  // TODO Test
   void removePlaceholder(String key, String placeholderId) {
     logger.d(
       'Removing placeholder for entry "$key" with id "$placeholderId"',
     );
 
-    final Map<String, ArbDefinition> modifiedDefs = {};
-    for (final String entry in state.languageData.arbDefinitions.keys) {
-      if (entry == key) {
-        final ArbDefinition copy = state.languageData.arbDefinitions[key]!;
-        final ArbDefinition newOne = copy.copyWith(
-          placeholders: [
-            for (ArbPlaceholder placeholder in copy.placeholders!)
-              if (placeholder.id != placeholderId) placeholder
-          ],
-        );
-
-        modifiedDefs[entry] = newOne;
-      } else {
-        modifiedDefs[entry] = state.languageData.arbDefinitions[entry]!;
-      }
-    }
-
-    _updateState(updateArbDefs: modifiedDefs);
+    state = state.copyWith(
+      languageData: state.languageData.removePlaceHolder(key, placeholderId),
+    );
   }
 
   void _updateState({

@@ -56,10 +56,10 @@ class _MetaPlaceholderState extends ConsumerState<MetaPlaceholder> {
   // update the id, once the textfield is losing focus
   void _updateId() {
     if (!_idFocus.hasFocus && (widget.placeholder.id != _idController.text)) {
-      ref.read(projectStateProvider.notifier).updatePlaceholderID(
-            widget.arbKey,
-            widget.placeholder.id,
-            _idController.text,
+      ref.read(projectStateProvider.notifier).updatePlaceholder(
+            key: widget.arbKey,
+            placeholderId: widget.placeholder.id,
+            updatedId: _idController.text,
           );
     }
   }
@@ -84,8 +84,10 @@ class _MetaPlaceholderState extends ConsumerState<MetaPlaceholder> {
         .removePlaceholder(widget.arbKey, widget.placeholder.id);
   }
 
+  // TODO update example
+
   // TODO update selections when implemeneted!
-  final List<ArbType> _availableTypes = [ArbType.String];
+  final List<MetaType> _availableTypes = [MetaType.String];
 
   @override
   Widget build(BuildContext context) {
@@ -113,7 +115,7 @@ class _MetaPlaceholderState extends ConsumerState<MetaPlaceholder> {
                 DropDownButton(
                   title: Text(_selectedOption),
                   items: [
-                    for (ArbType entry in _availableTypes)
+                    for (MetaType entry in _availableTypes)
                       MenuFlyoutItem(
                         text: Text(entry.name),
                         onPressed: () => _updateSelection(entry.name),

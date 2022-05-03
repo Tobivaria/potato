@@ -4,7 +4,7 @@ import 'package:potato/arb/arb_definition.dart';
 @immutable
 class ArbPlaceholder {
   final String id;
-  final ArbType type;
+  final MetaType type;
   final String? example;
 
   const ArbPlaceholder({required this.id, required this.type, this.example});
@@ -14,7 +14,7 @@ class ArbPlaceholder {
 
     return ArbPlaceholder(
       id: map.key,
-      type: ArbType.values.byName(entries['type'] as String),
+      type: MetaType.values.byName(entries['type'] as String),
       example: entries['example'] as String?,
     );
   }
@@ -31,6 +31,18 @@ class ArbPlaceholder {
     return {
       id: entries,
     };
+  }
+
+  ArbPlaceholder copyWith({
+    String? id,
+    MetaType? type,
+    String? example,
+  }) {
+    return ArbPlaceholder(
+      id: id ?? this.id,
+      type: type ?? this.type,
+      example: example ?? this.example,
+    );
   }
 
   @override

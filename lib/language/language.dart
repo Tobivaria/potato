@@ -1,9 +1,11 @@
 import 'package:flutter/foundation.dart';
 
+@immutable
 class Language {
   final Map<String, String> translations;
 
-  Language({Map<String, String>? existingTranslations}) : translations = existingTranslations ?? {};
+  Language({Map<String, String>? existingTranslations})
+      : translations = existingTranslations ?? {};
 
   Language copyWith({
     Map<String, String>? translations,

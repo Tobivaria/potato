@@ -116,14 +116,14 @@ void main() {
         },
         existingLanguages: {
           'en': Language(
-            existingTranslations: {
+            existingTranslations: const {
               'themeBlue': 'Blue',
               'themeDefault': 'Default',
               'themeGreen': 'Green'
             },
           ),
           'es': Language(
-            existingTranslations: {
+            existingTranslations: const {
               'themeBlue': 'Azul',
               'themeDefault': 'Por defecto',
               'themeGreen': 'Verde'
@@ -137,132 +137,6 @@ void main() {
     final ProjectState actual = container.read(projectStateProvider);
 
     expect(actual, expected);
-  });
-
-  test(
-      'Adding a new language, creates a new language entry with the already existing translations, but empty',
-      () {
-    final List<Map<String, dynamic>> input = [
-      {
-        '@@locale': 'en',
-        'greeting': 'Blue',
-        '@greeting': {'description': 'Say hello'},
-      },
-      {'@@locale': 'de', 'greeting': 'hallo'}
-    ];
-
-    container.read(projectStateProvider.notifier).loadfromJsons(input);
-    container.read(projectStateProvider.notifier).addLanguage('es');
-
-    final ProjectState projectState = container.read(projectStateProvider);
-    expect(projectState.languageData.languages.length, 3);
-
-    final Map<String, String> translations =
-        projectState.languageData.languages['es']!.translations;
-    expect(translations.length, 1);
-    expect(translations['greeting'], '');
-  });
-
-  test('Remove language', () {
-    final List<Map<String, dynamic>> input = [
-      {
-        '@@locale': 'en',
-        'greeting': 'Blue',
-        '@greeting': {'description': 'Say hello'},
-      },
-      {'@@locale': 'de', 'greeting': 'hallo'}
-    ];
-
-    container.read(projectStateProvider.notifier).loadfromJsons(input);
-
-    container.read(projectStateProvider.notifier).removeLanguage('en');
-
-    final ProjectState projectState = container.read(projectStateProvider);
-    expect(projectState.languageData.languages.length, 1);
-    expect(projectState.languageData.languages.keys, ['de']);
-  });
-
-  test(
-      'Adding a translation, adds a new map entry for each language and arb definition',
-      () {
-    final List<Map<String, dynamic>> input = [
-      {
-        '@@locale': 'en',
-        'greeting': 'Blue',
-        '@greeting': {'description': 'Say hello'},
-      },
-      {'@@locale': 'de', 'greeting': 'hallo'}
-    ];
-
-    container.read(projectStateProvider.notifier).loadfromJsons(input);
-
-    container.read(projectStateProvider.notifier).addTranslation(key: 'food');
-    final ProjectState projectState = container.read(projectStateProvider);
-    expect(projectState.languageData.languages['en']!.translations.length, 2);
-    expect(projectState.languageData.languages['de']!.translations.length, 2);
-    expect(projectState.languageData.arbDefinitions.length, 2);
-
-    expect(projectState.languageData.languages['en']!.translations['food'], '');
-    expect(projectState.languageData.languages['de']!.translations['food'], '');
-    expect(
-      projectState.languageData.arbDefinitions['food'],
-      const ArbDefinition(),
-    );
-  });
-
-  test(
-      'Removing a translation, remove the key from translation and arb definition',
-      () {
-    final List<Map<String, dynamic>> input = [
-      {
-        '@@locale': 'en',
-        'greeting': 'Blue',
-        '@greeting': {'description': 'Say hello'},
-      },
-      {'@@locale': 'de', 'greeting': 'hallo'}
-    ];
-
-    container.read(projectStateProvider.notifier).loadfromJsons(input);
-
-    container.read(projectStateProvider.notifier).removeTranslation('greeting');
-    final ProjectState projectState = container.read(projectStateProvider);
-    expect(projectState.languageData.languages['en']!.translations.length, 0);
-    expect(projectState.languageData.languages['de']!.translations.length, 0);
-    expect(projectState.languageData.arbDefinitions.length, 0);
-  });
-
-  test(
-      'Expect key to update all corresponding keys in arb definition and languages',
-      () {
-    when(() => mockNotificationController.add(any(), any(), any()))
-        .thenAnswer((_) async {});
-
-    final List<Map<String, dynamic>> input = [
-      {
-        '@@locale': 'en',
-        'greeting': 'hello',
-        '@greeting': {'description': 'Say hello'},
-      },
-      {'@@locale': 'de', 'greeting': 'hallo'}
-    ];
-
-    final LanguageData expected = LanguageData(
-      existingArdbDefinitions: const {
-        'bye': ArbDefinition(description: 'Say hello'),
-      },
-      existingLanguages: {
-        'en': Language(existingTranslations: {'bye': 'hello'}),
-        'de': Language(existingTranslations: {'bye': 'hallo'}),
-      },
-    );
-
-    container.read(projectStateProvider.notifier).loadfromJsons(input);
-
-    container.read(projectStateProvider.notifier).updateKey('greeting', 'bye');
-    final ProjectState actual = container.read(projectStateProvider);
-
-    verifyNever(() => mockNotificationController.add(any(), any(), any()));
-    expect(actual.languageData, expected);
   });
 
   test(
@@ -293,101 +167,6 @@ void main() {
 
     verify(() => mockNotificationController.add(any(), any(), any())).called(1);
     expect(prev, after);
-  });
-
-  test('Adding a descriptions to the definition, does not affect others', () {
-    final List<Map<String, dynamic>> input = [
-      {
-        '@@locale': 'en',
-        'greeting': 'Blue',
-        '@greeting': {},
-        'theme': 'Blue',
-      },
-      {'@@locale': 'de', 'greeting': 'hallo'}
-    ];
-
-    container.read(projectStateProvider.notifier).loadfromJsons(input);
-
-    container.read(projectStateProvider.notifier).addDescription('greeting');
-    final ProjectState state = container.read(projectStateProvider);
-    final ArbDefinition actual = state.languageData.arbDefinitions['greeting']!;
-
-    expect(actual.description, '');
-    expect(actual.placeholders, isNull);
-  });
-
-  test('Removing a descriptions to the definition, does not affect others', () {
-    final List<Map<String, dynamic>> input = [
-      {
-        '@@locale': 'en',
-        'greeting': 'Blue',
-        '@greeting': {'description': 'Say hello'},
-        'theme': 'Blue',
-      },
-      {'@@locale': 'de', 'greeting': 'hallo'}
-    ];
-
-    container.read(projectStateProvider.notifier).loadfromJsons(input);
-
-    container.read(projectStateProvider.notifier).removeDescription('greeting');
-    final ProjectState state = container.read(projectStateProvider);
-    final ArbDefinition actual = state.languageData.arbDefinitions['greeting']!;
-
-    expect(actual.description, isNull);
-    expect(actual.placeholders, isNull);
-  });
-
-  test('Updating a descriptions to the definition, does not affect others', () {
-    final List<Map<String, dynamic>> input = [
-      {
-        '@@locale': 'en',
-        'greeting': 'Blue',
-        '@greeting': {'description': 'Say hello'},
-        'theme': 'Blue',
-      },
-      {'@@locale': 'de', 'greeting': 'hallo'}
-    ];
-
-    container.read(projectStateProvider.notifier).loadfromJsons(input);
-
-    container
-        .read(projectStateProvider.notifier)
-        .updateDescription('greeting', 'Go home!');
-    final ProjectState state = container.read(projectStateProvider);
-    final ArbDefinition actual = state.languageData.arbDefinitions['greeting']!;
-
-    expect(actual.description, 'Go home!');
-    expect(actual.placeholders, isNull);
-  });
-
-  test('Expect a translation to update for the correct language', () {
-    final List<Map<String, dynamic>> input = [
-      {
-        '@@locale': 'en',
-        'greeting': 'hello',
-        '@greeting': {'description': 'Say hello'},
-      },
-      {'@@locale': 'de', 'greeting': 'hallo'}
-    ];
-
-    final LanguageData expected = LanguageData(
-      existingArdbDefinitions: const {
-        'greeting': ArbDefinition(description: 'Say hello'),
-      },
-      existingLanguages: {
-        'en': Language(existingTranslations: {'greeting': 'hello'}),
-        'de': Language(existingTranslations: {'greeting': 'Servus'}),
-      },
-    );
-
-    container.read(projectStateProvider.notifier).loadfromJsons(input);
-
-    container
-        .read(projectStateProvider.notifier)
-        .updateTranslation('de', 'greeting', 'Servus');
-    final ProjectState actual = container.read(projectStateProvider);
-
-    expect(actual.languageData, expected);
   });
 
   test('Export every language and its translations to a separate file',

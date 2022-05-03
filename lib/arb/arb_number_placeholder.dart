@@ -23,10 +23,10 @@ class ArbNumberPlaceholder extends ArbPlaceholder {
 
   ArbNumberPlaceholder({
     required String id,
-    required ArbType type,
+    required MetaType type,
     required this.format,
     String? example,
-  })  : assert(type == ArbType.DateTime || type == ArbType.String),
+  })  : assert(type == MetaType.DateTime || type == MetaType.String),
         super(id: id, type: type, example: example) {
     switch (format) {
       case ArbNumberFormat.compactCurrency:

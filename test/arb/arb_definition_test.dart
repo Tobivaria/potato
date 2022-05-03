@@ -4,8 +4,9 @@ import 'package:potato/arb/arb_placerholder.dart';
 
 void main() {
   test('Description and single placeholder to map', () {
-    const ArbDefinition definition =
-        ArbDefinition(description: 'Some text', placeholders: [ArbPlaceholder(id: 'value', type: ArbType.String)]);
+    const ArbDefinition definition = ArbDefinition(
+        description: 'Some text',
+        placeholders: [ArbPlaceholder(id: 'value', type: MetaType.String)]);
     final Map<String, dynamic> expected = {
       'description': 'Some text',
       'placeholders': {
@@ -20,9 +21,9 @@ void main() {
     const ArbDefinition definition = ArbDefinition(
       description: 'Some text',
       placeholders: [
-        ArbPlaceholder(id: 'value', type: ArbType.String),
-        ArbPlaceholder(id: 'person', type: ArbType.DateTime),
-        ArbPlaceholder(id: 'hola', type: ArbType.double),
+        ArbPlaceholder(id: 'value', type: MetaType.String),
+        ArbPlaceholder(id: 'person', type: MetaType.DateTime),
+        ArbPlaceholder(id: 'hola', type: MetaType.double),
       ],
     );
     final Map<String, dynamic> expected = {
@@ -50,9 +51,9 @@ void main() {
     const ArbDefinition expected = ArbDefinition(
       description: 'Some text',
       placeholders: [
-        ArbPlaceholder(id: 'value', type: ArbType.String),
-        ArbPlaceholder(id: 'person', type: ArbType.DateTime),
-        ArbPlaceholder(id: 'hola', type: ArbType.double),
+        ArbPlaceholder(id: 'value', type: MetaType.String),
+        ArbPlaceholder(id: 'person', type: MetaType.DateTime),
+        ArbPlaceholder(id: 'hola', type: MetaType.double),
       ],
     );
 

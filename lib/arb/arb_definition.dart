@@ -1,7 +1,7 @@
 import 'package:flutter/foundation.dart';
 import 'package:potato/arb/arb_placerholder.dart';
 
-enum ArbType {
+enum MetaType {
   // ignore: constant_identifier_names
   String,
   double,

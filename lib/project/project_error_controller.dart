@@ -48,12 +48,15 @@ class ProjectErrorController extends StateNotifier<List<ProjectError>> {
 
   /// Removes all errors for they key. E.g. error was fixed or key was removed
   void removeError(String key) {
-    logger.d('Removing any error for key: $key');
-
-    state = state
+    final List<ProjectError> errorList = state
         .where(
           (element) => element.key != key,
         )
         .toList();
+
+    if (state.length != errorList.length) {
+      logger.d('Removing any error for key: $key');
+      state = errorList;
+    }
   }
 }
