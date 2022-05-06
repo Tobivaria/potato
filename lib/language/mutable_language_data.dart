@@ -226,7 +226,7 @@ extension MutableLanguageData on LanguageData {
     // as the key needs to be unique for new entries, increment count
     final RegExp reg = RegExp(r'\d+');
     if (arbDefinitions[key]!.placeholders != null) {
-      while (isPlaceholderIdUnique(key, placeHolderKey)) {
+      while (!isPlaceholderIdUnique(key, placeHolderKey)) {
         final RegExpMatch? match = reg.firstMatch(placeHolderKey);
 
         if (match == null) {
