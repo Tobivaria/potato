@@ -24,7 +24,7 @@ class _AddLanguageState extends ConsumerState<AddLanguageDialog> {
     super.initState();
     // remove languages already in the project
     final List<String> existing =
-        ref.read(projectStateProvider).languageData.languages.keys.toList();
+        ref.read(projectStateProvider).languageData.supportedLanguages();
     for (final lang in existing) {
       _languages.remove(lang);
     }

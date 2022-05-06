@@ -1,6 +1,7 @@
 import 'package:fluent_ui/fluent_ui.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:potato/const/dimensions.dart';
+import 'package:potato/language/const_languages.dart';
 import 'package:potato/language/language_title.dart';
 
 class TableHeader extends ConsumerWidget {
@@ -15,6 +16,12 @@ class TableHeader extends ConsumerWidget {
     Key? key,
   }) : super(key: key);
 
+  String _formatLanguageText(String key) {
+    final Map<String, Map<String, dynamic>> _languages =
+        Map.from(ConstLanguages.languages);
+    return '$key - ${_languages[key]!["language"]!}';
+  }
+
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     return SizedBox(
@@ -23,11 +30,14 @@ class TableHeader extends ConsumerWidget {
         children: [
           const SizedBox(
             width: Dimensions.idCellWidth,
-            child: Text(
-              'Id',
-              style: TextStyle(
-                fontWeight: FontWeight.bold,
-              ), // TODO move style to theme
+            child: Padding(
+              padding: EdgeInsets.only(left: 8.0),
+              child: Text(
+                'Id',
+                style: TextStyle(
+                  fontWeight: FontWeight.bold,
+                ), // TODO move style to theme
+              ),
             ),
           ),
           Expanded(
@@ -40,6 +50,7 @@ class TableHeader extends ConsumerWidget {
                 children: List.generate(languages.length, (index) {
                   return LanguageTitle(
                     languages[index],
+                    _formatLanguageText(languages[index]),
                     Dimensions.languageCellWidth,
                     isBaseLanguage: languages[index] == baseLanguage,
                   );

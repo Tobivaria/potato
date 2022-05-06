@@ -8,13 +8,15 @@ import 'package:potato/project/project_state_controller.dart';
 
 class LanguageTitle extends ConsumerStatefulWidget {
   const LanguageTitle(
-    this.title,
+    this.languageKey,
+    this.formattedTitle,
     this.width, {
     this.isBaseLanguage = false,
     Key? key,
   }) : super(key: key);
 
-  final String title;
+  final String languageKey;
+  final String formattedTitle;
   final double width;
   final bool isBaseLanguage;
 
@@ -40,17 +42,17 @@ class _LanguageTitleState extends ConsumerState<LanguageTitle> {
   }
 
   void _deleteEntry() {
-    ref.read(projectStateProvider.notifier).removeLanguage(widget.title);
+    ref.read(projectStateProvider.notifier).removeLanguage(widget.languageKey);
   }
 
   void _setBaseLanguage() {
-    ref.read(projectStateProvider.notifier).setBaseLanguage(widget.title);
+    ref.read(projectStateProvider.notifier).setBaseLanguage(widget.languageKey);
   }
 
   @override
   Widget build(BuildContext context) {
     final Set<String> languageErrors = ref.watch(errorLanguageListProvider);
-    final bool hasError = languageErrors.contains(widget.title);
+    final bool hasError = languageErrors.contains(widget.languageKey);
 
     return MouseRegion(
       onEnter: _enterRegion,
@@ -62,11 +64,14 @@ class _LanguageTitleState extends ConsumerState<LanguageTitle> {
           padding: const EdgeInsets.only(right: 8),
           child: Row(
             children: [
-              Text(
-                widget.title,
-                style: const TextStyle(
-                  fontWeight: FontWeight.bold,
-                ), // TODO move style to theme
+              Padding(
+                padding: const EdgeInsets.only(left: 8.0),
+                child: Text(
+                  widget.formattedTitle,
+                  style: const TextStyle(
+                    fontWeight: FontWeight.bold,
+                  ), // TODO move style to theme
+                ),
               ),
               const Spacer(),
               if (widget.isBaseLanguage)
@@ -103,7 +108,7 @@ class _LanguageTitleState extends ConsumerState<LanguageTitle> {
                       onPressed: () => showDialog(
                         context: context,
                         builder: (_) => ConfirmDialog(
-                          title: 'Remove ${widget.title}',
+                          title: 'Remove ${widget.languageKey}',
                           text:
                               'This will also remove any translations for this language. This cannot be undone!',
                           confirmButtonText: 'Delete',

@@ -44,7 +44,7 @@ class _TableBodyState extends ConsumerState<TableBody> {
     // TODO optimize rebuilds
     final ProjectState projectState = ref.watch(projectStateProvider);
     final List<String> languages =
-        projectState.languageData.languages.keys.toList();
+        projectState.languageData.supportedLanguages();
     final LanguageData languageData = projectState.languageData;
     final Map<String, ArbDefinition> arbDefs =
         projectState.languageData.arbDefinitions;
