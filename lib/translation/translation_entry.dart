@@ -161,6 +161,7 @@ class _TranslationEntryState extends ConsumerState<TranslationEntry> {
     }
   }
 
+  /// Calculates the height of the textbox by taking into account meta options
   double _calculateHeight() {
     double height = Dimensions.arbKeyHeight;
     final ArbDefinition def = widget.definition;
@@ -183,11 +184,17 @@ class _TranslationEntryState extends ConsumerState<TranslationEntry> {
     return height;
   }
 
+  int _calculateMaxLines(double height) {
+    return (height / 20.5).floor();
+  }
+
   @override
   Widget build(BuildContext context) {
+    final double height = _calculateHeight();
+
     return SizedBox(
       width: Dimensions.languageCellWidth,
-      height: _calculateHeight(),
+      height: height,
       child: Padding(
         padding:
             const EdgeInsets.only(right: Dimensions.languageCellRightPadding),
@@ -195,7 +202,7 @@ class _TranslationEntryState extends ConsumerState<TranslationEntry> {
           controller: _controller,
           focusNode: _focus,
           onChanged: _onTranslationChange,
-          maxLines: 3,
+          maxLines: _calculateMaxLines(height),
           placeholder: 'Translation',
           decoration: const BoxDecoration(
             border: Border(),
