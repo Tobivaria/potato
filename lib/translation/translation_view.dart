@@ -52,7 +52,8 @@ class _TranslationViewState extends ConsumerState<TranslationView> {
         const Divider(),
         if (languages.isEmpty)
           const Center(
-            child: Text('Start by adding a language'),
+            child: Text(
+                'Start by adding a language or import already existing translation files.'),
           )
         else
           Expanded(

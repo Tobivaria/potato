@@ -118,6 +118,7 @@ class ProjectStateController extends StateNotifier<ProjectState> {
     }
   }
 
+  // TODO remove file service dependency
   Future<void> export(String pathToExportTo) async {
     final List<String> keys = state.languageData.arbDefinitions.keys.toList();
     // sort keys alphabetically
@@ -125,9 +126,13 @@ class ProjectStateController extends StateNotifier<ProjectState> {
       return a.toLowerCase().compareTo(b.toLowerCase());
     });
 
-    for (final item in state.languageData.languages.keys) {
-      final data = state.languageData.exportLanguage(item, keys);
-      final File file = File('$pathToExportTo/app_$item.arb');
+    for (final language in state.languageData.languages.keys) {
+      final data = state.languageData.exportLanguage(
+        language,
+        keys,
+        isBaseLanguage: language == state.file.baseLanguage,
+      );
+      final File file = File('$pathToExportTo/app_$language.arb');
       await fileService.writeFile(file, data);
     }
   }
