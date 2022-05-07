@@ -130,7 +130,8 @@ class ProjectStateController extends StateNotifier<ProjectState> {
       final data = state.languageData.exportLanguage(
         language,
         keys,
-        isBaseLanguage: language == state.file.baseLanguage,
+        isMainLanguage: language == state.file.baseLanguage,
+        mainLanguage: state.languageData.languages[state.file.baseLanguage],
       );
       final File file = File('$pathToExportTo/app_$language.arb');
       await fileService.writeFile(file, data);

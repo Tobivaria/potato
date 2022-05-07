@@ -1,6 +1,7 @@
 import 'package:flutter/foundation.dart';
 import 'package:potato/arb/arb_definition.dart';
 import 'package:potato/language/language.dart';
+import 'package:potato/settings/settings.dart';
 
 /// Holds the state of the currently loaded project
 @immutable
@@ -8,8 +9,10 @@ class LanguageData {
   final Map<String, Language> languages; // langCode
   final Map<String, ArbDefinition> arbDefinitions; // translation key
 
-  LanguageData({Map<String, Language>? existingLanguages, Map<String, ArbDefinition>? existingArdbDefinitions})
-      : languages = existingLanguages ?? <String, Language>{},
+  LanguageData({
+    Map<String, Language>? existingLanguages,
+    Map<String, ArbDefinition>? existingArdbDefinitions,
+  })  : languages = existingLanguages ?? <String, Language>{},
         arbDefinitions = existingArdbDefinitions ?? <String, ArbDefinition>{};
 
   List<String> supportedLanguages() {
@@ -17,18 +20,43 @@ class LanguageData {
   }
 
   /// Creates a ordered map of the given language key, in the arb format
-  Map<String, dynamic> exportLanguage(String langKey, List<String> keyOrder, {bool isBaseLanguage = false}) {
+  Map<String, dynamic> exportLanguage(
+    String langKey,
+    List<String> keyOrder, {
+    bool isMainLanguage = false,
+    EmptyTranslation? emptyTranslation,
+    Language? mainLanguage,
+  }) {
     final Map<String, dynamic> export = <String, dynamic>{'@@locale': langKey};
-    if (isBaseLanguage) {
-      final Map<String, String> baseTranslations = languages[langKey]!.translations;
+
+    if (isMainLanguage) {
+      final Map<String, String> mainTranslations =
+          languages[langKey]!.translations;
       // add one key after the other
       for (final String key in keyOrder) {
-        export[key] = baseTranslations[key];
+        export[key] = mainTranslations[key];
         export['@$key'] = arbDefinitions[key]!.toMap();
       }
     } else {
       for (final String key in keyOrder) {
-        export[key] = languages[langKey]!.translations[key];
+        final String val = languages[langKey]!.translations[key]!;
+        if (val.isEmpty) {
+          // TODO test this
+          switch (emptyTranslation) {
+            case EmptyTranslation.exportEmpty:
+              export[key] = languages[langKey]!.translations[key];
+              break;
+            case EmptyTranslation.copyMainLanguage:
+              export[key] = mainLanguage?.translations[key];
+              break;
+
+            case EmptyTranslation.noExport:
+            default:
+            // do nothing
+          }
+        } else {
+          export[key] = languages[langKey]!.translations[key];
+        }
       }
     }
     return export;
