@@ -45,8 +45,8 @@ class _ProjectMenuState extends ConsumerState<ProjectMenu> {
 
   void _createProject() {
     ref.refresh(projectStateProvider);
-    ref.refresh(abosultProjectPath);
-    ref.refresh(abosultTranslationPath);
+    ref.refresh(absolutProjectPath);
+    ref.refresh(absolutTranslationPath);
   }
 
   Future<void> _openFile() async {
@@ -58,7 +58,7 @@ class _ProjectMenuState extends ConsumerState<ProjectMenu> {
 
     // set abosult project path, which is also used for exporting
     final String aboslutePath = file.parent.path;
-    ref.read(abosultProjectPath.notifier).state = aboslutePath;
+    ref.read(absolutProjectPath.notifier).state = aboslutePath;
     ref.read(loggerProvider).i('Setting abosulte project path: $aboslutePath');
 
     final List<Map<String, dynamic>>? jsons = await ref
@@ -83,11 +83,11 @@ class _ProjectMenuState extends ConsumerState<ProjectMenu> {
     if (filePath != null) {
       // create relative path as long as it is not set
       if (ref.read(projectStateProvider).file.path == null) {
-        if (ref.read(abosultProjectPath).isNotEmpty &&
-            ref.read(abosultTranslationPath).isNotEmpty) {
+        if (ref.read(absolutProjectPath).isNotEmpty &&
+            ref.read(absolutTranslationPath).isNotEmpty) {
           final String realtiveFilePath = p.relative(
-            ref.read(abosultTranslationPath),
-            from: ref.read(abosultProjectPath),
+            ref.read(absolutTranslationPath),
+            from: ref.read(absolutProjectPath),
           );
           ref.read(projectStateProvider.notifier).setPath(realtiveFilePath);
         }

@@ -59,7 +59,7 @@ class _TranslationMenuState extends ConsumerState<TranslationMenu> {
       return null;
     }
 
-    ref.read(abosultTranslationPath.notifier).state = path;
+    ref.read(absolutTranslationPath.notifier).state = path;
     ref.read(loggerProvider).i('Setting absolute translation path: $path');
     return path;
   }
@@ -69,7 +69,7 @@ class _TranslationMenuState extends ConsumerState<TranslationMenu> {
   }
 
   Future<void> _exportData() async {
-    String? path = ref.read(abosultTranslationPath);
+    String? path = ref.read(absolutTranslationPath);
 
     if (path!.isEmpty) {
       path = await _pickLanguageDirectory('Export translations');

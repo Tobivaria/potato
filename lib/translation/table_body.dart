@@ -49,7 +49,7 @@ class _TableBodyState extends ConsumerState<TableBody> {
     final Map<String, ArbDefinition> arbDefs =
         projectState.languageData.arbDefinitions;
 
-    final List<String> orderedKeys = arbDefs.keys.toList()..sort();
+    final List<String> filteredIds = ref.watch(filteredOrderedIds);
 
     return Expanded(
       child: Row(
@@ -61,9 +61,9 @@ class _TableBodyState extends ConsumerState<TableBody> {
               physics: const AlwaysScrollableScrollPhysics(
                 parent: BouncingScrollPhysics(),
               ),
-              itemCount: orderedKeys.length,
+              itemCount: filteredIds.length,
               itemBuilder: (context, index) {
-                final String key = orderedKeys.elementAt(index);
+                final String key = filteredIds.elementAt(index);
                 return ArbEntry(
                   definition: arbDefs[key]!,
                   definitionKey: key,
@@ -86,9 +86,9 @@ class _TableBodyState extends ConsumerState<TableBody> {
                   physics: const AlwaysScrollableScrollPhysics(
                     parent: BouncingScrollPhysics(),
                   ),
-                  itemCount: orderedKeys.length,
+                  itemCount: filteredIds.length,
                   itemBuilder: (context, index) {
-                    final String key = orderedKeys.elementAt(index);
+                    final String key = filteredIds.elementAt(index);
                     return Row(
                       children: [
                         for (String languageKey in languages)

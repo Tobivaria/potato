@@ -12,15 +12,40 @@ import 'package:potato/project/project_file.dart';
 import 'package:potato/project/project_state.dart';
 import 'package:potato/utils/potato_logger.dart';
 
-/// Abosult path of the potato project file
-final StateProvider<String> abosultProjectPath = StateProvider<String>(
+/// Absolut path of the potato project file
+final StateProvider<String> absolutProjectPath = StateProvider<String>(
   (ref) => '',
 );
 
-/// Abosult path of the translation files
-final StateProvider<String> abosultTranslationPath = StateProvider<String>(
+/// Absolut path of the translation files
+final StateProvider<String> absolutTranslationPath = StateProvider<String>(
   (ref) => '',
 );
+
+/// Contains then input from filter, entered in the translation view
+final StateProvider<String> idFilter = StateProvider<String>(
+  (ref) => '',
+);
+
+/// Filters the ids and sorts them a to z
+final Provider<List<String>> filteredOrderedIds = Provider<List<String>>((ref) {
+  final String filter = ref.watch(idFilter).toLowerCase();
+  final Map<String, ArbDefinition> metaDefs = ref.watch(
+    projectStateProvider.select(
+      (value) => value.languageData.arbDefinitions,
+    ),
+  );
+
+  final List<String> sorted = metaDefs.keys.toList()..sort();
+
+  if (filter.isEmpty) {
+    return sorted;
+  }
+
+  return sorted
+      .where((element) => element.toLowerCase().contains(filter))
+      .toList();
+});
 
 final StateNotifierProvider<ProjectStateController, ProjectState>
     projectStateProvider =
