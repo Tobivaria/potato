@@ -1,9 +1,16 @@
 import 'package:fluent_ui/fluent_ui.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:potato/const/dimensions.dart';
+
+/// Absolut path of the potato project file
+final AutoDisposeStateProvider<FocusNode> focusFilterNodeProvider =
+    StateProvider.autoDispose<FocusNode>(
+  (ref) => FocusNode(),
+);
 
 typedef TextFieldChangedCb = void Function(String foo);
 
-class SearchField extends StatefulWidget {
+class SearchField extends ConsumerStatefulWidget {
   final String placeholder;
   final TextFieldChangedCb onValueChanged;
   const SearchField({
@@ -13,10 +20,10 @@ class SearchField extends StatefulWidget {
   }) : super(key: key);
 
   @override
-  State<SearchField> createState() => _SearchFieldState();
+  ConsumerState<SearchField> createState() => _SearchFieldState();
 }
 
-class _SearchFieldState extends State<SearchField> {
+class _SearchFieldState extends ConsumerState<SearchField> {
   final TextEditingController _clearController = TextEditingController();
   bool _showFilterClear = false;
 
@@ -45,9 +52,10 @@ class _SearchFieldState extends State<SearchField> {
   @override
   Widget build(BuildContext context) {
     return SizedBox(
-      width: Dimensions.idCellWidth,
+      width: Dimensions.idTextfieldWidth,
       child: TextBox(
         controller: _clearController,
+        focusNode: ref.watch(focusFilterNodeProvider),
         onChanged: _onFilterChange,
         placeholder: widget.placeholder,
         suffix: _showFilterClear
