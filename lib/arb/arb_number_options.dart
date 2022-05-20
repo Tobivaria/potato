@@ -33,7 +33,7 @@ class ArbNumberOptionsBase {
   const ArbNumberOptionsBase({this.decimalCount});
 
   Map<String, dynamic>? toMap() {
-    return decimalCount != null ? {'decimalDigits': decimalCount!} : null;
+    return decimalCount != null ? {'decimalDigits': decimalCount} : null;
   }
 }
 

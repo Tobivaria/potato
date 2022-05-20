@@ -2,5 +2,10 @@ import 'package:potato/settings/settings.dart';
 
 abstract class SettingsRepository {
   Future<EmptyTranslation?> getEmptyTranslation();
-  Future<void> setEmptyTranslation(EmptyTranslation value);
+  void setEmptyTranslation(EmptyTranslation value);
+
+  Future<List<String>?> getApiPlatforms();
+  Future<void> setApiPlatforms(List<String> val);
+  Future<String?> getPlatformApiKey(String key);
+  Future<void> setPlatformsApiKey(String key, String val);
 }

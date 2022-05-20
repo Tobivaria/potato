@@ -1,7 +1,14 @@
 import 'package:fluent_ui/fluent_ui.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:http/http.dart';
 import 'package:potato/settings/settings.dart';
+import 'package:potato/settings/settings_category.dart';
 import 'package:potato/settings/settings_controller.dart';
+import 'package:potato/settings/shared_preferences_repository.dart';
+import 'package:potato/settings/translation_provider.dart';
+import 'package:potato/translation_service/deepl/deepl_service.dart';
+import 'package:potato/translation_service/fake_service.dart';
+import 'package:potato/translation_service/translation_config.dart';
 
 class SettingsView extends ConsumerStatefulWidget {
   const SettingsView({Key? key}) : super(key: key);
@@ -11,6 +18,33 @@ class SettingsView extends ConsumerStatefulWidget {
 }
 
 class _SettingsViewState extends ConsumerState<SettingsView> {
+  final DeeplService _toBeDeletedService = DeeplService(
+    DeeplConfig(authKey: ''),
+    const TranslationConfig(
+      sourceLang: 'EN',
+      targetLang: 'DE',
+      formality: 'less',
+    ),
+    Client(),
+  );
+
+  late final FakeService _fakeService;
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    _fakeService = FakeService(
+      client: Client(),
+      fakeConfig: FakeConfig(authKey: '12'),
+      translationConfig: const TranslationConfig(
+        sourceLang: 'EN',
+        targetLang: 'DE',
+        formality: 'less',
+      ),
+      preferencesRepository: ref.watch(sharedPreferenceRepositoryProvider),
+    );
+  }
+
   void _setEmptyTranslation(EmptyTranslation val) {
     ref.read(settingsControllerProvider.notifier).setEmptyTranslation(val);
   }
@@ -18,15 +52,13 @@ class _SettingsViewState extends ConsumerState<SettingsView> {
   @override
   Widget build(BuildContext context) {
     final Settings settings = ref.watch(settingsControllerProvider);
+
     final EmptyTranslation emptyTranslation =
         settings.emptyTranslation ?? EmptyTranslation.exportEmpty;
 
     return ScaffoldPage.scrollable(
       children: [
-        Text(
-          'Empty translation',
-          style: FluentTheme.of(context).typography.subtitle,
-        ),
+        const SettingsCategory('Empty translation'),
         const SizedBox(height: 10.0),
         Padding(
           padding: const EdgeInsets.only(bottom: 8.0),
@@ -64,6 +96,13 @@ class _SettingsViewState extends ConsumerState<SettingsView> {
             content: const Text('Copy from main language'),
           ),
         ),
+        Row(
+          children: [
+            const SettingsCategory('Translation service'),
+            Button(child: const Text('Add'), onPressed: () => print('hit'))
+          ],
+        ),
+        TranslationProvider(_fakeService),
       ],
     );
   }

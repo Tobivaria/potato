@@ -9,4 +9,7 @@ class PotatoColor {
   static Color tableDivider = Colors.blue.lightest; // e.g. selection color
 
   static Color highlightLanguageError = Colors.red.lightest;
+
+  static Color successGreen = Colors.green; // e.g. checkmark
+  static Color errorRed = Colors.red; // e.g. cross (failed)
 }

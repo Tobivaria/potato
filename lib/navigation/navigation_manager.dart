@@ -1,5 +1,6 @@
 import 'package:fluent_ui/fluent_ui.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:potato/debug/debug_view.dart';
 import 'package:potato/navigation/navigation_controller.dart';
 import 'package:potato/navigation/navigation_view_pair.dart';
 import 'package:potato/navigation/project_menu.dart';
@@ -31,6 +32,14 @@ class _SideNavigationBarState extends ConsumerState<NavigationManager> {
       ),
       route: ViewRoute.settings,
       view: const SettingsView(),
+    ),
+    NavigationViewPair(
+      navigation: PaneItem(
+        icon: const Icon(FluentIcons.device_bug),
+        title: const Text('Debug'),
+      ),
+      route: ViewRoute.debug,
+      view: const DebugView(),
     ),
   ];
 

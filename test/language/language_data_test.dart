@@ -43,9 +43,11 @@ void main() {
   test('Export a language entry', () {
     final Map<String, Language> languages = {
       'en': Language(
-          existingTranslations: const {'greeting': 'hello', 'bye': 'goodbye'}),
+        existingTranslations: const {'greeting': 'hello', 'bye': 'goodbye'},
+      ),
       'de': Language(
-          existingTranslations: const {'greeting': 'hallo', 'bye': 'tschüss'})
+        existingTranslations: const {'greeting': 'hallo', 'bye': 'tschüss'},
+      )
     };
 
     final LanguageData project = LanguageData(existingLanguages: languages);
@@ -61,9 +63,11 @@ void main() {
   test('Export base language', () {
     final Map<String, Language> languages = {
       'en': Language(
-          existingTranslations: const {'greeting': 'hello', 'bye': 'goodbye'}),
+        existingTranslations: const {'greeting': 'hello', 'bye': 'goodbye'},
+      ),
       'de': Language(
-          existingTranslations: const {'greeting': 'hallo', 'bye': 'tschüss'})
+        existingTranslations: const {'greeting': 'hallo', 'bye': 'tschüss'},
+      )
     };
     final Map<String, ArbDefinition> arbDefinitions = {
       'bye': const ArbDefinition(description: 'Saying goodbye'),
@@ -71,7 +75,9 @@ void main() {
     };
 
     final LanguageData data = LanguageData(
-        existingLanguages: languages, existingArdbDefinitions: arbDefinitions);
+      existingLanguages: languages,
+      existingArdbDefinitions: arbDefinitions,
+    );
 
     const Map<String, dynamic> expected = {
       '@@locale': 'en',
@@ -81,7 +87,9 @@ void main() {
       '@greeting': {'description': 'Saying hello'}
     };
 
-    expect(data.exportLanguage('en', ['bye', 'greeting'], isMainLanguage: true),
-        expected);
+    expect(
+      data.exportLanguage('en', ['bye', 'greeting'], isMainLanguage: true),
+      expected,
+    );
   });
 }

@@ -57,7 +57,7 @@ class _TranslationEntryState extends ConsumerState<TranslationEntry> {
     if (oldWidget.definition != widget.definition) {
       // postpone rebuilding after build finished
       WidgetsBinding.instance
-          ?.addPostFrameCallback((_) => _validateTranslation());
+          .addPostFrameCallback((_) => _validateTranslation());
     }
   }
 
