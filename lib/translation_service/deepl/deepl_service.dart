@@ -182,23 +182,15 @@ class DeeplConfig {
 }
 
 @immutable
-class DeeplUsage implements Usage {
+class DeeplUsage extends Usage {
   final int _usedChars;
   final int _availableChars;
 
-  const DeeplUsage(this._usedChars, this._availableChars);
+  const DeeplUsage(this._usedChars, this._availableChars)
+      : super(_usedChars, _availableChars);
 
   @override
   String toString() {
     return 'DeeplUsage(usedChars: $_usedChars, availableChars: $_availableChars)';
   }
-
-  @override
-  int get current => _usedChars;
-
-  @override
-  int get max => _availableChars;
-
-  @override
-  double get usedPercentage => _usedChars / _availableChars * 100;
 }
