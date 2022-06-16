@@ -2,7 +2,7 @@ import 'dart:convert';
 
 import 'package:flutter/foundation.dart';
 import 'package:http/http.dart';
-import 'package:potato/settings/shared_preferences_repository.dart';
+import 'package:potato/settings/settings_repository.dart';
 import 'package:potato/translation_service/translation_config.dart';
 import 'package:potato/translation_service/translation_service.dart';
 import 'package:potato/translation_service/usage.dart';
@@ -15,26 +15,35 @@ class DeeplService extends TranslationService {
 
   DeeplService({
     required Client client,
-    required SharedPreferencesRepository preferencesRepository,
-    required TranslationConfig translationConfig,
+    required SettingsRepository preferencesRepository,
     required String name,
   }) : super(
           client: client,
           preferencesRepository: preferencesRepository,
-          translationConfig: translationConfig,
           name: name,
         );
 
   @override
-  Future<String> translate(String toTranslate) async {
+  String uniqueId() {
+    return 'DeepLService';
+  }
+
+  // const TranslationConfig(
+  //   sourceLang: 'EN',
+  //   targetLang: 'DE',
+  //   formality: 'less',
+  // ),
+
+  @override
+  Future<String> translate(String toTranslate, TranslationConfig config) async {
     final String preparedTranslation = replacePlaceholderWithTag(toTranslate);
     final apiKey = await super.getApiKey();
 
     final Map<String, String> requestBody = <String, String>{
       'auth_key': apiKey,
       'text': preparedTranslation,
-      'target_lang': translationConfig.targetLang,
-      'source_Lang': translationConfig.sourceLang,
+      'target_lang': config.targetLang,
+      'source_Lang': config.sourceLang,
       'formality': 'less',
       'tag_handling': 'xml',
       'ignore_tags': _replacePlaceholderTag

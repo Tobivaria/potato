@@ -1,13 +1,9 @@
 import 'package:fluent_ui/fluent_ui.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:http/http.dart';
 import 'package:potato/settings/settings.dart';
 import 'package:potato/settings/settings_category.dart';
 import 'package:potato/settings/settings_controller.dart';
-import 'package:potato/settings/shared_preferences_repository.dart';
-import 'package:potato/settings/translation_provider.dart';
-import 'package:potato/translation_service/fake_service.dart';
-import 'package:potato/translation_service/translation_config.dart';
+import 'package:potato/settings/translation_services/translation_category.dart';
 
 class SettingsView extends ConsumerStatefulWidget {
   const SettingsView({Key? key}) : super(key: key);
@@ -17,23 +13,6 @@ class SettingsView extends ConsumerStatefulWidget {
 }
 
 class _SettingsViewState extends ConsumerState<SettingsView> {
-  late final FakeService _fakeService;
-
-  @override
-  void didChangeDependencies() {
-    super.didChangeDependencies();
-    _fakeService = FakeService(
-      client: Client(),
-      translationConfig: const TranslationConfig(
-        sourceLang: 'EN',
-        targetLang: 'DE',
-        formality: 'less',
-      ),
-      preferencesRepository: ref.watch(sharedPreferenceRepositoryProvider),
-      name: 'FakeService',
-    );
-  }
-
   void _setEmptyTranslation(EmptyTranslation val) {
     ref.read(settingsControllerProvider.notifier).setEmptyTranslation(val);
   }
@@ -85,13 +64,7 @@ class _SettingsViewState extends ConsumerState<SettingsView> {
             content: const Text('Copy from main language'),
           ),
         ),
-        Row(
-          children: [
-            const SettingsCategory('Translation service'),
-            Button(child: const Text('Add'), onPressed: () => print('hit'))
-          ],
-        ),
-        TranslationProvider(_fakeService),
+        const TranslationCategory(),
       ],
     );
   }

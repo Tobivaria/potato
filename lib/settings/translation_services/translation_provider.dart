@@ -1,7 +1,7 @@
 import 'package:fluent_ui/fluent_ui.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:potato/const/potato_color.dart';
-import 'package:potato/settings/usage_statistics.dart';
+import 'package:potato/settings/translation_services/usage_statistics.dart';
 import 'package:potato/translation_service/translation_service.dart';
 import 'package:potato/translation_service/usage.dart';
 
@@ -35,6 +35,8 @@ class _TranslationProviderState extends ConsumerState<TranslationProvider> {
 
   @override
   void dispose() {
+    _focus.removeListener(_setApiKey);
+    _focus.dispose();
     super.dispose();
   }
 
@@ -44,7 +46,7 @@ class _TranslationProviderState extends ConsumerState<TranslationProvider> {
   }
 
   Future<void> _setApiKey() async {
-    // update api key on lost focus and when it changed
+    // update api key on focus change and the key changed
     if (!_focus.hasFocus &&
         (await widget.service.getApiKey() != _apiKeyController.text)) {
       widget.service.setApiKey(_apiKeyController.text);
@@ -56,12 +58,14 @@ class _TranslationProviderState extends ConsumerState<TranslationProvider> {
       _isTestingApi = true;
     });
     final request = await widget.service.getUsage();
-    setState(() {
-      if (request != null) {
-        _usage = request;
+
+    // check if the widget is still mounted as the request might take longer
+    if (mounted) {
+      setState(() {
         _isTestingApi = false;
-      }
-    });
+        _usage = request;
+      });
+    }
   }
 
   @override
@@ -79,7 +83,6 @@ class _TranslationProviderState extends ConsumerState<TranslationProvider> {
         Row(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // _isTestingApi
             Expanded(
               child: TextFormBox(
                 readOnly: _isTestingApi,
@@ -110,14 +113,16 @@ class _TranslationProviderState extends ConsumerState<TranslationProvider> {
             const SizedBox(
               width: 8,
             ),
-
             Button(
               onPressed: _isTestingApi ? null : _getUsage,
               child: const Text('Test'),
             ),
+            Padding(
+              padding: const EdgeInsets.only(left: 16.0),
+              child: UsageStatistics(_usage),
+            ),
           ],
         ),
-        UsageStatistics(_usage)
       ],
     );
   }

@@ -5,22 +5,22 @@ import 'package:potato/settings/settings_repository.dart';
 import 'package:potato/settings/shared_preferences_repository.dart';
 import 'package:potato/utils/potato_logger.dart';
 
-final StateNotifierProvider<ProjectErrorController, Settings>
+final StateNotifierProvider<ProjectSettingsController, Settings>
     settingsControllerProvider =
-    StateNotifierProvider<ProjectErrorController, Settings>((
-  StateNotifierProviderRef<ProjectErrorController, Settings> ref,
+    StateNotifierProvider<ProjectSettingsController, Settings>((
+  StateNotifierProviderRef<ProjectSettingsController, Settings> ref,
 ) {
-  return ProjectErrorController(
+  return ProjectSettingsController(
     ref.watch(sharedPreferenceRepositoryProvider),
     ref.watch(loggerProvider),
   );
 });
 
-class ProjectErrorController extends StateNotifier<Settings> {
+class ProjectSettingsController extends StateNotifier<Settings> {
   final SettingsRepository _repository;
   final Logger logger;
 
-  ProjectErrorController(
+  ProjectSettingsController(
     this._repository,
     this.logger,
   ) : super(const Settings()) {
@@ -30,14 +30,9 @@ class ProjectErrorController extends StateNotifier<Settings> {
   Future<void> loadSettings() async {
     final EmptyTranslation? emptyTranslation =
         await _repository.getEmptyTranslation();
-    final List<String>? platforms = await _repository.getApiPlatforms();
-
-    final Map<String, String>? platformKeys =
-        await _createPlatformApiMap(platforms);
 
     state = state.copyWith(
       emptyTranslation: emptyTranslation,
-      apiKeys: platformKeys,
     );
     logger.i('Settings loaded: ${state.toString()}');
   }
@@ -46,43 +41,5 @@ class ProjectErrorController extends StateNotifier<Settings> {
     logger.i('Persisting empty translation: $val');
     state = state.copyWith(emptyTranslation: val);
     _repository.setEmptyTranslation(val);
-  }
-
-  // TODO rewrite to just create / read plattforms from preference list
-  Future<void> setApiKey(String platform, String key) async {
-    logger.i('Persisting $platform key: $key');
-
-    // persist plattform if not already available
-    if (state.apiKeys?.containsKey(platform) == false) {
-      _repository.setApiPlatforms(state.apiKeys!.keys.toList());
-      _repository.setPlatformsApiKey(platform, key);
-      state = state.copyWith(
-        apiKeys: {...?state.apiKeys, platform: key},
-      );
-      return;
-    }
-
-    // platform already exists
-    _repository.setPlatformsApiKey(platform, key);
-    final Map<String, String> platformCopy = {...?state.apiKeys};
-    platformCopy[platform] = key;
-
-    state = state.copyWith(
-      apiKeys: platformCopy,
-    );
-  }
-
-  Future<Map<String, String>?> _createPlatformApiMap(
-    List<String>? platforms,
-  ) async {
-    if (platforms == null) {
-      return null;
-    }
-    final Map<String, String> platformKeys = {};
-    for (final platform in platforms) {
-      final String key = await _repository.getPlatformApiKey(platform) ?? '';
-      platformKeys[platform] = key;
-    }
-    return platformKeys;
   }
 }
