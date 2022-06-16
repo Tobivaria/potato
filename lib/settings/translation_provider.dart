@@ -1,7 +1,6 @@
 import 'package:fluent_ui/fluent_ui.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:potato/const/potato_color.dart';
-import 'package:potato/settings/settings_controller.dart';
 import 'package:potato/settings/usage_statistics.dart';
 import 'package:potato/translation_service/translation_service.dart';
 import 'package:potato/translation_service/usage.dart';
@@ -16,14 +15,15 @@ class TranslationProvider extends ConsumerStatefulWidget {
 }
 
 class _TranslationProviderState extends ConsumerState<TranslationProvider> {
-  bool _isTestingApi = false;
+  final FocusNode _focus = FocusNode();
   final TextEditingController _apiKeyController = TextEditingController();
+  bool _isTestingApi = false;
   Usage? _usage;
 
   @override
   void initState() {
     super.initState();
-    _getUsage();
+    _focus.addListener(_setApiKey);
   }
 
   @override
@@ -33,13 +33,22 @@ class _TranslationProviderState extends ConsumerState<TranslationProvider> {
     _getUsage();
   }
 
+  @override
+  void dispose() {
+    super.dispose();
+  }
+
   Future<void> _getApiKey() async {
     final String key = await widget.service.getApiKey();
     _apiKeyController.text = key;
   }
 
-  Future<void> _setApiKey(String newKey) async {
-    widget.service.setApiKey(newKey);
+  Future<void> _setApiKey() async {
+    // update api key on lost focus and when it changed
+    if (!_focus.hasFocus &&
+        (await widget.service.getApiKey() != _apiKeyController.text)) {
+      widget.service.setApiKey(_apiKeyController.text);
+    }
   }
 
   Future<void> _getUsage() async {
@@ -57,8 +66,6 @@ class _TranslationProviderState extends ConsumerState<TranslationProvider> {
 
   @override
   Widget build(BuildContext context) {
-    final tmp = ref.watch(settingsControllerProvider).apiKeys;
-    print(tmp);
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -78,7 +85,7 @@ class _TranslationProviderState extends ConsumerState<TranslationProvider> {
                 readOnly: _isTestingApi,
                 controller: _apiKeyController,
                 placeholder: 'Api key',
-                onChanged: _setApiKey,
+                focusNode: _focus,
               ),
             ),
             const SizedBox(
