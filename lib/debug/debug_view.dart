@@ -1,6 +1,7 @@
 import 'package:fluent_ui/fluent_ui.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:http/http.dart';
+import 'package:potato/settings/shared_preferences_repository.dart';
 import 'package:potato/translation_service/deepl/deepl_service.dart';
 import 'package:potato/translation_service/translation_config.dart';
 
@@ -14,20 +15,27 @@ class DebugView extends ConsumerStatefulWidget {
 class _DebugViewState extends ConsumerState<DebugView> {
   final TextEditingController _controller = TextEditingController();
 
-  DeeplService deeplService = DeeplService(
-    DeeplConfig(authKey: ''),
-    const TranslationConfig(
-      sourceLang: 'EN',
-      targetLang: 'DE',
-      formality: 'less',
-    ),
-    Client(),
-  );
+  late final DeeplService _deeplService;
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    _deeplService = DeeplService(
+      client: Client(),
+      translationConfig: const TranslationConfig(
+        sourceLang: 'EN',
+        targetLang: 'DE',
+        formality: 'less',
+      ),
+      preferencesRepository: ref.watch(sharedPreferenceRepositoryProvider),
+      name: 'DeepLService',
+    );
+  }
 
   String result = '';
 
   Future<void> _translate() async {
-    final String translation = await deeplService.translate(_controller.text);
+    final String translation = await _deeplService.translate(_controller.text);
 
     setState(() {
       result = translation;
@@ -35,7 +43,7 @@ class _DebugViewState extends ConsumerState<DebugView> {
   }
 
   Future<void> _usage() async {
-    final DeeplUsage? usage = await deeplService.getUsage();
+    final DeeplUsage? usage = await _deeplService.getUsage();
     print(usage);
   }
 

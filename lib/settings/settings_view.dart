@@ -6,7 +6,6 @@ import 'package:potato/settings/settings_category.dart';
 import 'package:potato/settings/settings_controller.dart';
 import 'package:potato/settings/shared_preferences_repository.dart';
 import 'package:potato/settings/translation_provider.dart';
-import 'package:potato/translation_service/deepl/deepl_service.dart';
 import 'package:potato/translation_service/fake_service.dart';
 import 'package:potato/translation_service/translation_config.dart';
 
@@ -18,16 +17,6 @@ class SettingsView extends ConsumerStatefulWidget {
 }
 
 class _SettingsViewState extends ConsumerState<SettingsView> {
-  final DeeplService _toBeDeletedService = DeeplService(
-    DeeplConfig(authKey: ''),
-    const TranslationConfig(
-      sourceLang: 'EN',
-      targetLang: 'DE',
-      formality: 'less',
-    ),
-    Client(),
-  );
-
   late final FakeService _fakeService;
 
   @override
@@ -35,13 +24,13 @@ class _SettingsViewState extends ConsumerState<SettingsView> {
     super.didChangeDependencies();
     _fakeService = FakeService(
       client: Client(),
-      fakeConfig: FakeConfig(authKey: '12'),
       translationConfig: const TranslationConfig(
         sourceLang: 'EN',
         targetLang: 'DE',
         formality: 'less',
       ),
       preferencesRepository: ref.watch(sharedPreferenceRepositoryProvider),
+      name: 'FakeService',
     );
   }
 

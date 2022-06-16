@@ -3,11 +3,12 @@ import 'package:potato/translation_service/translation_service.dart';
 import 'package:potato/translation_service/usage.dart';
 
 class FakeService extends TranslationService {
-  FakeService(
-      {required super.preferencesRepository,
-      required super.fakeConfig,
-      required super.translationConfig,
-      required super.client});
+  FakeService({
+    required super.preferencesRepository,
+    required super.translationConfig,
+    required super.client,
+    required super.name,
+  }) : super();
 
   @override
   Future<String> translate(String toTranslate) async {
@@ -29,40 +30,15 @@ class FakeService extends TranslationService {
 }
 
 @immutable
-class FakeConfig {
-  final String authKey;
-  late final String tagHandling;
-
-  /// tag which will replace placeholders in the request
-  /// these tags are also ignored, and will not be translated
-  late final String replacePlaceholderTag;
-
-  FakeConfig({
-    required this.authKey,
-  }) {
-    tagHandling = 'xml';
-    replacePlaceholderTag = 'p';
-  }
-}
-
-@immutable
-class FakeUsage implements Usage {
+class FakeUsage extends Usage {
   final int _usedChars;
   final int _availableChars;
 
-  const FakeUsage(this._usedChars, this._availableChars);
+  const FakeUsage(this._usedChars, this._availableChars)
+      : super(_usedChars, _availableChars);
 
   @override
   String toString() {
     return 'FakeUsage(usedChars: $_usedChars, availableChars: $_availableChars)';
   }
-
-  @override
-  int get current => _usedChars;
-
-  @override
-  int get max => _availableChars;
-
-  @override
-  double get usedPercentage => _usedChars / _availableChars * 100;
 }

@@ -3,40 +3,44 @@ import 'dart:convert';
 import 'package:flutter/foundation.dart';
 import 'package:http/http.dart';
 import 'package:potato/settings/shared_preferences_repository.dart';
-import 'package:potato/translation_service/fake_service.dart';
 import 'package:potato/translation_service/translation_config.dart';
 import 'package:potato/translation_service/translation_service.dart';
 import 'package:potato/translation_service/usage.dart';
 
-class DeeplService implements TranslationService {
-  DeeplConfig deeplConfig;
-  @override
-  TranslationConfig translationConfig;
-  @override
-  Client client;
-  final String _baseUrl = 'https://api-free.deepl.com/v2/';
+class DeeplService extends TranslationService {
+  static const String _baseUrl = 'https://api-free.deepl.com/v2/';
 
-  DeeplService(
-    this.deeplConfig,
-    this.translationConfig,
-    this.client,
-  );
+  /// Tag which will replace placeholders in the request, these tags are also ignored, and will not be translated
+  static const String _replacePlaceholderTag = 'p';
+
+  DeeplService({
+    required Client client,
+    required SharedPreferencesRepository preferencesRepository,
+    required TranslationConfig translationConfig,
+    required String name,
+  }) : super(
+          client: client,
+          preferencesRepository: preferencesRepository,
+          translationConfig: translationConfig,
+          name: name,
+        );
 
   @override
   Future<String> translate(String toTranslate) async {
     final String preparedTranslation = replacePlaceholderWithTag(toTranslate);
+    final apiKey = await super.getApiKey();
 
     final Map<String, String> requestBody = <String, String>{
-      'auth_key': deeplConfig.authKey,
+      'auth_key': apiKey,
       'text': preparedTranslation,
       'target_lang': translationConfig.targetLang,
       'source_Lang': translationConfig.sourceLang,
       'formality': 'less',
-      'tag_handling': deeplConfig.tagHandling,
-      'ignore_tags': deeplConfig.replacePlaceholderTag
+      'tag_handling': 'xml',
+      'ignore_tags': _replacePlaceholderTag
     };
 
-    final String url = '${_baseUrl}translate';
+    const String url = '${_baseUrl}translate';
     String? translation;
 
     try {
@@ -84,8 +88,8 @@ class DeeplService implements TranslationService {
     final RegExp regExp = RegExp('{.*}');
     // replace placeholder brackets with placeholder xml
     if (regExp.hasMatch(val)) {
-      out = out.replaceAll('{', '<${deeplConfig.replacePlaceholderTag}>');
-      out = out.replaceAll('}', '</${deeplConfig.replacePlaceholderTag}>');
+      out = out.replaceAll('{', '<$_replacePlaceholderTag>');
+      out = out.replaceAll('}', '</$_replacePlaceholderTag>');
     }
     return out;
   }
@@ -95,25 +99,24 @@ class DeeplService implements TranslationService {
     final RegExp regExp = RegExp('<p>.*</p>');
     // replace placeholder brackets with placeholder xml
     if (regExp.hasMatch(val)) {
-      out = out.replaceAll('<${deeplConfig.replacePlaceholderTag}>', '{');
-      out = out.replaceAll('</${deeplConfig.replacePlaceholderTag}>', '}');
+      out = out.replaceAll('<$_replacePlaceholderTag>', '{');
+      out = out.replaceAll('</$_replacePlaceholderTag>', '}');
     }
     return out;
   }
 
   @override
   Future<DeeplUsage?> getUsage() async {
-    final String url = '${_baseUrl}usage';
+    const String url = '${_baseUrl}usage';
+    final apiKey = await super.getApiKey();
 
     final Map<String, String> requestBody = <String, String>{
-      'auth_key': deeplConfig.authKey
+      'auth_key': apiKey
     };
 
     try {
       final Response response =
           await client.post(Uri.parse(url), body: requestBody);
-
-      print(response);
 
       if (response.statusCode == 200) {
         // decode body bytes to get a valid utf-8 encoded string, otherwise there are issues with special chars like in spanish
@@ -126,58 +129,13 @@ class DeeplService implements TranslationService {
           responseJson['character_count'] as int,
           responseJson['character_limit'] as int,
         );
+      } else {
+        // TODO: log something
       }
     } catch (e) {
       // TODO logger
     }
     return null;
-  }
-
-  @override
-  String getName() {
-    return 'DeepL';
-  }
-
-  @override
-  // TODO: implement fakeConfig
-  FakeConfig get fakeConfig => throw UnimplementedError();
-
-  @override
-  Future<String> getApiKey() {
-    // TODO: implement getApiKey
-    throw UnimplementedError();
-  }
-
-  @override
-  // TODO: implement preferencesRepository
-  SharedPreferencesRepository get preferencesRepository =>
-      throw UnimplementedError();
-
-  @override
-  Future<void> setApiKey(String val) {
-    // TODO: implement setApiKey
-    throw UnimplementedError();
-  }
-
-  @override
-  // TODO: implement preferenceKey
-  String get preferenceKey => throw UnimplementedError();
-}
-
-@immutable
-class DeeplConfig {
-  final String authKey;
-  late final String tagHandling;
-
-  /// tag which will replace placeholders in the request
-  /// these tags are also ignored, and will not be translated
-  late final String replacePlaceholderTag;
-
-  DeeplConfig({
-    required this.authKey,
-  }) {
-    tagHandling = 'xml';
-    replacePlaceholderTag = 'p';
   }
 }
 

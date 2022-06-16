@@ -48,6 +48,7 @@ class ProjectErrorController extends StateNotifier<Settings> {
     _repository.setEmptyTranslation(val);
   }
 
+  // TODO rewrite to just create / read plattforms from preference list
   Future<void> setApiKey(String platform, String key) async {
     logger.i('Persisting $platform key: $key');
 

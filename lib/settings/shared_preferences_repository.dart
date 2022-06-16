@@ -67,8 +67,8 @@ class SharedPreferencesRepository implements SettingsRepository {
   }
 
   @override
-  Future<void> setPlatformsApiKey(String key, String val) async {
-    _setString(key, val);
+  Future<void> setPlatformsApiKey(String id, String val) async {
+    _setString(id, val);
   }
 
   Future<bool?> _getBool(String key) async {

@@ -5,7 +5,7 @@ import 'package:potato/navigation/navigation_manager.dart';
 import 'package:potato/shortcuts/potato_shortcuts.dart';
 
 void main() {
-  runApp(const PotatoApp());
+  runApp(const ProviderScope(child: PotatoApp()));
 }
 
 class PotatoApp extends StatelessWidget {
@@ -13,12 +13,11 @@ class PotatoApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return ProviderScope(
-      child: FluentApp(
-        theme: PotatoTheme.getTheme(),
-        home: const PotatoShortcuts(
-          child: NavigationManager(),
-        ),
+    // TODO splash screen
+    return FluentApp(
+      theme: PotatoTheme.getTheme(),
+      home: const PotatoShortcuts(
+        child: NavigationManager(),
       ),
     );
   }

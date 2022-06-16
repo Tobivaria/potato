@@ -34,17 +34,12 @@ class _TranslationProviderState extends ConsumerState<TranslationProvider> {
   }
 
   Future<void> _getApiKey() async {
-    // final String key = await ref
-    //         .read(sharedPreferenceRepositoryProvider)
-    //         .getString(widget.service.preferenceKey) ??
-    //     '';
-    // _apiKeyController.text = key;
+    final String key = await widget.service.getApiKey();
+    _apiKeyController.text = key;
   }
 
   Future<void> _setApiKey(String newKey) async {
-    ref
-        .read(settingsControllerProvider.notifier)
-        .setApiKey(widget.service.preferenceKey, newKey);
+    widget.service.setApiKey(newKey);
   }
 
   Future<void> _getUsage() async {
