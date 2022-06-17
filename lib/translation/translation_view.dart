@@ -4,6 +4,7 @@ import 'package:linked_scroll_controller/linked_scroll_controller.dart';
 import 'package:potato/core/search_field.dart';
 import 'package:potato/language/language.dart';
 import 'package:potato/project/project_state_controller.dart';
+import 'package:potato/recent_projects/recent_projects.dart';
 import 'package:potato/translation/table_body.dart';
 import 'package:potato/translation/table_header.dart';
 import 'package:potato/translation/translation_menu.dart';
@@ -56,13 +57,14 @@ class _TranslationViewState extends ConsumerState<TranslationView> {
           disableExport: languages.isEmpty,
         ),
         const Divider(),
-        if (languages.isEmpty)
+        if (languages.isEmpty) ...[
           const Center(
             child: Text(
               'Start by adding a language or import already existing translation files.',
             ),
-          )
-        else
+          ),
+          const RecentProjects()
+        ] else
           Expanded(
             child: Padding(
               padding: const EdgeInsets.all(8.0),

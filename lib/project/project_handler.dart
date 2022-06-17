@@ -10,6 +10,7 @@ import 'package:potato/navigation/navigation_controller.dart';
 import 'package:potato/navigation/navigation_view_pair.dart';
 import 'package:potato/notification/notification_controller.dart';
 import 'package:potato/project/project_state_controller.dart';
+import 'package:potato/recent_projects/recent_project_controller.dart';
 import 'package:potato/utils/potato_logger.dart';
 
 mixin ProjectHandler {
@@ -31,16 +32,21 @@ mixin ProjectHandler {
     );
   }
 
-  Future<void> openFile(WidgetRef ref) async {
-    final File? file = await ref.read(filePickerProvider).pickFile();
-    if (file == null) {
-      return;
+  Future<void> openFile(WidgetRef ref, [String? path]) async {
+    File? file;
+    if (path == null) {
+      file = await ref.read(filePickerProvider).pickFile();
+      if (file == null) {
+        return;
+      }
+    } else {
+      file = File(path);
     }
 
     // set abosult project path, which is also used for exporting
-    final String aboslutePath = file.parent.path;
-    ref.read(absolutProjectPath.notifier).state = aboslutePath;
-    ref.read(loggerProvider).i('Setting abosulte project path: $aboslutePath');
+    final String absolutePath = file.parent.path;
+    ref.read(absolutProjectPath.notifier).state = absolutePath;
+    ref.read(loggerProvider).i('Setting abosulte project path: $absolutePath');
 
     final List<Map<String, dynamic>>? jsons = await ref
         .read(projectStateProvider.notifier)
@@ -55,6 +61,7 @@ mixin ProjectHandler {
 
     ref.read(projectStateProvider.notifier).loadfromJsons(jsons);
     ref.read(navigationProvider.notifier).navigateTo(ViewRoute.translations);
+    ref.read(recentProjectsProvider.notifier).addRecentProject(file.path);
   }
 
   Future<void> saveProject(WidgetRef ref) async {
@@ -73,6 +80,7 @@ mixin ProjectHandler {
         }
       }
       ref.read(projectStateProvider.notifier).saveProjectFile(filePath);
+      ref.read(recentProjectsProvider.notifier).addRecentProject(filePath);
     }
   }
 }
