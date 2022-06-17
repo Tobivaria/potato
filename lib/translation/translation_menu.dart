@@ -10,11 +10,11 @@ import 'package:potato/utils/potato_logger.dart';
 class TranslationMenu extends ConsumerStatefulWidget {
   final bool disableExport;
   final bool disableAddTranslation;
-  const TranslationMenu(
-      {required this.disableExport,
-      required this.disableAddTranslation,
-      Key? key})
-      : super(key: key);
+  const TranslationMenu({
+    required this.disableExport,
+    required this.disableAddTranslation,
+    Key? key,
+  }) : super(key: key);
 
   @override
   ConsumerState<TranslationMenu> createState() => _TranslationMenuState();
@@ -95,6 +95,9 @@ class _TranslationMenuState extends ConsumerState<TranslationMenu> {
 
   @override
   Widget build(BuildContext context) {
+    final bool undoAvailable = ref.watch(canUndo);
+    final bool redoAvailable = ref.watch(canRedo);
+
     final List<CommandBarButton> _menu = [
       CommandBarButton(
         icon: const Icon(FluentIcons.download),
@@ -120,6 +123,20 @@ class _TranslationMenuState extends ConsumerState<TranslationMenu> {
         icon: const Icon(FluentIcons.add),
         label: const Text('Add translation'),
         onPressed: widget.disableAddTranslation ? null : _addTranslation,
+      ),
+      CommandBarButton(
+        icon: const Icon(FluentIcons.undo),
+        label: const Text('Undo'),
+        onPressed: undoAvailable
+            ? () => ref.read(projectStateProvider.notifier).undo()
+            : null,
+      ),
+      CommandBarButton(
+        icon: const Icon(FluentIcons.redo),
+        label: const Text('Redo'),
+        onPressed: redoAvailable
+            ? () => ref.read(projectStateProvider.notifier).redo()
+            : null,
       ),
     ];
 

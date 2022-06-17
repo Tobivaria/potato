@@ -47,6 +47,22 @@ final Provider<List<String>> filteredOrderedIds = Provider<List<String>>((ref) {
       .toList();
 });
 
+/// Provides if the project state can be undone
+final StateProvider<bool> canUndo = StateProvider<bool>((ref) {
+  // watch vor state changes
+  // TODO find another way to achieve this
+  final unused = ref.watch(projectStateProvider);
+  return ref.read(projectStateProvider.notifier).canUndo;
+});
+
+/// Provides if the project state can be redone
+final StateProvider<bool> canRedo = StateProvider<bool>((ref) {
+  // watch vor state changes
+  // TODO find another way to achieve this
+  final unused = ref.watch(projectStateProvider);
+  return ref.read(projectStateProvider.notifier).canRedo;
+});
+
 final StateNotifierProvider<ProjectStateController, ProjectState>
     projectStateProvider =
     StateNotifierProvider<ProjectStateController, ProjectState>(
@@ -62,6 +78,9 @@ class ProjectStateController extends StateNotifier<ProjectState> {
   final FileService fileService;
   final Logger logger;
   Ref ref;
+
+  List<ProjectState> _history = [];
+  int _historyIndex = -1;
 
   ProjectStateController(
     this.fileService,
@@ -108,6 +127,9 @@ class ProjectStateController extends StateNotifier<ProjectState> {
     }
 
     setBaseLanguage(baseLang);
+
+    // remove the previous created states from history
+    _clearHistory();
 
     _updateState(
       updateLanguages: languages,
@@ -361,5 +383,43 @@ class ProjectStateController extends StateNotifier<ProjectState> {
     }
 
     return fileService.readFilesFromDirectory(project.path!);
+  }
+
+  // Undo / Redo states
+  @override
+  set state(ProjectState value) {
+    _historyIndex++;
+
+    // clear everything from the current index upwords
+    _history = _history.sublist(0, _historyIndex);
+
+    // add the new entry
+    _history.add(value);
+    super.state = value;
+  }
+
+  bool get canUndo => _historyIndex > 0;
+
+  void undo() {
+    if (canUndo) {
+      _historyIndex--;
+
+      super.state = _history.elementAt(_historyIndex);
+    }
+  }
+
+  bool get canRedo => _historyIndex < _history.length - 1;
+
+  void redo() {
+    if (canRedo) {
+      _historyIndex++;
+
+      super.state = _history.elementAt(_historyIndex);
+    }
+  }
+
+  void _clearHistory() {
+    _historyIndex = -1;
+    _history.clear();
   }
 }
