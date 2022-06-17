@@ -1,3 +1,4 @@
+// ignore_for_file: public_member_api_docs, sort_constructors_first
 import 'package:fluent_ui/fluent_ui.dart';
 
 enum EmptyTranslation { exportEmpty, noExport, copyMainLanguage }

@@ -14,6 +14,7 @@ class PotatoShortcuts extends ConsumerWidget with ProjectHandler {
   /// Focuses the filter, when translation view is active
   void _focusFilter(WidgetRef ref) {
     if (ref.read(routeProvider) == ViewRoute.translations) {
+      print('test');
       ref.read(focusFilterNodeProvider).requestFocus();
     }
   }
@@ -48,6 +49,9 @@ class PotatoShortcuts extends ConsumerWidget with ProjectHandler {
         },
         child: Focus(
           autofocus: true,
+          canRequestFocus: true,
+          onFocusChange: (bool changed) => print(changed),
+          descendantsAreFocusable: true,
           child: child,
         ),
       ),

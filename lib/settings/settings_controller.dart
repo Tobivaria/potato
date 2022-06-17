@@ -5,22 +5,22 @@ import 'package:potato/settings/settings_repository.dart';
 import 'package:potato/settings/shared_preferences_repository.dart';
 import 'package:potato/utils/potato_logger.dart';
 
-final StateNotifierProvider<ProjectErrorController, Settings>
+final StateNotifierProvider<ProjectSettingsController, Settings>
     settingsControllerProvider =
-    StateNotifierProvider<ProjectErrorController, Settings>((
-  StateNotifierProviderRef<ProjectErrorController, Settings> ref,
+    StateNotifierProvider<ProjectSettingsController, Settings>((
+  StateNotifierProviderRef<ProjectSettingsController, Settings> ref,
 ) {
-  return ProjectErrorController(
+  return ProjectSettingsController(
     ref.watch(sharedPreferenceRepositoryProvider),
     ref.watch(loggerProvider),
   );
 });
 
-class ProjectErrorController extends StateNotifier<Settings> {
+class ProjectSettingsController extends StateNotifier<Settings> {
   final SettingsRepository _repository;
   final Logger logger;
 
-  ProjectErrorController(
+  ProjectSettingsController(
     this._repository,
     this.logger,
   ) : super(const Settings()) {
@@ -31,7 +31,9 @@ class ProjectErrorController extends StateNotifier<Settings> {
     final EmptyTranslation? emptyTranslation =
         await _repository.getEmptyTranslation();
 
-    state = state.copyWith(emptyTranslation: emptyTranslation);
+    state = state.copyWith(
+      emptyTranslation: emptyTranslation,
+    );
     logger.i('Settings loaded: ${state.toString()}');
   }
 

@@ -285,6 +285,22 @@ class ProjectStateController extends StateNotifier<ProjectState> {
     );
   }
 
+  /// Returns language codes which translations are empty
+  List<String> getEmptyTranslations(String key) {
+    final out = <String>[];
+    final langs = state.languageData.languages;
+
+    for (final lang in langs.keys) {
+      if (lang != state.file.baseLanguage) {
+        final String translation = langs[lang]!.translations[key]!;
+        if (translation.isEmpty) {
+          out.add(lang);
+        }
+      }
+    }
+    return out;
+  }
+
   void _updateState({
     Map<String, Language>? updateLanguages,
     Map<String, ArbDefinition>? updateArbDefs,

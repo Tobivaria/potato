@@ -37,7 +37,7 @@ class _TranslationEntryState extends ConsumerState<TranslationEntry> {
   @override
   void initState() {
     super.initState();
-    _controller.text = widget.translation ?? '';
+    _initializeFields();
     _focus.addListener(_updateTranslation);
   }
 
@@ -57,8 +57,15 @@ class _TranslationEntryState extends ConsumerState<TranslationEntry> {
     if (oldWidget.definition != widget.definition) {
       // postpone rebuilding after build finished
       WidgetsBinding.instance
-          ?.addPostFrameCallback((_) => _validateTranslation());
+          .addPostFrameCallback((_) => _validateTranslation());
+    } else if (oldWidget.translation != widget.translation) {
+      // postpone rebuilding after build finished
+      WidgetsBinding.instance.addPostFrameCallback((_) => _initializeFields());
     }
+  }
+
+  void _initializeFields() {
+    _controller.text = widget.translation ?? '';
   }
 
   // update the translation key, once the textfield is losing focus

@@ -11,6 +11,8 @@ import 'package:potato/const/potato_color.dart';
 import 'package:potato/core/confirm_dialog.dart';
 import 'package:potato/project/project_error_controller.dart';
 import 'package:potato/project/project_state_controller.dart';
+import 'package:potato/settings/translation_services/translation_services_controller.dart';
+import 'package:potato/translation_service/translation_config.dart';
 
 class ArbEntry extends ConsumerStatefulWidget {
   const ArbEntry({
@@ -106,6 +108,53 @@ class _ArbEntryState extends ConsumerState<ArbEntry> {
         .removeTranslation(_keyController.text);
   }
 
+  // translates empty entries
+  Future<void> _translate() async {
+    final providers = ref.read(translationServicesProvider);
+    final baseLang = ref.read(projectStateProvider).file.baseLanguage;
+
+    // TODO pick first for now, later make the user select one if there a more available then one
+    if (providers.isEmpty || baseLang == null) {
+      return;
+    }
+
+    final keyToTranslate = widget.definitionKey;
+
+    final langsMissing = ref
+        .read(projectStateProvider.notifier)
+        .getEmptyTranslations(keyToTranslate);
+
+    if (langsMissing.isEmpty) {
+      return;
+    }
+
+    final baseTranslation = ref
+        .read(projectStateProvider)
+        .languageData
+        .languages[baseLang]!
+        .translations[keyToTranslate]!;
+
+    final Map<String, String> newTranslations = {};
+
+    for (final lang in langsMissing) {
+      final config = TranslationConfig(
+        targetLang: lang,
+        sourceLang: baseLang,
+        formality: 'less',
+      );
+      final translation =
+          await providers.first.translate(baseTranslation, config);
+      newTranslations[lang] = translation;
+    }
+
+    for (final lang in newTranslations.keys) {
+      // TODO create another controller method to bulk change
+      ref
+          .read(projectStateProvider.notifier)
+          .updateTranslation(lang, keyToTranslate, newTranslations[lang]!);
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return ConstrainedBox(
@@ -188,6 +237,16 @@ class _ArbEntryState extends ConsumerState<ArbEntry> {
                   ArbOptionMenu(
                     arbDefinition: widget.definition,
                     definitionKey: widget.definitionKey,
+                  ),
+                  Tooltip(
+                    message: 'Translate empty values',
+                    child: IconButton(
+                      icon: const Icon(
+                        FluentIcons.translate,
+                        size: Dimensions.arbSettingIconSize,
+                      ),
+                      onPressed: _translate,
+                    ),
                   ),
                 ],
               ),
