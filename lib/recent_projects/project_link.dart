@@ -1,6 +1,7 @@
 import 'package:fluent_ui/fluent_ui.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:path/path.dart';
 import 'package:potato/project/project_handler.dart';
 
 class ProjectLink extends ConsumerStatefulWidget {
@@ -30,19 +31,35 @@ class _ProjectLinkState extends ConsumerState<ProjectLink> with ProjectHandler {
     });
   }
 
+  String _formatPath() {
+    return basename(widget.path).replaceAll('.potato', '');
+  }
+
+  String _formatUrl() {
+    return widget.path.replaceAll(basename(widget.path), '');
+  }
+
   @override
   Widget build(BuildContext context) {
-    return MouseRegion(
-      onExit: _reset,
-      onHover: _hover,
-      cursor: SystemMouseCursors.click,
-      child: RichText(
-        text: TextSpan(
-          text: widget.path,
-          style: TextStyle(color: Colors.blue, decoration: _textDecoration),
-          recognizer: TapGestureRecognizer()..onTap = () => _openFile(),
+    return Row(
+      children: [
+        MouseRegion(
+          onExit: _reset,
+          onHover: _hover,
+          cursor: SystemMouseCursors.click,
+          child: RichText(
+            text: TextSpan(
+              text: _formatPath(),
+              style: TextStyle(color: Colors.blue, decoration: _textDecoration),
+              recognizer: TapGestureRecognizer()..onTap = () => _openFile(),
+            ),
+          ),
         ),
-      ),
+        const SizedBox(
+          width: 20,
+        ),
+        Text(_formatUrl())
+      ],
     );
   }
 }

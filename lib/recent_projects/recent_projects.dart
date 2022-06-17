@@ -9,17 +9,23 @@ class RecentProjects extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final projects = ref.watch(recentProjectsProvider);
-    return Padding(
-      padding: const EdgeInsets.only(top: 20.0),
-      child: Column(
-        children: [
-          const Text(
-            'Recent projects',
-            style: TextStyle(fontWeight: FontWeight.bold),
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        Padding(
+          padding: const EdgeInsets.only(top: 20.0),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              const Text(
+                'Recent projects',
+                style: TextStyle(fontWeight: FontWeight.bold),
+              ),
+              for (var project in projects) ProjectLink(path: project),
+            ],
           ),
-          for (var project in projects) ProjectLink(path: project),
-        ],
-      ),
+        ),
+      ],
     );
   }
 }
