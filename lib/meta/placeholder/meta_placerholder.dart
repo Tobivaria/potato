@@ -1,18 +1,18 @@
 import 'package:fluent_ui/fluent_ui.dart';
-import 'package:potato/arb/arb_definition.dart';
+import 'package:potato/meta/meta_definition.dart';
 
 @immutable
-class ArbPlaceholder {
+class MetaPlaceholder {
   final String id;
   final MetaType type;
   final String? example;
 
-  const ArbPlaceholder({required this.id, required this.type, this.example});
+  const MetaPlaceholder({required this.id, required this.type, this.example});
 
-  factory ArbPlaceholder.fromMap(MapEntry<String, dynamic> map) {
+  factory MetaPlaceholder.fromMap(MapEntry<String, dynamic> map) {
     final entries = map.value as Map<String, dynamic>;
 
-    return ArbPlaceholder(
+    return MetaPlaceholder(
       id: map.key,
       type: MetaType.values.byName(entries['type'] as String),
       example: entries['example'] as String?,
@@ -33,12 +33,12 @@ class ArbPlaceholder {
     };
   }
 
-  ArbPlaceholder copyWith({
+  MetaPlaceholder copyWith({
     String? id,
     MetaType? type,
     String? example,
   }) {
-    return ArbPlaceholder(
+    return MetaPlaceholder(
       id: id ?? this.id,
       type: type ?? this.type,
       example: example ?? this.example,
@@ -49,7 +49,7 @@ class ArbPlaceholder {
   bool operator ==(Object other) {
     if (identical(this, other)) return true;
 
-    return other is ArbPlaceholder &&
+    return other is MetaPlaceholder &&
         other.id == id &&
         other.type == type &&
         other.example == example;
@@ -62,5 +62,5 @@ class ArbPlaceholder {
 
   @override
   String toString() =>
-      'ArbPlaceholder(id: $id, type: $type, example: $example)';
+      'MetaPlaceholder(id: $id, type: $type, example: $example)';
 }

@@ -1,24 +1,24 @@
 import 'package:fluent_ui/fluent_ui.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:potato/arb/arb_definition.dart';
 import 'package:potato/const/dimensions.dart';
+import 'package:potato/meta/meta_definition.dart';
 import 'package:potato/project/project_state_controller.dart';
 
-class ArbOptionMenu extends ConsumerStatefulWidget {
-  const ArbOptionMenu({
+class MetaOptionMenu extends ConsumerStatefulWidget {
+  const MetaOptionMenu({
     required this.definitionKey,
-    required this.arbDefinition,
+    required this.metaDefinition,
     Key? key,
   }) : super(key: key);
 
   final String definitionKey;
-  final ArbDefinition arbDefinition;
+  final MetaDefinition metaDefinition;
 
   @override
-  ConsumerState<ArbOptionMenu> createState() => _ArbOptionMenuState();
+  ConsumerState<MetaOptionMenu> createState() => _MetaOptionMenuState();
 }
 
-class _ArbOptionMenuState extends ConsumerState<ArbOptionMenu> {
+class _MetaOptionMenuState extends ConsumerState<MetaOptionMenu> {
   final FlyoutController _flyoutController = FlyoutController();
 
   void _addDescription() {
@@ -41,7 +41,7 @@ class _ArbOptionMenuState extends ConsumerState<ArbOptionMenu> {
       content: (context) {
         return MenuFlyout(
           items: [
-            if (widget.arbDefinition.description == null)
+            if (widget.metaDefinition.description == null)
               MenuFlyoutItem(
                 leading: const Icon(FluentIcons.copy),
                 text: const Text('Description'),
@@ -61,7 +61,7 @@ class _ArbOptionMenuState extends ConsumerState<ArbOptionMenu> {
       child: IconButton(
         icon: const Icon(
           FluentIcons.add,
-          size: Dimensions.arbSettingIconSize,
+          size: Dimensions.metaSettingIconSize,
         ),
         onPressed: _flyoutController.open,
       ),

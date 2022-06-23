@@ -1,5 +1,5 @@
 import 'package:flutter/foundation.dart';
-import 'package:potato/arb/arb_placerholder.dart';
+import 'package:potato/meta/placeholder/meta_placerholder.dart';
 
 enum MetaType {
   // ignore: constant_identifier_names
@@ -11,24 +11,24 @@ enum MetaType {
 }
 
 @immutable
-class ArbDefinition {
+class MetaDefinition {
   final String? description;
-  final List<ArbPlaceholder>? placeholders;
+  final List<MetaPlaceholder>? placeholders;
 
-  const ArbDefinition({this.description, this.placeholders});
+  const MetaDefinition({this.description, this.placeholders});
 
-  factory ArbDefinition.fromMap(Map<String, dynamic> map) {
-    List<ArbPlaceholder>? placeholderList;
+  factory MetaDefinition.fromMap(Map<String, dynamic> map) {
+    List<MetaPlaceholder>? placeholderList;
 
     if (map['placeholders'] != null) {
       placeholderList = [];
       final Map<String, dynamic> placeholderMap =
           map['placeholders'] as Map<String, dynamic>;
       for (final MapEntry<String, dynamic> entry in placeholderMap.entries) {
-        placeholderList.add(ArbPlaceholder.fromMap(entry));
+        placeholderList.add(MetaPlaceholder.fromMap(entry));
       }
     }
-    return ArbDefinition(
+    return MetaDefinition(
       description: map['description'] as String?,
       placeholders: placeholderList,
     );
@@ -48,11 +48,11 @@ class ArbDefinition {
     return out;
   }
 
-  ArbDefinition copyWith({
+  MetaDefinition copyWith({
     String? description,
-    List<ArbPlaceholder>? placeholders,
+    List<MetaPlaceholder>? placeholders,
   }) {
-    return ArbDefinition(
+    return MetaDefinition(
       description: description ?? this.description,
       placeholders: placeholders ?? this.placeholders,
     );
@@ -62,7 +62,7 @@ class ArbDefinition {
   bool operator ==(Object other) {
     if (identical(this, other)) return true;
 
-    return other is ArbDefinition &&
+    return other is MetaDefinition &&
         other.description == description &&
         listEquals(other.placeholders, placeholders);
   }
@@ -72,5 +72,5 @@ class ArbDefinition {
 
   @override
   String toString() =>
-      'ArbDefinition(description: $description, placeholders: $placeholders)';
+      'MetaDefinition(description: $description, placeholders: $placeholders)';
 }

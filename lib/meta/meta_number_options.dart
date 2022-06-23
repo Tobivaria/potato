@@ -7,19 +7,19 @@ enum NumberOptions {
   pattern,
 }
 
-abstract class ArbNumberOptions {
+abstract class MetaNumberOptions {
   List<NumberOptions> getOptions();
   // Map<String, dynamic> getValues;
 }
 
-class ArbNumberOptionsBaseNew implements ArbNumberOptions {
+class MetaNumberOptionsBaseNew implements MetaNumberOptions {
   final List<NumberOptions> _options = [NumberOptions.decimalDigits];
   @override
   List<NumberOptions> getOptions() {
     return _options;
   }
 
-  // factory ArbNumberOptionsBaseNew.fromMap(Map<String, dynamic> map) {
+  // factory MetaNumberOptionsBaseNew.fromMap(Map<String, dynamic> map) {
   //   return decimalCount != null ? {'decimalDigits': decimalCount!} : null;
   // }
 
@@ -28,9 +28,9 @@ class ArbNumberOptionsBaseNew implements ArbNumberOptions {
 /// Options:
 /// * decimalDigits
 @immutable
-class ArbNumberOptionsBase {
+class MetaNumberOptionsBase {
   final int? decimalCount;
-  const ArbNumberOptionsBase({this.decimalCount});
+  const MetaNumberOptionsBase({this.decimalCount});
 
   Map<String, dynamic>? toMap() {
     return decimalCount != null ? {'decimalDigits': decimalCount} : null;
@@ -41,9 +41,9 @@ class ArbNumberOptionsBase {
 /// * decimalDigits
 /// * name
 @immutable
-class ArbNumberOptionsSimple extends ArbNumberOptionsBase {
+class MetaNumberOptionsSimple extends MetaNumberOptionsBase {
   final String? name;
-  const ArbNumberOptionsSimple({this.name, int? decimalCount})
+  const MetaNumberOptionsSimple({this.name, int? decimalCount})
       : super(decimalCount: decimalCount);
 
   @override
@@ -59,9 +59,10 @@ class ArbNumberOptionsSimple extends ArbNumberOptionsBase {
 /// * name
 /// * symbol
 @immutable
-class ArbNumberOptionsExtended extends ArbNumberOptionsSimple {
+class MetaNumberOptionsExtended extends MetaNumberOptionsSimple {
   final String? symbol;
-  const ArbNumberOptionsExtended({this.symbol, String? name, int? decimalCount})
+  const MetaNumberOptionsExtended(
+      {this.symbol, String? name, int? decimalCount})
       : super(name: name, decimalCount: decimalCount);
 
   @override
@@ -79,9 +80,9 @@ class ArbNumberOptionsExtended extends ArbNumberOptionsSimple {
 /// * symbol
 /// * pattern
 @immutable
-class ArbNumberOptionsFull extends ArbNumberOptionsExtended {
+class MetaNumberOptionsFull extends MetaNumberOptionsExtended {
   final String? pattern;
-  const ArbNumberOptionsFull({
+  const MetaNumberOptionsFull({
     this.pattern,
     String? symbol,
     String? name,

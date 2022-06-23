@@ -1,12 +1,13 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:potato/arb/arb_definition.dart';
-import 'package:potato/arb/arb_placerholder.dart';
+import 'package:potato/meta/meta_definition.dart';
+import 'package:potato/meta/placeholder/meta_placerholder.dart';
 
 void main() {
   test('Description and single placeholder to map', () {
-    const ArbDefinition definition = ArbDefinition(
-        description: 'Some text',
-        placeholders: [ArbPlaceholder(id: 'value', type: MetaType.String)]);
+    const MetaDefinition definition = MetaDefinition(
+      description: 'Some text',
+      placeholders: [MetaPlaceholder(id: 'value', type: MetaType.String)],
+    );
     final Map<String, dynamic> expected = {
       'description': 'Some text',
       'placeholders': {
@@ -18,12 +19,12 @@ void main() {
   });
 
   test('Description and multiple placeholders to map', () {
-    const ArbDefinition definition = ArbDefinition(
+    const MetaDefinition definition = MetaDefinition(
       description: 'Some text',
       placeholders: [
-        ArbPlaceholder(id: 'value', type: MetaType.String),
-        ArbPlaceholder(id: 'person', type: MetaType.DateTime),
-        ArbPlaceholder(id: 'hola', type: MetaType.double),
+        MetaPlaceholder(id: 'value', type: MetaType.String),
+        MetaPlaceholder(id: 'person', type: MetaType.DateTime),
+        MetaPlaceholder(id: 'hola', type: MetaType.double),
       ],
     );
     final Map<String, dynamic> expected = {
@@ -38,7 +39,7 @@ void main() {
     expect(definition.toMap(), expected);
   });
 
-  test('ArbDefinition from Map', () {
+  test('MetaDefinition from Map', () {
     final Map<String, dynamic> source = {
       'description': 'Some text',
       'placeholders': {
@@ -48,15 +49,15 @@ void main() {
       }
     };
 
-    const ArbDefinition expected = ArbDefinition(
+    const MetaDefinition expected = MetaDefinition(
       description: 'Some text',
       placeholders: [
-        ArbPlaceholder(id: 'value', type: MetaType.String),
-        ArbPlaceholder(id: 'person', type: MetaType.DateTime),
-        ArbPlaceholder(id: 'hola', type: MetaType.double),
+        MetaPlaceholder(id: 'value', type: MetaType.String),
+        MetaPlaceholder(id: 'person', type: MetaType.DateTime),
+        MetaPlaceholder(id: 'hola', type: MetaType.double),
       ],
     );
 
-    expect(ArbDefinition.fromMap(source), expected);
+    expect(MetaDefinition.fromMap(source), expected);
   });
 }

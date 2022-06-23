@@ -1,8 +1,8 @@
 import 'package:fluent_ui/fluent_ui.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:potato/arb/arb_definition.dart';
 import 'package:potato/const/dimensions.dart';
 import 'package:potato/core/entry_state.dart';
+import 'package:potato/meta/meta_definition.dart';
 import 'package:potato/notification/notification_controller.dart';
 import 'package:potato/project/project_error_controller.dart';
 import 'package:potato/project/project_state_controller.dart';
@@ -22,7 +22,7 @@ class TranslationEntry extends ConsumerStatefulWidget {
   final String languageKey;
   final String? translation;
   final String translationKey;
-  final ArbDefinition definition;
+  final MetaDefinition definition;
 
   @override
   ConsumerState<TranslationEntry> createState() => _TranslationEntryState();
@@ -170,18 +170,18 @@ class _TranslationEntryState extends ConsumerState<TranslationEntry> {
 
   /// Calculates the height of the textbox by taking into account meta options
   double _calculateHeight() {
-    double height = Dimensions.arbKeyHeight;
-    final ArbDefinition def = widget.definition;
+    double height = Dimensions.metaKeyHeight;
+    final MetaDefinition def = widget.definition;
 
     // description height
     if (def.description != null) {
-      height +=
-          Dimensions.arbDescriptionHeight + Dimensions.paddingBetweenArbOptions;
+      height += Dimensions.metaDescriptionHeight +
+          Dimensions.paddingBetweenMetaOptions;
     }
 
     if (def.placeholders != null) {
-      height += (Dimensions.arbPlaceholderHeight +
-              Dimensions.paddingBetweenArbOptions) *
+      height += (Dimensions.metaPlaceholderHeight +
+              Dimensions.paddingBetweenMetaOptions) *
           def.placeholders!.length;
     }
 

@@ -1,25 +1,25 @@
 import 'package:fluent_ui/fluent_ui.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:potato/arb/arb_definition.dart';
-import 'package:potato/arb/arb_placerholder.dart';
 import 'package:potato/const/dimensions.dart';
+import 'package:potato/meta/meta_definition.dart';
+import 'package:potato/meta/placeholder/meta_placerholder.dart';
 import 'package:potato/project/project_state_controller.dart';
 
-class MetaPlaceholder extends ConsumerStatefulWidget {
-  final String arbKey;
-  final ArbPlaceholder placeholder;
+class PlaceholderOption extends ConsumerStatefulWidget {
+  final String metaKey;
+  final MetaPlaceholder placeholder;
 
-  const MetaPlaceholder({
-    required this.arbKey,
+  const PlaceholderOption({
+    required this.metaKey,
     required this.placeholder,
     Key? key,
   }) : super(key: key);
 
   @override
-  ConsumerState<MetaPlaceholder> createState() => _MetaPlaceholderState();
+  ConsumerState<PlaceholderOption> createState() => _MetaPlaceholderState();
 }
 
-class _MetaPlaceholderState extends ConsumerState<MetaPlaceholder> {
+class _MetaPlaceholderState extends ConsumerState<PlaceholderOption> {
   final TextEditingController _idController = TextEditingController();
   final TextEditingController _exController = TextEditingController();
   final FocusNode _idFocus = FocusNode();
@@ -57,7 +57,7 @@ class _MetaPlaceholderState extends ConsumerState<MetaPlaceholder> {
   void _updateId() {
     if (!_idFocus.hasFocus && (widget.placeholder.id != _idController.text)) {
       ref.read(projectStateProvider.notifier).updatePlaceholder(
-            key: widget.arbKey,
+            key: widget.metaKey,
             placeholderId: widget.placeholder.id,
             updatedId: _idController.text,
           );
@@ -81,7 +81,7 @@ class _MetaPlaceholderState extends ConsumerState<MetaPlaceholder> {
   void _removePlaceholder() {
     ref
         .read(projectStateProvider.notifier)
-        .removePlaceholder(widget.arbKey, widget.placeholder.id);
+        .removePlaceholder(widget.metaKey, widget.placeholder.id);
   }
 
   // TODO update example
@@ -107,7 +107,7 @@ class _MetaPlaceholderState extends ConsumerState<MetaPlaceholder> {
                   child: IconButton(
                     icon: const Icon(
                       FluentIcons.clear,
-                      size: Dimensions.arbSettingIconSize,
+                      size: Dimensions.metaSettingIconSize,
                     ),
                     onPressed: _removePlaceholder,
                   ),
@@ -136,7 +136,7 @@ class _MetaPlaceholderState extends ConsumerState<MetaPlaceholder> {
             ),
           ),
           SizedBox(
-            width: Dimensions.idTextfieldWidth - Dimensions.arbOptionOffset,
+            width: Dimensions.idTextfieldWidth - Dimensions.metaOptionOffset,
             child: TextBox(
               controller: _exController,
               focusNode: _exFocus,

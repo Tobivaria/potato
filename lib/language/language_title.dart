@@ -80,7 +80,7 @@ class _LanguageTitleState extends ConsumerState<LanguageTitle> {
                   message: 'Base language',
                   child: Icon(
                     FluentIcons.favorite_star,
-                    size: Dimensions.arbSettingIconSize,
+                    size: Dimensions.metaSettingIconSize,
                   ),
                 ),
               AnimatedOpacity(
@@ -95,7 +95,7 @@ class _LanguageTitleState extends ConsumerState<LanguageTitle> {
                         child: IconButton(
                           icon: const Icon(
                             FluentIcons.favorite_star,
-                            size: Dimensions.arbSettingIconSize,
+                            size: Dimensions.metaSettingIconSize,
                           ),
                           onPressed: _setBaseLanguage,
                         ),
@@ -103,7 +103,7 @@ class _LanguageTitleState extends ConsumerState<LanguageTitle> {
                     IconButton(
                       icon: const Icon(
                         FluentIcons.delete,
-                        size: Dimensions.arbSettingIconSize,
+                        size: Dimensions.metaSettingIconSize,
                       ),
                       onPressed: () => showDialog(
                         context: context,

@@ -1,14 +1,14 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:potato/arb/arb_definition.dart';
 import 'package:potato/language/language.dart';
 import 'package:potato/language/language_data.dart';
+import 'package:potato/meta/meta_definition.dart';
 
 void main() {
   test('Create new language data', () {
     final LanguageData data = LanguageData();
     expect(mapEquals(data.languages, {}), isTrue);
-    expect(mapEquals(data.arbDefinitions, {}), isTrue);
+    expect(mapEquals(data.metaDefinitions, {}), isTrue);
   });
 
   test('Copy language data', () {
@@ -16,17 +16,17 @@ void main() {
       'en': Language(existingTranslations: const {'greeting': 'hello'}),
       'de': Language(existingTranslations: const {'greeting': 'hallo'})
     };
-    final Map<String, ArbDefinition> arbDefinitions = {
-      'greeting': const ArbDefinition(description: 'Lul')
+    final Map<String, MetaDefinition> metaDefinitions = {
+      'greeting': const MetaDefinition(description: 'Lul')
     };
 
     final LanguageData data = LanguageData();
     final LanguageData copy =
-        data.copyWith(languages: languages, arbDefinitions: arbDefinitions);
+        data.copyWith(languages: languages, metas: metaDefinitions);
 
     expect(copy.languages, languages);
     expect(mapEquals(copy.languages, languages), isTrue);
-    expect(mapEquals(copy.arbDefinitions, arbDefinitions), isTrue);
+    expect(mapEquals(copy.metaDefinitions, metaDefinitions), isTrue);
   });
 
   test('Return available language list', () {
@@ -69,14 +69,14 @@ void main() {
         existingTranslations: const {'greeting': 'hallo', 'bye': 'tschüss'},
       )
     };
-    final Map<String, ArbDefinition> arbDefinitions = {
-      'bye': const ArbDefinition(description: 'Saying goodbye'),
-      'greeting': const ArbDefinition(description: 'Saying hello')
+    final Map<String, MetaDefinition> metaDefinitions = {
+      'bye': const MetaDefinition(description: 'Saying goodbye'),
+      'greeting': const MetaDefinition(description: 'Saying hello')
     };
 
     final LanguageData data = LanguageData(
       existingLanguages: languages,
-      existingArdbDefinitions: arbDefinitions,
+      existingArdbDefinitions: metaDefinitions,
     );
 
     const Map<String, dynamic> expected = {

@@ -1,7 +1,7 @@
-import 'package:potato/arb/arb_definition.dart';
-import 'package:potato/arb/arb_placerholder.dart';
 import 'package:potato/language/language.dart';
 import 'package:potato/language/language_data.dart';
+import 'package:potato/meta/meta_definition.dart';
+import 'package:potato/meta/placeholder/meta_placerholder.dart';
 
 extension MutableLanguageData on LanguageData {
   LanguageData _updateLanguage(
@@ -21,17 +21,17 @@ extension MutableLanguageData on LanguageData {
     );
   }
 
-  LanguageData _updateMetaDefinition(String key, ArbDefinition updatedDef) {
-    final Map<String, ArbDefinition> modifiedDefs = {};
-    for (final String entry in arbDefinitions.keys) {
+  LanguageData _updateMetaDefinition(String key, MetaDefinition updatedDef) {
+    final Map<String, MetaDefinition> modifiedDefs = {};
+    for (final String entry in metaDefinitions.keys) {
       if (entry == key) {
         modifiedDefs[entry] = updatedDef;
       } else {
-        modifiedDefs[entry] = arbDefinitions[entry]!;
+        modifiedDefs[entry] = metaDefinitions[entry]!;
       }
     }
     return copyWith(
-      arbDefinitions: modifiedDefs,
+      metas: modifiedDefs,
     );
   }
 
@@ -41,7 +41,7 @@ extension MutableLanguageData on LanguageData {
 
   LanguageData addLanguage(String langKey) {
     final Map<String, String> newLanguage = {};
-    for (final entry in arbDefinitions.keys) {
+    for (final entry in metaDefinitions.keys) {
       newLanguage[entry] = '';
     }
 
@@ -92,7 +92,7 @@ extension MutableLanguageData on LanguageData {
     // TODO add test for that part
     // as the key needs to be unique for new entries, increment count
     final RegExp reg = RegExp(r'\d+');
-    while (arbDefinitions.keys.contains(keyToInsert)) {
+    while (metaDefinitions.keys.contains(keyToInsert)) {
       final RegExpMatch? match = reg.firstMatch(keyToInsert);
 
       if (match == null) {
@@ -118,8 +118,8 @@ extension MutableLanguageData on LanguageData {
 
     return LanguageData(
       existingArdbDefinitions: {
-        ...arbDefinitions,
-        keyToInsert: const ArbDefinition()
+        ...metaDefinitions,
+        keyToInsert: const MetaDefinition()
       },
       existingLanguages: modifiedLanguages,
     );
@@ -137,11 +137,11 @@ extension MutableLanguageData on LanguageData {
       modifiedLanguages[languageKey] = Language(existingTranslations: copy);
     }
 
-    final Map<String, ArbDefinition> arbDefs = {...arbDefinitions};
-    arbDefs.remove(key)!;
+    final Map<String, MetaDefinition> metaDefs = {...metaDefinitions};
+    metaDefs.remove(key)!;
 
     return LanguageData(
-      existingArdbDefinitions: arbDefs,
+      existingArdbDefinitions: metaDefs,
       existingLanguages: modifiedLanguages,
     );
   }
@@ -162,12 +162,12 @@ extension MutableLanguageData on LanguageData {
       modifiedLanguages[languageKey] = Language(existingTranslations: copy);
     }
 
-    final Map<String, ArbDefinition> arbDefs = {...arbDefinitions};
-    final ArbDefinition removedDef = arbDefs.remove(key)!;
-    arbDefs[updatedKey] = removedDef;
+    final Map<String, MetaDefinition> metaDefs = {...metaDefinitions};
+    final MetaDefinition removedDef = metaDefs.remove(key)!;
+    metaDefs[updatedKey] = removedDef;
 
     return LanguageData(
-      existingArdbDefinitions: arbDefs,
+      existingArdbDefinitions: metaDefs,
       existingLanguages: modifiedLanguages,
     );
   }
@@ -180,15 +180,15 @@ extension MutableLanguageData on LanguageData {
   LanguageData addDescription(String key) {
     return _updateMetaDefinition(
       key,
-      arbDefinitions[key]!.copyWith(description: ''),
+      metaDefinitions[key]!.copyWith(description: ''),
     );
   }
 
   LanguageData removeDescription(String key) {
     return _updateMetaDefinition(
       key,
-      ArbDefinition(
-        placeholders: arbDefinitions[key]?.placeholders,
+      MetaDefinition(
+        placeholders: metaDefinitions[key]?.placeholders,
       ),
     );
   }
@@ -196,7 +196,7 @@ extension MutableLanguageData on LanguageData {
   LanguageData updateDescription(String key, String description) {
     return _updateMetaDefinition(
       key,
-      arbDefinitions[key]!.copyWith(description: description),
+      metaDefinitions[key]!.copyWith(description: description),
     );
   }
 
@@ -206,8 +206,8 @@ extension MutableLanguageData on LanguageData {
 
   /// Validates that for the definition key does not already exist a placeholder with the same id
   bool isPlaceholderIdUnique(String key, String placeholderId) {
-    final List<ArbPlaceholder>? placeholders =
-        arbDefinitions[key]!.placeholders;
+    final List<MetaPlaceholder>? placeholders =
+        metaDefinitions[key]!.placeholders;
 
     if (placeholders == null) {
       return true;
@@ -225,7 +225,7 @@ extension MutableLanguageData on LanguageData {
 
     // as the key needs to be unique for new entries, increment count
     final RegExp reg = RegExp(r'\d+');
-    if (arbDefinitions[key]!.placeholders != null) {
+    if (metaDefinitions[key]!.placeholders != null) {
       while (!isPlaceholderIdUnique(key, placeHolderKey)) {
         final RegExpMatch? match = reg.firstMatch(placeHolderKey);
 
@@ -240,11 +240,11 @@ extension MutableLanguageData on LanguageData {
       }
     }
 
-    final ArbDefinition orig = arbDefinitions[key]!;
-    final ArbDefinition modified = orig.copyWith(
+    final MetaDefinition orig = metaDefinitions[key]!;
+    final MetaDefinition modified = orig.copyWith(
       placeholders: [
         ...?orig.placeholders,
-        ArbPlaceholder(id: placeHolderKey, type: defaultType)
+        MetaPlaceholder(id: placeHolderKey, type: defaultType)
       ],
     );
 
@@ -259,10 +259,10 @@ extension MutableLanguageData on LanguageData {
     String? updatedExample,
     MetaType? updatedType,
   }) {
-    final ArbDefinition orig = arbDefinitions[key]!;
-    final ArbDefinition modified = orig.copyWith(
+    final MetaDefinition orig = metaDefinitions[key]!;
+    final MetaDefinition modified = orig.copyWith(
       placeholders: [
-        for (ArbPlaceholder placeholder in orig.placeholders!)
+        for (MetaPlaceholder placeholder in orig.placeholders!)
           if (placeholder.id == id)
             placeholder.copyWith(
               id: updatedId,
@@ -279,11 +279,11 @@ extension MutableLanguageData on LanguageData {
 
   /// Removes the placeholder by its id of the definition key
   LanguageData removePlaceHolder(String key, String placeholderId) {
-    final ArbDefinition orig = arbDefinitions[key]!;
+    final MetaDefinition orig = metaDefinitions[key]!;
 
-    final ArbDefinition modified = arbDefinitions[key]!.copyWith(
+    final MetaDefinition modified = metaDefinitions[key]!.copyWith(
       placeholders: [
-        for (ArbPlaceholder placeholder in orig.placeholders!)
+        for (MetaPlaceholder placeholder in orig.placeholders!)
           if (placeholder.id != placeholderId) placeholder
       ],
     );

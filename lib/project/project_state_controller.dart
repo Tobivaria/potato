@@ -3,10 +3,10 @@ import 'dart:io';
 import 'package:fluent_ui/fluent_ui.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:logger/logger.dart';
-import 'package:potato/arb/arb_definition.dart';
 import 'package:potato/file_handling/file_service.dart';
 import 'package:potato/language/language.dart';
 import 'package:potato/language/mutable_language_data.dart';
+import 'package:potato/meta/meta_definition.dart';
 import 'package:potato/notification/notification_controller.dart';
 import 'package:potato/project/project_file.dart';
 import 'package:potato/project/project_state.dart';
@@ -30,9 +30,9 @@ final StateProvider<String> idFilter = StateProvider<String>(
 /// Filters the ids and sorts them a to z
 final Provider<List<String>> filteredOrderedIds = Provider<List<String>>((ref) {
   final String filter = ref.watch(idFilter).toLowerCase();
-  final Map<String, ArbDefinition> metaDefs = ref.watch(
+  final Map<String, MetaDefinition> metaDefs = ref.watch(
     projectStateProvider.select(
-      (value) => value.languageData.arbDefinitions,
+      (value) => value.languageData.metaDefinitions,
     ),
   );
 
@@ -90,7 +90,7 @@ class ProjectStateController extends StateNotifier<ProjectState> {
   ]) : super(init ?? ProjectState());
 
   void loadfromJsons(List<Map<String, dynamic>> data) {
-    final Map<String, ArbDefinition> arbDefinitions = {};
+    final Map<String, MetaDefinition> metaDefinitions = {};
     final Map<String, Language> languages = {};
 
     // TODO error handling
@@ -107,8 +107,8 @@ class ProjectStateController extends StateNotifier<ProjectState> {
         if (key == '@@locale') {
           locale = item as String;
         } else if (key.startsWith('@')) {
-          arbDefinitions[key.substring(1)] =
-              ArbDefinition.fromMap(Map<String, dynamic>.from(item as Map));
+          metaDefinitions[key.substring(1)] =
+              MetaDefinition.fromMap(Map<String, dynamic>.from(item as Map));
           baseLang ??= locale;
         } else {
           translations[key] = item as String;
@@ -133,7 +133,7 @@ class ProjectStateController extends StateNotifier<ProjectState> {
 
     _updateState(
       updateLanguages: languages,
-      updateArbDefs: arbDefinitions,
+      updateMetaDefs: metaDefinitions,
     );
   }
 
@@ -167,7 +167,7 @@ class ProjectStateController extends StateNotifier<ProjectState> {
 
   // TODO remove file service dependency
   Future<void> export(String pathToExportTo) async {
-    final List<String> keys = state.languageData.arbDefinitions.keys.toList();
+    final List<String> keys = state.languageData.metaDefinitions.keys.toList();
     // sort keys alphabetically
     keys.sort((a, b) {
       return a.toLowerCase().compareTo(b.toLowerCase());
@@ -200,11 +200,11 @@ class ProjectStateController extends StateNotifier<ProjectState> {
     );
   }
 
-  /// Updates the key in the arb definition and all languages
+  /// Updates the key in the meta definition and all languages
   void updateKey(String oldKey, String newKey) {
     logger.d('Updating key from "$oldKey" to "$newKey"');
 
-    if (state.languageData.arbDefinitions.containsKey(newKey)) {
+    if (state.languageData.metaDefinitions.containsKey(newKey)) {
       logger.w('Key already exists and cannot be renamed');
       ref.read(notificationController.notifier).add(
             'Duplicate key',
@@ -325,11 +325,11 @@ class ProjectStateController extends StateNotifier<ProjectState> {
 
   void _updateState({
     Map<String, Language>? updateLanguages,
-    Map<String, ArbDefinition>? updateArbDefs,
+    Map<String, MetaDefinition>? updateMetaDefs,
   }) {
     state = state.copyWith(
       languageData: state.languageData
-          .copyWith(languages: updateLanguages, arbDefinitions: updateArbDefs),
+          .copyWith(languages: updateLanguages, metas: updateMetaDefs),
     );
   }
 
@@ -376,7 +376,7 @@ class ProjectStateController extends StateNotifier<ProjectState> {
 
     final ProjectFile project = ProjectFile.fromMap(data);
 
-    // load all arb files and their content
+    // load all meta files and their content
     if (project.path == null || project.path!.isEmpty) {
       logger.i('Skipping loading translations, as no path was provided');
       return null;

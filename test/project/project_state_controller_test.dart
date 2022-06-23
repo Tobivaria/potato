@@ -3,10 +3,10 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:logger/logger.dart';
 import 'package:mocktail/mocktail.dart';
-import 'package:potato/arb/arb_definition.dart';
 import 'package:potato/file_handling/file_service.dart';
 import 'package:potato/language/language.dart';
 import 'package:potato/language/language_data.dart';
+import 'package:potato/meta/meta_definition.dart';
 import 'package:potato/notification/notification_controller.dart';
 import 'package:potato/project/project_file.dart';
 import 'package:potato/project/project_state.dart';
@@ -104,15 +104,15 @@ void main() {
       }
     ];
 
-    // expect to detect base language 'en, as it contains the arb definitions
+    // expect to detect base language 'en, as it contains the meta definitions
     final ProjectState expected = ProjectState(
       projectFile: const ProjectFile(baseLanguage: 'en'),
       languageData: LanguageData(
         existingArdbDefinitions: const {
-          'themeBlue': ArbDefinition(description: 'Title of the blue theme'),
+          'themeBlue': MetaDefinition(description: 'Title of the blue theme'),
           'themeDefault':
-              ArbDefinition(description: 'Title of the default theme'),
-          'themeGreen': ArbDefinition(description: 'Title of the green theme'),
+              MetaDefinition(description: 'Title of the default theme'),
+          'themeGreen': MetaDefinition(description: 'Title of the green theme'),
         },
         existingLanguages: {
           'en': Language(

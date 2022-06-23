@@ -1,14 +1,14 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:potato/arb/arb_definition.dart';
-import 'package:potato/arb/arb_placerholder.dart';
+import 'package:potato/meta/meta_definition.dart';
+import 'package:potato/meta/placeholder/meta_placerholder.dart';
 import 'package:potato/translation/translation_verification.dart';
 
 void main() {
   group('Verify placeholders in string', () {
     test('Missing placeholder return an error', () {
       const String input = '';
-      const ArbDefinition definition = ArbDefinition(
-        placeholders: [ArbPlaceholder(id: 'value', type: MetaType.String)],
+      const MetaDefinition definition = MetaDefinition(
+        placeholders: [MetaPlaceholder(id: 'value', type: MetaType.String)],
       );
 
       final TranslationVerification validator =
@@ -22,8 +22,8 @@ void main() {
 
     test('Too many placeholder return an error', () {
       const String input = 'Something {value} lala {again}';
-      const ArbDefinition definition = ArbDefinition(
-        placeholders: [ArbPlaceholder(id: 'value', type: MetaType.String)],
+      const MetaDefinition definition = MetaDefinition(
+        placeholders: [MetaPlaceholder(id: 'value', type: MetaType.String)],
       );
 
       final TranslationVerification validator =
@@ -37,8 +37,8 @@ void main() {
 
     test('Wrongly named placeholder return an error', () {
       const String input = 'Something {val} lala';
-      const ArbDefinition definition = ArbDefinition(
-        placeholders: [ArbPlaceholder(id: 'value', type: MetaType.String)],
+      const MetaDefinition definition = MetaDefinition(
+        placeholders: [MetaPlaceholder(id: 'value', type: MetaType.String)],
       );
 
       final TranslationVerification validator =
@@ -52,10 +52,10 @@ void main() {
 
     test('Valid string return no error', () {
       const String input = 'Something {val} lala {}';
-      const ArbDefinition definition = ArbDefinition(
+      const MetaDefinition definition = MetaDefinition(
         placeholders: [
-          ArbPlaceholder(id: '', type: MetaType.String),
-          ArbPlaceholder(id: 'val', type: MetaType.String)
+          MetaPlaceholder(id: '', type: MetaType.String),
+          MetaPlaceholder(id: 'val', type: MetaType.String)
         ],
       );
 

@@ -1,11 +1,11 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:potato/arb/arb_definition.dart';
-import 'package:potato/arb/arb_placerholder.dart';
+import 'package:potato/meta/meta_definition.dart';
+import 'package:potato/meta/placeholder/meta_placerholder.dart';
 
 void main() {
   test('String placeholder to map', () {
-    ArbPlaceholder placeholder =
-        const ArbPlaceholder(id: 'value', type: MetaType.String);
+    MetaPlaceholder placeholder =
+        const MetaPlaceholder(id: 'value', type: MetaType.String);
     Map<String, dynamic> expected = {
       'value': {'type': 'String'}
     };
@@ -13,7 +13,7 @@ void main() {
     expect(placeholder.toMap(), expected);
 
     // with example
-    placeholder = const ArbPlaceholder(
+    placeholder = const MetaPlaceholder(
       id: 'value',
       type: MetaType.String,
       example: 'Blabla lila',
@@ -26,8 +26,8 @@ void main() {
   });
 
   test('Number placeholder to map', () {
-    const ArbPlaceholder placeholder =
-        ArbPlaceholder(id: 'value', type: MetaType.int);
+    const MetaPlaceholder placeholder =
+        MetaPlaceholder(id: 'value', type: MetaType.int);
     const Map<String, dynamic> expected = <String, dynamic>{
       'value': {
         'type': 'int',
@@ -42,25 +42,25 @@ void main() {
       'value',
       {'type': 'String', 'example': 'Blabla lila'},
     );
-    ArbPlaceholder expected = const ArbPlaceholder(
+    MetaPlaceholder expected = const MetaPlaceholder(
       id: 'value',
       type: MetaType.String,
       example: 'Blabla lila',
     );
 
-    expect(ArbPlaceholder.fromMap(source), expected);
+    expect(MetaPlaceholder.fromMap(source), expected);
 
     // number with format
     source = const MapEntry<String, dynamic>(
       'value',
       {'type': 'double', 'example': 'Blabla lila', 'format': 'compactLong'},
     );
-    expected = const ArbPlaceholder(
+    expected = const MetaPlaceholder(
       id: 'value',
       type: MetaType.double,
       example: 'Blabla lila',
     );
 
-    expect(ArbPlaceholder.fromMap(source), expected);
+    expect(MetaPlaceholder.fromMap(source), expected);
   });
 }

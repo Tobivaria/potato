@@ -1,10 +1,10 @@
 import 'package:fluent_ui/fluent_ui.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:linked_scroll_controller/linked_scroll_controller.dart';
-import 'package:potato/arb/arb_definition.dart';
-import 'package:potato/arb/arb_entry.dart';
 import 'package:potato/const/dimensions.dart';
 import 'package:potato/language/language_data.dart';
+import 'package:potato/meta/meta_definition.dart';
+import 'package:potato/meta/meta_entry.dart';
 import 'package:potato/project/project_state.dart';
 import 'package:potato/project/project_state_controller.dart';
 import 'package:potato/translation/table_divider.dart';
@@ -46,8 +46,8 @@ class _TableBodyState extends ConsumerState<TableBody> {
     final List<String> languages =
         projectState.languageData.supportedLanguages();
     final LanguageData languageData = projectState.languageData;
-    final Map<String, ArbDefinition> arbDefs =
-        projectState.languageData.arbDefinitions;
+    final Map<String, MetaDefinition> metaDefs =
+        projectState.languageData.metaDefinitions;
 
     final List<String> filteredIds = ref.watch(filteredOrderedIds);
 
@@ -64,8 +64,8 @@ class _TableBodyState extends ConsumerState<TableBody> {
               itemCount: filteredIds.length,
               itemBuilder: (context, index) {
                 final String key = filteredIds.elementAt(index);
-                return ArbEntry(
-                  definition: arbDefs[key]!,
+                return MetaEntry(
+                  definition: metaDefs[key]!,
                   definitionKey: key,
                 );
               },
@@ -97,7 +97,7 @@ class _TableBodyState extends ConsumerState<TableBody> {
                             translation: languageData.languages[languageKey]
                                 ?.getTranslation(key),
                             translationKey: key,
-                            definition: arbDefs[key]!,
+                            definition: metaDefs[key]!,
                             key: ValueKey('$languageKey-$key'),
                           ),
                       ],

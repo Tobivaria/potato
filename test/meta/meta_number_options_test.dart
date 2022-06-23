@@ -1,15 +1,15 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:potato/arb/arb_number_options.dart';
+import 'package:potato/meta/meta_number_options.dart';
 
 void main() {
   group('Number options base toMap', () {
     test('Empty options return null', () {
-      expect(const ArbNumberOptionsBase().toMap(), isNull);
+      expect(const MetaNumberOptionsBase().toMap(), isNull);
     });
     test('Set digit count is represented in map', () {
       final Map<String, dynamic> expected = {'decimalDigits': 2};
-      const ArbNumberOptionsBase options =
-          ArbNumberOptionsBase(decimalCount: 2);
+      const MetaNumberOptionsBase options =
+          MetaNumberOptionsBase(decimalCount: 2);
 
       expect(options.toMap(), expected);
     });
@@ -17,7 +17,7 @@ void main() {
 
   group('Number options Simple toMap', () {
     test('Empty options return null', () {
-      expect(const ArbNumberOptionsSimple().toMap(), isNull);
+      expect(const MetaNumberOptionsSimple().toMap(), isNull);
     });
 
     test('Set name and digit count is represented in map', () {
@@ -25,8 +25,8 @@ void main() {
         'decimalDigits': 2,
         'name': 'Solo'
       };
-      const ArbNumberOptionsSimple options =
-          ArbNumberOptionsSimple(name: 'Solo', decimalCount: 2);
+      const MetaNumberOptionsSimple options =
+          MetaNumberOptionsSimple(name: 'Solo', decimalCount: 2);
 
       expect(options.toMap(), expected);
     });
@@ -34,7 +34,7 @@ void main() {
 
   group('Number options extended toMap', () {
     test('Empty options return null', () {
-      expect(const ArbNumberOptionsExtended().toMap(), isNull);
+      expect(const MetaNumberOptionsExtended().toMap(), isNull);
     });
 
     test('Set name and digit count is represented in map', () {
@@ -43,7 +43,7 @@ void main() {
         'name': 'Solo',
         'symbol': '€'
       };
-      const ArbNumberOptionsExtended options = ArbNumberOptionsExtended(
+      const MetaNumberOptionsExtended options = MetaNumberOptionsExtended(
         symbol: '€',
         name: 'Solo',
         decimalCount: 2,
@@ -55,7 +55,7 @@ void main() {
 
   group('Number options full toMap', () {
     test('Empty options return null', () {
-      expect(const ArbNumberOptionsFull().toMap(), isNull);
+      expect(const MetaNumberOptionsFull().toMap(), isNull);
     });
 
     test('Set name and digit count is represented in map', () {
@@ -65,7 +65,7 @@ void main() {
         'symbol': '€',
         'customPattern': '#0.00'
       };
-      const ArbNumberOptionsFull options = ArbNumberOptionsFull(
+      const MetaNumberOptionsFull options = MetaNumberOptionsFull(
         pattern: '#0.00',
         symbol: '€',
         name: 'Solo',

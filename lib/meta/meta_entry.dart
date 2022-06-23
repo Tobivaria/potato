@@ -1,33 +1,33 @@
 import 'package:fluent_ui/fluent_ui.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:potato/arb/arb_definition.dart';
-import 'package:potato/arb/arb_description.dart';
-import 'package:potato/arb/arb_option_menu.dart';
-import 'package:potato/arb/arb_placerholder.dart';
-import 'package:potato/arb/meta_placeholder.dart';
 import 'package:potato/const/dimensions.dart';
 import 'package:potato/const/potato_color.dart';
 import 'package:potato/core/confirm_dialog.dart';
+import 'package:potato/meta/meta_definition.dart';
+import 'package:potato/meta/meta_description.dart';
+import 'package:potato/meta/meta_option_menu.dart';
+import 'package:potato/meta/placeholder/meta_placerholder.dart';
+import 'package:potato/meta/placeholder/placeholder_option.dart';
 import 'package:potato/project/project_error_controller.dart';
 import 'package:potato/project/project_state_controller.dart';
 import 'package:potato/settings/translation_services/translation_services_controller.dart';
 import 'package:potato/translation_service/translation_config.dart';
 
-class ArbEntry extends ConsumerStatefulWidget {
-  const ArbEntry({
+class MetaEntry extends ConsumerStatefulWidget {
+  const MetaEntry({
     required this.definition,
     required this.definitionKey,
     Key? key,
   }) : super(key: key);
-  final ArbDefinition definition;
+  final MetaDefinition definition;
   final String definitionKey;
 
   @override
-  ConsumerState<ArbEntry> createState() => _ArbEntryState();
+  ConsumerState<MetaEntry> createState() => _MetaEntryState();
 }
 
-class _ArbEntryState extends ConsumerState<ArbEntry> {
+class _MetaEntryState extends ConsumerState<MetaEntry> {
   final TextEditingController _keyController = TextEditingController();
 
   final FocusNode _keyFocusNode = FocusNode();
@@ -44,7 +44,7 @@ class _ArbEntryState extends ConsumerState<ArbEntry> {
   }
 
   @override
-  void didUpdateWidget(covariant ArbEntry oldWidget) {
+  void didUpdateWidget(covariant MetaEntry oldWidget) {
     super.didUpdateWidget(oldWidget);
     if (widget != oldWidget) {
       _initializeFields();
@@ -186,22 +186,22 @@ class _ArbEntryState extends ConsumerState<ArbEntry> {
                 if (_showDescription)
                   Padding(
                     padding: const EdgeInsets.only(
-                      top: Dimensions.paddingBetweenArbOptions,
+                      top: Dimensions.paddingBetweenMetaOptions,
                     ),
-                    child: ArbDescription(
-                      arbKey: widget.definitionKey,
+                    child: MetaDescription(
+                      metaKey: widget.definitionKey,
                       description: widget.definition.description,
                     ),
                   ),
                 if (_showPlaceholder) ...[
-                  for (ArbPlaceholder placeholder
+                  for (MetaPlaceholder placeholder
                       in widget.definition.placeholders!)
                     Padding(
                       padding: const EdgeInsets.only(
-                        top: Dimensions.paddingBetweenArbOptions,
+                        top: Dimensions.paddingBetweenMetaOptions,
                       ),
-                      child: MetaPlaceholder(
-                        arbKey: widget.definitionKey,
+                      child: PlaceholderOption(
+                        metaKey: widget.definitionKey,
                         placeholder: placeholder,
                         key: ValueKey(
                           '${widget.definitionKey}-${placeholder.id}',
@@ -220,7 +220,7 @@ class _ArbEntryState extends ConsumerState<ArbEntry> {
                   IconButton(
                     icon: const Icon(
                       FluentIcons.delete,
-                      size: Dimensions.arbSettingIconSize,
+                      size: Dimensions.metaSettingIconSize,
                     ),
                     onPressed: () => showDialog(
                       context: context,
@@ -234,8 +234,8 @@ class _ArbEntryState extends ConsumerState<ArbEntry> {
                       ),
                     ),
                   ),
-                  ArbOptionMenu(
-                    arbDefinition: widget.definition,
+                  MetaOptionMenu(
+                    metaDefinition: widget.definition,
                     definitionKey: widget.definitionKey,
                   ),
                   Tooltip(
@@ -243,7 +243,7 @@ class _ArbEntryState extends ConsumerState<ArbEntry> {
                     child: IconButton(
                       icon: const Icon(
                         FluentIcons.translate,
-                        size: Dimensions.arbSettingIconSize,
+                        size: Dimensions.metaSettingIconSize,
                       ),
                       onPressed: _translate,
                     ),

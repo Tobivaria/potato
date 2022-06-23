@@ -1,25 +1,25 @@
 import 'package:flutter/foundation.dart';
-import 'package:potato/arb/arb_definition.dart';
 import 'package:potato/language/language.dart';
+import 'package:potato/meta/meta_definition.dart';
 import 'package:potato/settings/settings.dart';
 
 /// Holds the state of the currently loaded project
 @immutable
 class LanguageData {
   final Map<String, Language> languages; // langCode
-  final Map<String, ArbDefinition> arbDefinitions; // translation key
+  final Map<String, MetaDefinition> metaDefinitions; // translation key
 
   LanguageData({
     Map<String, Language>? existingLanguages,
-    Map<String, ArbDefinition>? existingArdbDefinitions,
+    Map<String, MetaDefinition>? existingArdbDefinitions,
   })  : languages = existingLanguages ?? <String, Language>{},
-        arbDefinitions = existingArdbDefinitions ?? <String, ArbDefinition>{};
+        metaDefinitions = existingArdbDefinitions ?? <String, MetaDefinition>{};
 
   List<String> supportedLanguages() {
     return languages.keys.toList();
   }
 
-  /// Creates a ordered map of the given language key, in the arb format
+  /// Creates a ordered map of the given language key, in the meta format
   Map<String, dynamic> exportLanguage(
     String langKey,
     List<String> keyOrder, {
@@ -35,7 +35,7 @@ class LanguageData {
       // add one key after the other
       for (final String key in keyOrder) {
         export[key] = mainTranslations[key];
-        export['@$key'] = arbDefinitions[key]!.toMap();
+        export['@$key'] = metaDefinitions[key]!.toMap();
       }
     } else {
       for (final String key in keyOrder) {
@@ -64,11 +64,11 @@ class LanguageData {
 
   LanguageData copyWith({
     Map<String, Language>? languages,
-    Map<String, ArbDefinition>? arbDefinitions,
+    Map<String, MetaDefinition>? metas,
   }) {
     return LanguageData(
       existingLanguages: languages ?? this.languages,
-      existingArdbDefinitions: arbDefinitions ?? this.arbDefinitions,
+      existingArdbDefinitions: metas ?? metaDefinitions,
     );
   }
 
@@ -78,11 +78,11 @@ class LanguageData {
 
     return other is LanguageData &&
         mapEquals(other.languages, languages) &&
-        mapEquals(other.arbDefinitions, arbDefinitions);
+        mapEquals(other.metaDefinitions, metaDefinitions);
   }
 
   @override
   int get hashCode {
-    return languages.hashCode ^ arbDefinitions.hashCode;
+    return languages.hashCode ^ metaDefinitions.hashCode;
   }
 }

@@ -3,21 +3,21 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:potato/const/dimensions.dart';
 import 'package:potato/project/project_state_controller.dart';
 
-class ArbDescription extends ConsumerStatefulWidget {
-  const ArbDescription({
-    required this.arbKey,
+class MetaDescription extends ConsumerStatefulWidget {
+  const MetaDescription({
+    required this.metaKey,
     this.description,
     Key? key,
   }) : super(key: key);
 
-  final String arbKey;
+  final String metaKey;
   final String? description;
 
   @override
-  ConsumerState<ArbDescription> createState() => _ArbDescriptionState();
+  ConsumerState<MetaDescription> createState() => _MetaDescriptionState();
 }
 
-class _ArbDescriptionState extends ConsumerState<ArbDescription> {
+class _MetaDescriptionState extends ConsumerState<MetaDescription> {
   final TextEditingController _textontroller = TextEditingController();
   final FocusNode _focusNode = FocusNode();
   double _controlsOpacity = 0.0;
@@ -40,12 +40,12 @@ class _ArbDescriptionState extends ConsumerState<ArbDescription> {
     if (_textontroller.text != widget.description) {
       ref
           .read(projectStateProvider.notifier)
-          .updateDescription(widget.arbKey, _textontroller.text);
+          .updateDescription(widget.metaKey, _textontroller.text);
     }
   }
 
   void _removeDescription() {
-    ref.read(projectStateProvider.notifier).removeDescription(widget.arbKey);
+    ref.read(projectStateProvider.notifier).removeDescription(widget.metaKey);
   }
 
   void _enterRegion(PointerEvent details) {
@@ -75,13 +75,13 @@ class _ArbDescriptionState extends ConsumerState<ArbDescription> {
             child: IconButton(
               icon: const Icon(
                 FluentIcons.clear,
-                size: Dimensions.arbSettingIconSize,
+                size: Dimensions.metaSettingIconSize,
               ),
               onPressed: _removeDescription,
             ),
           ),
           SizedBox(
-            width: Dimensions.idTextfieldWidth - Dimensions.arbOptionOffset,
+            width: Dimensions.idTextfieldWidth - Dimensions.metaOptionOffset,
             child: TextBox(
               controller: _textontroller,
               focusNode: _focusNode,
