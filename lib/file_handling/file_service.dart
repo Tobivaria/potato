@@ -5,7 +5,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:logger/logger.dart';
 import 'package:potato/utils/potato_logger.dart';
 
-final Provider<FileService> fileServiceProvider = Provider<FileService>((ProviderRef<FileService> ref) {
+final Provider<FileService> fileServiceProvider =
+    Provider<FileService>((ProviderRef<FileService> ref) {
   return FileService(ref.watch(loggerProvider));
 });
 
@@ -15,9 +16,11 @@ class FileService {
 
   FileService(this._logger);
 
-  Future<List<Map<String, dynamic>>> readFilesFromDirectory(String projectPath) async {
+  Future<List<Map<String, dynamic>>> readFilesFromDirectory(
+      String projectPath) async {
     final Directory dir = Directory(projectPath);
-    final List<FileSystemEntity> entities = await dir.list().toList(); // TODO error handling
+    final List<FileSystemEntity> entities =
+        await dir.list().toList(); // TODO error handling
 
     final List<Map<String, dynamic>> list = [];
 
@@ -32,15 +35,20 @@ class FileService {
   }
 
   Future<Map<String, dynamic>?> readJsonFromFile(File file) async {
-    final String raw = await file.readAsString();
-    // TODO validate file format in calling method
-    Map<String, dynamic>? data;
     try {
-      data = jsonDecode(raw) as Map<String, dynamic>;
+      final String raw = await file.readAsString();
+      // TODO validate file format in calling method
+      Map<String, dynamic>? data;
+      try {
+        data = jsonDecode(raw) as Map<String, dynamic>;
+      } catch (e) {
+        _logger.e(e, data);
+      }
+      return data;
     } catch (e) {
-      _logger.e(e, data);
+      _logger.e(e);
     }
-    return data;
+    return null;
   }
 
   Future<void> writeFile(File file, Map<String, dynamic> data) async {
