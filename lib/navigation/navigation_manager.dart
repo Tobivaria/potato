@@ -9,7 +9,7 @@ import 'package:potato/settings/settings_view.dart';
 import 'package:potato/translation/translation_view.dart';
 
 class NavigationManager extends ConsumerStatefulWidget {
-  const NavigationManager({Key? key}) : super(key: key);
+  const NavigationManager({super.key});
 
   @override
   ConsumerState<NavigationManager> createState() => _SideNavigationBarState();
@@ -21,6 +21,7 @@ class _SideNavigationBarState extends ConsumerState<NavigationManager> {
       navigation: PaneItem(
         icon: const Icon(FluentIcons.text_document_edit),
         title: const Text('Translations'),
+        body: const TranslationView(),
       ),
       route: ViewRoute.translations,
       view: const TranslationView(),
@@ -29,6 +30,7 @@ class _SideNavigationBarState extends ConsumerState<NavigationManager> {
       navigation: PaneItem(
         icon: const Icon(FluentIcons.settings),
         title: const Text('Settings'),
+        body: const SettingsView(),
       ),
       route: ViewRoute.settings,
       view: const SettingsView(),
@@ -37,6 +39,7 @@ class _SideNavigationBarState extends ConsumerState<NavigationManager> {
       navigation: PaneItem(
         icon: const Icon(FluentIcons.device_bug),
         title: const Text('Debug'),
+        body: const DebugView(),
       ),
       route: ViewRoute.debug,
       view: const DebugView(),
@@ -49,32 +52,35 @@ class _SideNavigationBarState extends ConsumerState<NavigationManager> {
     final int navIndex =
         _navigationViewPairs.indexWhere((e) => e.route == route);
 
-    return NavigationView(
-      pane: NavigationPane(
-        displayMode: PaneDisplayMode.top,
-        selected: navIndex,
-        onChanged: (newIndex) => ref
-            .read(navigationProvider.notifier)
-            .navigateTo(_navigationViewPairs[newIndex].route),
-        items: [
-          PaneItemHeader(
-            header: const ProjectMenu(),
+    return Stack(
+      children: [
+        NavigationView(
+          pane: NavigationPane(
+            displayMode: PaneDisplayMode.top,
+            selected: navIndex,
+            onChanged: (newIndex) => ref
+                .read(navigationProvider.notifier)
+                .navigateTo(_navigationViewPairs[newIndex].route),
+            items: [
+              PaneItemHeader(
+                header: const ProjectMenu(),
+              ),
+              ..._navigationViewPairs
+                  .getRange(0, _navigationViewPairs.length)
+                  .map((e) => e.navigation)
+                  .toList()
+            ],
           ),
-          ..._navigationViewPairs
-              .getRange(0, _navigationViewPairs.length)
-              .map((e) => e.navigation)
-              .toList()
-        ],
-      ),
-      content: Stack(
-        children: [
-          NavigationBody(
-            index: navIndex,
-            children: _navigationViewPairs.map((e) => e.view).toList(),
-          ),
-          const NotificationView()
-        ],
-      ),
+          // content: Stack(
+          //   children: const [
+          //     // NavigationBody(
+          //     //   index: navIndex,
+          //     //   children: _navigationViewPairs.map((e) => e.view).toList(),
+          //     // ),
+          // ),
+        ),
+        const NotificationView()
+      ],
     );
   }
 }
