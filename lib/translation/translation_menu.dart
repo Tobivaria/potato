@@ -38,17 +38,25 @@ class _TranslationMenuState extends ConsumerState<TranslationMenu> {
       return;
     }
 
-    final List<Map<String, dynamic>> jsons =
-        await ref.read(fileServiceProvider).readFilesFromDirectory(path);
+    var res = await ref.read(fileServiceProvider).readFilesFromDirectory(path);
 
-    if (jsons.isEmpty) {
+    if (res.error != null) {
+      ref.read(notificationController.notifier).add(
+            'Loading failed',
+            res.error!,
+            InfoBarSeverity.error,
+          );
+      return;
+    }
+
+    if (res.files!.isEmpty) {
       ref
           .read(notificationController.notifier)
           .add('No data', 'No translations to import', InfoBarSeverity.warning);
       return;
     }
 
-    ref.read(projectStateProvider.notifier).loadfromJsons(jsons);
+    ref.read(projectStateProvider.notifier).loadfromJsons(res.files!);
   }
 
   Future<String?> _pickLanguageDirectory(String dialogTitle) async {
@@ -98,7 +106,7 @@ class _TranslationMenuState extends ConsumerState<TranslationMenu> {
     final bool undoAvailable = ref.watch(canUndo);
     final bool redoAvailable = ref.watch(canRedo);
 
-    final List<CommandBarButton> _menu = [
+    final List<CommandBarButton> menu = [
       CommandBarButton(
         icon: const Icon(FluentIcons.download),
         label: const Text('Import'),
@@ -144,7 +152,7 @@ class _TranslationMenuState extends ConsumerState<TranslationMenu> {
       height: 40,
       child: CommandBar(
         compactBreakpointWidth: 768,
-        primaryItems: [..._menu],
+        primaryItems: [...menu],
       ),
     );
   }

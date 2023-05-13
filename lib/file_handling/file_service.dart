@@ -16,11 +16,16 @@ class FileService {
 
   FileService(this._logger);
 
-  Future<List<Map<String, dynamic>>> readFilesFromDirectory(
-      String projectPath) async {
+  Future<({List<Map<String, dynamic>>? files, String? error})>
+      readFilesFromDirectory(String projectPath) async {
     final Directory dir = Directory(projectPath);
-    final List<FileSystemEntity> entities =
-        await dir.list().toList(); // TODO error handling
+
+    List<FileSystemEntity> entities;
+    try {
+      entities = await dir.list().toList();
+    } catch (e) {
+      return (error: e.toString(), files: null);
+    }
 
     final List<Map<String, dynamic>> list = [];
 
@@ -31,7 +36,7 @@ class FileService {
         list.add(tmp);
       }
     }
-    return list;
+    return (error: null, files: list);
   }
 
   Future<Map<String, dynamic>?> readJsonFromFile(File file) async {

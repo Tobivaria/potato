@@ -382,7 +382,19 @@ class ProjectStateController extends StateNotifier<ProjectState> {
       return null;
     }
 
-    return fileService.readFilesFromDirectory(project.path!);
+    var res = await fileService.readFilesFromDirectory(project.path!);
+
+    if (res.error != null) {
+      logger.w('Loading project files failed: ${file.path}');
+      ref.read(notificationController.notifier).add(
+            'Loading failed',
+            res.error!,
+            InfoBarSeverity.error,
+          );
+      return null;
+    }
+
+    return res.files;
   }
 
   // Undo / Redo states

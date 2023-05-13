@@ -76,7 +76,8 @@ void main() {
     );
 
     when(() => mockFileService.readFilesFromDirectory('expected/path'))
-        .thenAnswer((_) async => <Map<String, dynamic>>[]);
+        .thenAnswer(
+            (_) async => (files: <Map<String, dynamic>>[], error: null));
 
     await container
         .read(projectStateProvider.notifier)
