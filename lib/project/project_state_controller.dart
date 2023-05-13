@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:fluent_ui/fluent_ui.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:logger/logger.dart';
+import 'package:path/path.dart' as p;
 import 'package:potato/file_handling/file_service.dart';
 import 'package:potato/language/language.dart';
 import 'package:potato/language/mutable_language_data.dart';
@@ -70,6 +71,7 @@ final StateNotifierProvider<ProjectStateController, ProjectState>
   return ProjectStateController(
     ref.watch(fileServiceProvider),
     ref.watch(loggerProvider),
+    ref.watch(absolutProjectPath),
     ref,
   );
 });
@@ -77,6 +79,7 @@ final StateNotifierProvider<ProjectStateController, ProjectState>
 class ProjectStateController extends StateNotifier<ProjectState> {
   final FileService fileService;
   final Logger logger;
+  final String absoluteProjectPath;
   Ref ref;
 
   List<ProjectState> _history = [];
@@ -85,6 +88,7 @@ class ProjectStateController extends StateNotifier<ProjectState> {
   ProjectStateController(
     this.fileService,
     this.logger,
+    this.absoluteProjectPath,
     this.ref, [
     ProjectState? init,
   ]) : super(init ?? ProjectState());
@@ -337,6 +341,7 @@ class ProjectStateController extends StateNotifier<ProjectState> {
   // Methods related to project file class
   ///////////////////////////////////////////////
   void setPath(String path) {
+    path = path.replaceAll('\\', '/');
     logger.i('Setting translation relative path: $path');
     state = state.copyWith(file: state.file.copyWith(path: path));
   }
@@ -348,6 +353,7 @@ class ProjectStateController extends StateNotifier<ProjectState> {
   }
 
   Future<void> saveProjectFile(String filePath) async {
+    print(state);
     logger.i('Saving project to file');
     logger.d('$state');
 
@@ -356,7 +362,6 @@ class ProjectStateController extends StateNotifier<ProjectState> {
     await fileService.writeFile(file, data);
   }
 
-  // TODO absolut and relative pathes
   Future<List<Map<String, dynamic>>?> loadProjectFileAndTranslations(
     File file,
   ) async {
@@ -382,7 +387,10 @@ class ProjectStateController extends StateNotifier<ProjectState> {
       return null;
     }
 
-    var res = await fileService.readFilesFromDirectory(project.path!);
+    String absTranslationPath = p.join(absoluteProjectPath, project.path!);
+    ref.read(absolutTranslationPath.notifier).state = absTranslationPath;
+
+    var res = await fileService.readFilesFromDirectory(absTranslationPath);
 
     if (res.error != null) {
       logger.w('Loading project files failed: ${file.path}');

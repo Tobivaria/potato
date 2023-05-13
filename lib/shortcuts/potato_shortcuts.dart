@@ -50,7 +50,6 @@ class PotatoShortcuts extends ConsumerWidget with ProjectHandler {
         child: Focus(
           autofocus: true,
           canRequestFocus: true,
-          onFocusChange: (bool changed) => print(changed),
           descendantsAreFocusable: true,
           child: child,
         ),

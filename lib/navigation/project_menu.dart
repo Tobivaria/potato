@@ -28,9 +28,10 @@ class _ProjectMenuState extends ConsumerState<ProjectMenu> with ProjectHandler {
     openFile(ref);
   }
 
-  Future<void> _saveProject(BuildContext context) async {
+  Future<void> _saveProject(BuildContext context,
+      [bool forcePicker = false]) async {
     Flyout.of(context).close();
-    saveProject(ref);
+    saveProject(ref, forcePicker);
   }
 
   @override
@@ -60,6 +61,11 @@ class _ProjectMenuState extends ConsumerState<ProjectMenu> with ProjectHandler {
                 text: const Text('Save'),
                 trailing: const Text('Ctrl + S'),
                 onPressed: () => _saveProject(context),
+              ),
+              MenuFlyoutItem(
+                leading: const Icon(FluentIcons.save),
+                text: const Text('Save as'),
+                onPressed: () => _saveProject(context, true),
               ),
             ],
           ),

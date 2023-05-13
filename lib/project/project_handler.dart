@@ -64,23 +64,30 @@ mixin ProjectHandler {
     ref.read(recentProjectsProvider.notifier).addRecentProject(file.path);
   }
 
-  Future<void> saveProject(WidgetRef ref) async {
-    final String? filePath = await ref.read(filePickerProvider).saveFile();
+  Future<void> saveProject(WidgetRef ref,
+      [bool forceFilePicker = false]) async {
+    String filePath = ref.read(absolutProjectPath);
 
-    if (filePath != null) {
-      // create relative path as long as it is not set
-      if (ref.read(projectStateProvider).file.path == null) {
-        if (ref.read(absolutProjectPath).isNotEmpty &&
-            ref.read(absolutTranslationPath).isNotEmpty) {
-          final String realtiveFilePath = p.relative(
-            ref.read(absolutTranslationPath),
-            from: ref.read(absolutProjectPath),
-          );
-          ref.read(projectStateProvider.notifier).setPath(realtiveFilePath);
-        }
+    if (forceFilePicker || filePath.isEmpty) {
+      String? pickerPath = await ref.read(filePickerProvider).saveFile();
+      if (pickerPath == null) {
+        return;
       }
-      ref.read(projectStateProvider.notifier).saveProjectFile(filePath);
-      ref.read(recentProjectsProvider.notifier).addRecentProject(filePath);
+      ref.read(absolutProjectPath.notifier).state = pickerPath;
+      filePath = pickerPath;
     }
+
+    // create relative path as long as it is not set
+    if (ref.read(projectStateProvider).file.path == null) {
+      if (filePath.isNotEmpty && ref.read(absolutTranslationPath).isNotEmpty) {
+        final String realtiveFilePath = p.relative(
+          ref.read(absolutTranslationPath),
+          from: p.dirname(filePath),
+        );
+        ref.read(projectStateProvider.notifier).setPath(realtiveFilePath);
+      }
+    }
+    ref.read(projectStateProvider.notifier).saveProjectFile(filePath);
+    ref.read(recentProjectsProvider.notifier).addRecentProject(filePath);
   }
 }
