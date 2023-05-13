@@ -6,7 +6,7 @@ import 'package:potato/settings/translation_services/translation_services_contro
 import 'package:potato/translation_service/translation_service.dart';
 
 class TranslationCategory extends ConsumerStatefulWidget {
-  const TranslationCategory({Key? key}) : super(key: key);
+  const TranslationCategory({super.key});
 
   @override
   ConsumerState<ConsumerStatefulWidget> createState() =>
@@ -26,31 +26,29 @@ class _TranslationCategoryState extends ConsumerState<TranslationCategory> {
         Row(
           children: [
             const SettingsCategory('Translation service'),
-            Flyout(
-              content: (context) {
-                return MenuFlyout(
-                  items: [
-                    if (translationServices.indexWhere(
-                          (element) => element.uniqueId() == 'DeepLService',
-                        ) ==
-                        -1)
-                      MenuFlyoutItem(
-                        text: const Text('DeepL'),
-                        onPressed: () {
-                          ref
-                              .read(translationServicesProvider.notifier)
-                              .addDeepL();
-                          _flyoutController.close();
-                        },
-                      ),
-                  ],
-                );
-              },
-              openMode: FlyoutOpenMode.press,
+            FlyoutTarget(
               controller: _flyoutController,
-              child: Container(
-                padding: const EdgeInsets.all(10.0),
+              child: HyperlinkButton(
                 child: const Text('Add'),
+                onPressed: () => _flyoutController.showFlyout(
+                  builder: (context) => MenuFlyout(
+                    items: [
+                      if (translationServices.indexWhere(
+                            (element) => element.uniqueId() == 'DeepLService',
+                          ) ==
+                          -1)
+                        MenuFlyoutItem(
+                          text: const Text('DeepL'),
+                          onPressed: () {
+                            ref
+                                .read(translationServicesProvider.notifier)
+                                .addDeepL();
+                            Flyout.of(context).close();
+                          },
+                        ),
+                    ],
+                  ),
+                ),
               ),
             ),
           ],

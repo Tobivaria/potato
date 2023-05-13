@@ -36,7 +36,8 @@ void main() {
       overrides: [
         fileServiceProvider.overrideWithValue(mockFileService),
         loggerProvider.overrideWithValue(mockLogger),
-        notificationController.overrideWithValue(mockNotificationController)
+        notificationController
+            .overrideWith((ref) => mockNotificationController),
       ],
     );
   });

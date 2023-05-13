@@ -8,8 +8,8 @@ class MetaOptionMenu extends ConsumerStatefulWidget {
   const MetaOptionMenu({
     required this.definitionKey,
     required this.metaDefinition,
-    Key? key,
-  }) : super(key: key);
+    super.key,
+  });
 
   final String definitionKey;
   final MetaDefinition metaDefinition;
@@ -22,14 +22,14 @@ class _MetaOptionMenuState extends ConsumerState<MetaOptionMenu> {
   final FlyoutController _flyoutController = FlyoutController();
 
   void _addDescription() {
-    _flyoutController.close();
+    Flyout.of(context).close();
     ref
         .read(projectStateProvider.notifier)
         .addDescription(widget.definitionKey);
   }
 
   void _addPlaceholder() {
-    _flyoutController.close();
+    Flyout.of(context).close();
     ref
         .read(projectStateProvider.notifier)
         .addPlaceholder(widget.definitionKey);
@@ -37,33 +37,30 @@ class _MetaOptionMenuState extends ConsumerState<MetaOptionMenu> {
 
   @override
   Widget build(BuildContext context) {
-    return Flyout(
-      content: (context) {
-        return MenuFlyout(
-          items: [
-            if (widget.metaDefinition.description == null)
-              MenuFlyoutItem(
-                leading: const Icon(FluentIcons.copy),
-                text: const Text('Description'),
-                onPressed: _addDescription,
-              ),
-            MenuFlyoutItem(
-              leading: const Icon(FluentIcons.fabric_open_folder_horizontal),
-              text: const Text('Placeholder'),
-              onPressed: _addPlaceholder,
-            ),
-          ],
-        );
-      },
-      openMode: FlyoutOpenMode.press,
+    return FlyoutTarget(
       controller: _flyoutController,
-      position: FlyoutPosition.below,
       child: IconButton(
         icon: const Icon(
           FluentIcons.add,
           size: Dimensions.metaSettingIconSize,
         ),
-        onPressed: _flyoutController.open,
+        onPressed: () => _flyoutController.showFlyout(
+          builder: (context) => MenuFlyout(
+            items: [
+              if (widget.metaDefinition.description == null)
+                MenuFlyoutItem(
+                  leading: const Icon(FluentIcons.copy),
+                  text: const Text('Description'),
+                  onPressed: _addDescription,
+                ),
+              MenuFlyoutItem(
+                leading: const Icon(FluentIcons.fabric_open_folder_horizontal),
+                text: const Text('Placeholder'),
+                onPressed: _addPlaceholder,
+              ),
+            ],
+          ),
+        ),
       ),
     );
   }

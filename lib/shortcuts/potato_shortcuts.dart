@@ -9,7 +9,7 @@ import 'package:potato/shortcuts/potato_intents.dart';
 
 class PotatoShortcuts extends ConsumerWidget with ProjectHandler {
   final Widget child;
-  const PotatoShortcuts({required this.child, Key? key}) : super(key: key);
+  const PotatoShortcuts({required this.child, super.key});
 
   /// Focuses the filter, when translation view is active
   void _focusFilter(WidgetRef ref) {

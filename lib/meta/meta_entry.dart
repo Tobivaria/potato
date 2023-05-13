@@ -208,7 +208,7 @@ class _MetaEntryState extends ConsumerState<MetaEntry> {
                         ),
                       ),
                     ),
-                ]
+                ],
               ],
             ),
             const SizedBox(width: 20),

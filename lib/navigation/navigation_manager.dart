@@ -71,13 +71,6 @@ class _SideNavigationBarState extends ConsumerState<NavigationManager> {
                   .toList()
             ],
           ),
-          // content: Stack(
-          //   children: const [
-          //     // NavigationBody(
-          //     //   index: navIndex,
-          //     //   children: _navigationViewPairs.map((e) => e.view).toList(),
-          //     // ),
-          // ),
         ),
         const NotificationView()
       ],
