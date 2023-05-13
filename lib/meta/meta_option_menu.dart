@@ -21,14 +21,14 @@ class MetaOptionMenu extends ConsumerStatefulWidget {
 class _MetaOptionMenuState extends ConsumerState<MetaOptionMenu> {
   final FlyoutController _flyoutController = FlyoutController();
 
-  void _addDescription() {
+  void _addDescription(BuildContext context) {
     Flyout.of(context).close();
     ref
         .read(projectStateProvider.notifier)
         .addDescription(widget.definitionKey);
   }
 
-  void _addPlaceholder() {
+  void _addPlaceholder(BuildContext context) {
     Flyout.of(context).close();
     ref
         .read(projectStateProvider.notifier)
@@ -51,12 +51,12 @@ class _MetaOptionMenuState extends ConsumerState<MetaOptionMenu> {
                 MenuFlyoutItem(
                   leading: const Icon(FluentIcons.copy),
                   text: const Text('Description'),
-                  onPressed: _addDescription,
+                  onPressed: () => _addDescription(context),
                 ),
               MenuFlyoutItem(
                 leading: const Icon(FluentIcons.fabric_open_folder_horizontal),
                 text: const Text('Placeholder'),
-                onPressed: _addPlaceholder,
+                onPressed: () => _addPlaceholder(context),
               ),
             ],
           ),

@@ -18,17 +18,17 @@ class _ProjectMenuState extends ConsumerState<ProjectMenu> with ProjectHandler {
     super.dispose();
   }
 
-  void _showConfirmDialog() {
+  void _showConfirmDialog(BuildContext context) {
     Flyout.of(context).close();
     showConfirmDialog(ref, context);
   }
 
-  Future<void> _openFile() async {
+  Future<void> _openFile(BuildContext context) async {
     Flyout.of(context).close();
     openFile(ref);
   }
 
-  Future<void> _saveProject() async {
+  Future<void> _saveProject(BuildContext context) async {
     Flyout.of(context).close();
     saveProject(ref);
   }
@@ -40,25 +40,26 @@ class _ProjectMenuState extends ConsumerState<ProjectMenu> with ProjectHandler {
       child: HyperlinkButton(
         child: const Text('Project'),
         onPressed: () => _flyoutController.showFlyout(
+          dismissWithEsc: true,
           builder: (context) => MenuFlyout(
             items: [
               MenuFlyoutItem(
                 leading: const Icon(FluentIcons.copy),
                 text: const Text('New'),
                 trailing: const Text('Ctrl + N'),
-                onPressed: () => _showConfirmDialog(),
+                onPressed: () => _showConfirmDialog(context),
               ),
               MenuFlyoutItem(
                 leading: const Icon(FluentIcons.fabric_open_folder_horizontal),
                 text: const Text('Open'),
                 trailing: const Text('Ctrl + O'),
-                onPressed: _openFile,
+                onPressed: () => _openFile(context),
               ),
               MenuFlyoutItem(
                 leading: const Icon(FluentIcons.save),
                 text: const Text('Save'),
                 trailing: const Text('Ctrl + S'),
-                onPressed: _saveProject,
+                onPressed: () => _saveProject(context),
               ),
             ],
           ),
