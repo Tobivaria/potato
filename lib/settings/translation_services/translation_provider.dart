@@ -24,11 +24,10 @@ class _TranslationProviderState extends ConsumerState<TranslationProvider> {
   void initState() {
     super.initState();
     _focus.addListener(_setApiKey);
+    _init();
   }
 
-  @override
-  Future<void> didChangeDependencies() async {
-    super.didChangeDependencies();
+  Future<void> _init() async {
     await _getApiKey();
     _getUsage();
   }
